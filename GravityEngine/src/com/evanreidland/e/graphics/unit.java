@@ -5,6 +5,10 @@ public class unit {
 		return maxUnit != 0 ? (curUnit/maxUnit) : 0;
 	}
 	
+	public static float roundedTo100(float f) {
+		return ((int)(f*100))/100f;
+	}
+	
 	public static Quad generateQuad(float pointA, float pointB, float maxUnit, float numPerUnit) {
 		Quad q = new Quad();
 		q.vert[0].pos.setAs(-1, -1, 0);

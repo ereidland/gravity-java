@@ -49,6 +49,7 @@ public class ents {
 	private static HashMap<String, ClassFactory> factories = new HashMap<String, ClassFactory>();
 	
 	public static void Register(String className, Class<? extends Entity> entClass) {
+		System.out.println("Regsitered " + entClass.toString() + " to \"" + className + "\".");
 		factories.put(className, new ClassFactory(entClass));
 	}
 	

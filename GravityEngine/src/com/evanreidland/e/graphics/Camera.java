@@ -7,6 +7,19 @@ public class Camera {
 	public boolean is3D, ortho; // Use Orthographic projection? Default false. 
 	public Vector3 pos, angle;
 	
+	public Vector3 topLeft() {
+		return new Vector3(-width*0.5f, -height*0.5f, 0);
+	}
+	public Vector3 topRight() {
+		return new Vector3(width*0.5f, -height*0.5f, 0);
+	}
+	public Vector3 bottomLeft() {
+		return new Vector3(-width*0.5f, -height*0.5f, 0);
+	}
+	public Vector3 bottomRight() {
+		return new Vector3(width*0.5f, height*0.5f, 0);
+	}
+	
 	public Vector3 toScreen(Vector3 v) {
 		return v.multipliedBy(getForward());
 	}
@@ -27,10 +40,7 @@ public class Camera {
 		return angle.getUp();
 	}
 	
-	public void Apply() {
-	}
-	
-	public void ApplyHUD() {
+	public void onRender() {
 		
 	}
 	
@@ -56,7 +66,6 @@ public class Camera {
 				angle.x += Math.PI * 2;
 			}
 		}
-		Apply();
 	}
 	
 	public void applyMouse(float changeX, float changeY, float scalar) {

@@ -442,7 +442,7 @@ implements Runnable {
 		GL11.glBlendFunc (GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glBlendFunc (GL11.GL_SRC_COLOR, GL11.GL_MULT);
 		cam.is3D = false;
-		cam.Apply();
+		graphics.setCamera(cam);
 		GL11.glDisable(GL11.GL_CULL_FACE);
 		onRenderHUD();
 		GL11.glPopMatrix();

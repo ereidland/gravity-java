@@ -132,7 +132,7 @@ public class engine {
 			managers[i] = new ResourceManager(ResourceType.None);
 		}
 		
-		dataPath = defaultDirectory() + "/.emecharena/";
+		dataPath = defaultDirectory() + "/.egravity/";
 		new File(dataPath).mkdir();
 		
 		System.out.println(dataPath);

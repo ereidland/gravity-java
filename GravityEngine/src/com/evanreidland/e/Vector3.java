@@ -1,9 +1,15 @@
 package com.evanreidland.e;
 
-
-
 public class Vector3 {
 	public float x, y, z;
+	
+	public String toString() {
+		return "(" + x + ", " + y + ", " + z + ")";
+	}
+	
+	public String toRoundedString() {
+		return String.format("(%3.02f, %3.02f, %3.02f)", x, y, z);
+	}
 	
 	public static Vector3 Zero() {
 		return new Vector3();

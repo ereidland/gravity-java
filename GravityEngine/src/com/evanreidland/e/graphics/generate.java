@@ -20,10 +20,10 @@ public class generate {
 		
 		Quad q = new Quad();
 		//Top
-		q.vert[0].pos.setAs(r.topRight());
-		q.vert[1].pos.setAs(r.topLeft());
-		q.vert[2].pos.setAs(r.topBLeft());
-		q.vert[3].pos.setAs(r.topBRight());
+		q.vert[0].pos.setAs(r.topLeft());
+		q.vert[1].pos.setAs(r.topRight());
+		q.vert[2].pos.setAs(r.topBRight());
+		q.vert[3].pos.setAs(r.topBLeft());
 		triList.addQuad(q);
 		
 		//Bottom
@@ -34,31 +34,31 @@ public class generate {
 		triList.addQuad(q);
 		
 		//Back
-		q.vert[0].pos.setAs(r.topLeft());
-		q.vert[1].pos.setAs(r.topRight());
-		q.vert[2].pos.setAs(r.bottomURight());
-		q.vert[3].pos.setAs(r.bottomULeft());
-		triList.addQuad(q);
-		
-		//Front
-		q.vert[0].pos.setAs(r.topBRight());
-		q.vert[1].pos.setAs(r.topBLeft());
-		q.vert[2].pos.setAs(r.bottomLeft());
-		q.vert[3].pos.setAs(r.bottomRight());
-		triList.addQuad(q);
-		
-		//Left
 		q.vert[0].pos.setAs(r.topBLeft());
-		q.vert[1].pos.setAs(r.topLeft());
-		q.vert[2].pos.setAs(r.bottomULeft());
+		q.vert[1].pos.setAs(r.topBRight());
+		q.vert[2].pos.setAs(r.bottomRight());
 		q.vert[3].pos.setAs(r.bottomLeft());
 		triList.addQuad(q);
 		
-		//Right
+		//Front
 		q.vert[0].pos.setAs(r.topRight());
-		q.vert[1].pos.setAs(r.topBRight());
-		q.vert[2].pos.setAs(r.bottomRight());
+		q.vert[1].pos.setAs(r.topLeft());
+		q.vert[2].pos.setAs(r.bottomULeft());
 		q.vert[3].pos.setAs(r.bottomURight());
+		triList.addQuad(q);
+		
+		//Left
+		q.vert[0].pos.setAs(r.topLeft());
+		q.vert[1].pos.setAs(r.topBLeft());
+		q.vert[2].pos.setAs(r.bottomLeft());
+		q.vert[3].pos.setAs(r.bottomULeft());
+		triList.addQuad(q);
+		
+		//Right
+		q.vert[0].pos.setAs(r.topBRight());
+		q.vert[1].pos.setAs(r.topRight());
+		q.vert[2].pos.setAs(r.bottomURight());
+		q.vert[3].pos.setAs(r.bottomRight());
 		triList.addQuad(q);
 		
 		triList.Shift(offset);

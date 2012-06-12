@@ -129,9 +129,10 @@ public class GLGraphicsManager extends GraphicsManager {
 		
 		GL11.glTranslatef(offset.x, offset.y, offset.z);
 		
-		GL11.glRotatef((float)Math.toDegrees(angle.x), 1, 0, 0);
-		GL11.glRotatef((float)Math.toDegrees(angle.y), 0, 1, 0);
 		GL11.glRotatef((float)Math.toDegrees(angle.z), 0, 0, 1);
+		GL11.glRotatef((float)Math.toDegrees(angle.y), 0, 1, 0);
+		GL11.glRotatef((float)Math.toDegrees(angle.x), 1, 0, 0);
+		
 	}
 
 	public void endTranslation() {

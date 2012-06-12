@@ -13,10 +13,10 @@ public class EntityList {
 	
 	public void simulateGravity(float delta) {
 		for ( int i = 0; i < entities.size(); i++ ) {
-			for ( int j = 0; j < entities.size(); j++ ) {
-				if ( i == j ) continue;
-				Entity ent = entities.get(i);
-				if ( !ent.bStatic ) {
+			Entity ent = entities.get(i);
+			if ( !ent.bStatic ) {
+				for ( int j = 0; j < entities.size(); j++ ) {
+					if ( i == j ) continue;
 					Entity other = entities.get(j);
 					ent.applyGravity(other, delta);
 				}

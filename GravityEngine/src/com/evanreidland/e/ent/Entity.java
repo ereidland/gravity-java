@@ -15,9 +15,17 @@ public class Entity extends EObject {
 	
 	public void onThink() {
 		State f = flags.getState("dead");
-		if ( f == State.False || f == State.Undef || f == State.Either ) {
+		if ( !bStatic && (f == State.False || f == State.Undef || f == State.Either) ) {
 			pos.add(vel.multipliedBy(engine.getDelta()));
 		}
+	}
+	
+	public float getOrbitalVelocity(float distance, float sourceMass) {
+		return (float)Math.sqrt(sourceMass/distance);
+	}
+	
+	public float getGravity(float distance, float sourceMass) {
+		return (mass*sourceMass)/(distance*distance);
 	}
 	
 	public float getGravity(Vector3 source, float sourceMass) {
@@ -30,7 +38,9 @@ public class Entity extends EObject {
 	}
 	
 	public void applyGravity(Vector3 source, float sourceMass, float delta) {
-		vel.add(source.minus(pos).getNormal().multiply(getGravity(source, sourceMass)*delta));
+		if ( mass != 0 ) {
+			vel.add(source.minus(pos).getNormal().multiply((getGravity(source, sourceMass)*delta)/mass));
+		}
 	}
 	
 	public void applyGravity(Entity other, float delta) {
@@ -38,7 +48,6 @@ public class Entity extends EObject {
 	}
 	
 	public void onRender() {
-		
 	}
 	public void onRenderHUD() {
 		
@@ -51,6 +60,7 @@ public class Entity extends EObject {
 		super(className, id);
 		pos = Vector3.Zero();
 		vel = Vector3.Zero();
+		angle = Vector3.Zero();
 		bStatic = false;
 	}
 }

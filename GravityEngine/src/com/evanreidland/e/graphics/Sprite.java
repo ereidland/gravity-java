@@ -27,9 +27,9 @@ public class Sprite {
 		Vector3 up = newAngle.getUp(), right = newAngle.getRight();
 		
 		a.pos.setAs(pos.plus(up.multipliedBy(-h2).plus(right.multipliedBy(-w2))));
-		b.pos.setAs(pos.plus(up.multipliedBy(h2).plus(right.multipliedBy(-w2))));
+		b.pos.setAs(pos.plus(up.multipliedBy(-h2).plus(right.multipliedBy(w2))));
 		c.pos.setAs(pos.plus(up.multipliedBy(h2).plus(right.multipliedBy(w2))));
-		d.pos.setAs(pos.plus(up.multipliedBy(-h2).plus(right.multipliedBy(w2))));
+		d.pos.setAs(pos.plus(up.multipliedBy(h2).plus(right.multipliedBy(-w2))));
 		
 		a.r = cr; a.g = cg; a.b = cb; a.a = ca;
 		b.r = cr; b.g = cg; b.b = cb; b.a = ca;
