@@ -24,6 +24,30 @@ public class EntityList {
 		}
 	}
 	
+	public Vector3 getGravitationalInfluence(Entity ent) {
+		Vector3 v = Vector3.Zero();
+		if ( ent.mass == 0 ) return v;
+		for ( int i = 0; i < entities.size(); i++ ) {
+			Entity other = entities.get(i);
+			if ( other.getID() != ent.getID() ) {
+				v.add(other.pos.minus(ent.pos).Normalize().multiply(ent.getGravity(other)));
+			}
+		}
+		return v;
+	}
+	
+	public Vector3 getUniversalOrbitalVelocity(Entity ent) {
+		Vector3 v = Vector3.Zero();
+		if ( ent.mass == 0 ) return v;
+		for ( int i = 0; i < entities.size(); i++ ) {
+			Entity other = entities.get(i);
+			if ( other.getID() != ent.getID() ) {
+				v.add(other.pos.minus(ent.pos).getAngle().getRight().multiply(ent.getOrbitalVelocity(other)));
+			}
+		}
+		return v;
+	}
+	
 	public Entity add(Entity ent) {
 		if ( !entities.contains(ent) ) {
 			entities.add(ent);
@@ -56,6 +80,8 @@ public class EntityList {
 		for ( int i = 0; i < entities.size(); i++ ) {
 			entities.get(i).onThink();
 		}
+		
+		removeWithFlags(eflags.dead);
 	}
 	
 	public void onRender() {

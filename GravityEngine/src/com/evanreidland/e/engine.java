@@ -72,14 +72,13 @@ public class engine {
 	public static void Update() {
 		long diffTime = System.currentTimeMillis() - lastTime;
 		if ( diffTime <= 0 ) return;
-		
-		delta = ((float)diffTime)/1000f;
+		delta = diffTime/1000f;
+		lastTime = System.currentTimeMillis();
 		
 		if ( game != null ) {
 			sound.goToCamera();
 			game.onUpdate();
 		}
-		lastTime = System.currentTimeMillis();
 	}
 	
 	public static void Render() {

@@ -1,9 +1,9 @@
 package com.evanreidland.e.gravity;
 
+import com.evanreidland.e.Game;
 import com.evanreidland.e.Resource;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
-import com.evanreidland.e.roll;
 import com.evanreidland.e.client.EApplet;
 import com.evanreidland.e.client.EApplication;
 import com.evanreidland.e.client.GameClient;
@@ -11,6 +11,7 @@ import com.evanreidland.e.client.control.input;
 import com.evanreidland.e.client.control.key;
 import com.evanreidland.e.client.ent.Planet;
 import com.evanreidland.e.client.ent.Ship;
+import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.graphics.Model;
 import com.evanreidland.e.graphics.Sprite;
@@ -29,17 +30,37 @@ public class GravityClient extends GameClient {
 	Ship ship;
 	Planet planet;
 	
+	long nextShot;
+	
+	Vector3 orbitOffset = Vector3.Zero();
+	
+	float viewHeight = 5;
+	
 	public void drawRing(Vector3 origin, float rad, int numPoints) {
 		Vector3 lp = origin.plus(Vector3.fromAngle2d(0).multipliedBy(rad));
 		for ( int i = 1; i <= numPoints; i++ ) {
 			Vector3 np = origin.plus(Vector3.fromAngle2d((i/(float)numPoints)*engine.Pi2).multipliedBy(rad));
-			graphics.drawLine(lp, np, 2, 1, 1, 1, 1);
+			graphics.drawLine(lp, np, 1, 1, 1, 1, 0.5f);
 			lp.setAs(np);
 		}
 	}
 	
 	public void onUpdate() {
 		float speed = 2*getDelta();
+		if ( input.getKeyState(key.KEY_1) && Game.getTime() >= nextShot ) {
+			Entity ent = ents.Create("missile");
+			ent.pos = ship.pos.plus(ship.angle.getForward());
+			ent.vel = ship.vel.plus(ship.angle.getForward().multipliedBy(5));
+			nextShot = Game.getTime() + 100;
+		}
+		if ( input.getKeyState(key.KEY_9) ) {
+			viewHeight += speed;
+		}
+		if ( input.getKeyState(key.KEY_8) ) {
+			viewHeight -= speed;
+		}
+		if ( viewHeight < 0.5f ) viewHeight = 0.5f;
+		if ( viewHeight > 50 ) viewHeight = 50;
 		if ( input.getKeyState(key.KEY_SHIFT) ) {
 			speed *= 2;
 			if ( input.getKeyState(key.KEY_UP) ) {
@@ -56,44 +77,45 @@ public class GravityClient extends GameClient {
 			}
 		} else {
 			if ( input.getKeyState(key.KEY_UP) ) {
-				ship.angle.x += speed;
+				orbitOffset.x += speed;
 			}
 			if ( input.getKeyState(key.KEY_DOWN) ) {
-				ship.angle.x -= speed;
+				orbitOffset.x -= speed;
 			}
-			//ship.angle.clipAngle();
+			orbitOffset.clipAngle();
 			
 			if ( input.getKeyState(key.KEY_CONTROL) ) {
-				float scalar = ship.getOrbitalVelocity(ship.pos.getDistance(planet.pos), planet.mass);
+				Vector3 inf = ents.list.getUniversalOrbitalVelocity(ship);
 				if ( input.getKeyState(key.KEY_LEFT) ) {
-					ship.vel = planet.pos.minus(ship.pos).getNormal().getAngle().getRight().multipliedBy(-scalar);
+					ship.vel = inf.multipliedBy(-1);
 				}
 				if ( input.getKeyState(key.KEY_RIGHT) ) {
-					ship.vel = planet.pos.minus(ship.pos).getNormal().getAngle().getRight().multipliedBy(scalar);
+					ship.vel = inf;
 				}
 			} else {
 				if ( ship.angle.x < engine.Pi ) {
 					speed = -speed;
 				}
 				if ( input.getKeyState(key.KEY_LEFT) ) {
-					ship.angle.z -= speed;//Math.cos(ship.angle.y)*speed;
+					orbitOffset.z -= speed;//Math.cos(ship.angle.y)*speed;
 				}
 				if ( input.getKeyState(key.KEY_RIGHT) ) {
-					ship.angle.z += speed;//Math.cos(ship.angle.y)*speed;
+					orbitOffset.z += speed;//Math.cos(ship.angle.y)*speed;
 				}
 			}
 		}
 		
-		if ( input.getKeyState(key.KEY_SPACE) ) { 
-			ship.angle = planet.pos.minus(ship.pos).getAngle();
+		if ( input.getKeyState(key.KEY_SPACE) ) {
+			orbitOffset.setAs(0, 0, 0);
 		}
+		
+		ship.angle.setAs(planet.pos.minus(ship.pos).getAngle().plus(orbitOffset));
 		
 		ents.list.simulateGravity(getDelta());
 		ents.list.onThink();
 		
 		graphics.camera.angle.setAs(ship.angle);//planet.pos.minus(ship.pos).getAngle());
-		graphics.camera.angle.x -= 0.5f;
-		graphics.camera.pos.setAs(ship.pos.plus(graphics.camera.getForward().multipliedBy(-5)));
+		graphics.camera.pos.setAs(ship.pos.plus(graphics.camera.getForward().multipliedBy(-viewHeight*2.5f)).plus(graphics.camera.getUp().multipliedBy(viewHeight)));
 	}
 
 	public void onRender() {
@@ -101,26 +123,27 @@ public class GravityClient extends GameClient {
 	
 		graphics.unbindTexture();
 		for ( int i = 1; i < 10; i++ ) {			
-			drawRing(planet.pos, i*2, i*20);
+			drawRing(planet.pos, i*100, i*100);
 		}
 		
 		for ( int i = 0; i < 50; i++ ) {
-			graphics.drawLine(planet.pos, planet.pos.plus(Vector3.fromAngle2d((i/50f)*engine.Pi2).multipliedBy(18)), 1, 1, 1, 0, 0.5f);
+			graphics.drawLine(planet.pos, planet.pos.plus(Vector3.fromAngle2d((i/50f)*engine.Pi2).multipliedBy(900)), 1, 1, 1, 0, 0.5f);
 		}
 	}
 
 	public void onRenderHUD() {
 		font.Render2d(font1, "Pos: " + ship.pos.toRoundedString(), graphics.camera.bottomLeft().plus(0, 16, 0), 16, false);
 		font.Render2d(font1, "Ang: " + ship.angle.clipAngle().toRoundedString(), graphics.camera.bottomLeft().plus(0, 32, 0), 16, false);
+		font.Render2d(font1, "Delta: " + Game.getDelta(), graphics.camera.bottomLeft().plus(0, 48, 0), 16, false);
 		
 		float radarScale = 5;
-		graphics.putTranslation(graphics.camera.bottomLeft().plus(100, 100, 0).divide(radarScale), new Vector3(radarScale, radarScale, radarScale), Vector3.Zero());
-		onRender();
+		graphics.putTranslation(graphics.camera.topLeft().plus(100, -100, 0).divide(radarScale), new Vector3(radarScale, radarScale, radarScale), Vector3.Zero());
+		//onRender();
 		graphics.endTranslation();
 	}
 	
 	public void registerEntities() {
-		ents.Register("ship", Ship.class);
+		ents.Register("missile", TestInterceptor.class);
 	}
 	
 	public void createEntities() {
@@ -130,26 +153,27 @@ public class GravityClient extends GameClient {
 		ship.model = shipModel;
 		ship.mass = 0.001f;
 		ship.bStatic = false;
+		ship.pos = new Vector3(200, 0, 0);
 		
-		ship.pos = new Vector3(15, 0, 0);
+		nextShot = 0;
 		
-		planet.mass = 100;
-		planet.radius = 8;
+		planet.mass = 100000;
+		planet.radius = 100;
 		planet.sprite = planetSprite;
-		planet.bStatic = false;
+		planet.bStatic = true;
 		
 		ship.vel = new Vector3(0, ship.getOrbitalVelocity(ship.pos.x, planet.mass), 0);
 		
-		float num = 10;
+		float num = 1;
 		
 		for ( float i = 0; i < num; i++ ) {
 			Planet ent = (Planet)ents.Create("planet");
 			
 			ent.sprite = planet.sprite;
-			ent.mass = 0.0001f;
+			ent.mass = 10;
 			ent.radius = 1;
 			
-			float rad = (i + 1)*2;
+			float rad = (i + 1)*100;
 		
 			ent.bStatic = false;
 			
@@ -178,7 +202,7 @@ public class GravityClient extends GameClient {
 	}
 	
 	public void loadSound() {
-		
+		//I'm going to have something here eventually.
 	}
 	
 	public void onInit() {

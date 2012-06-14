@@ -66,7 +66,6 @@ implements Runnable {
 	protected long curTime;
 
 	private long frameDelay;
-	private float delta;
 	
 	public float scale;
 	
@@ -82,10 +81,6 @@ implements Runnable {
 	
 	public void setFrameDelay(long newDelay) {
 		frameDelay = newDelay;
-	}
-	
-	public float getDelta() {
-		return delta;
 	}
 	
 	public long getTime() {
@@ -286,7 +281,6 @@ implements Runnable {
 		lockedMouse = false;
 		yLocked = false;
 		curTime = 0;
-		delta = 0.01f;
 		xmouse = ymouse = lxmouse = lymouse = 0;
 		events = new Vector<EventKey>();
 		keys = new char[256];
@@ -295,9 +289,6 @@ implements Runnable {
 		setLayout(new BorderLayout());
 		try {
 			screen = new Canvas() {
-				/**
-				 * 
-				 */
 				private static final long serialVersionUID = 7141569955043137552L;
 				public final void addNotify() {
 					super.addNotify();
@@ -327,10 +318,8 @@ implements Runnable {
 		curTime = System.currentTimeMillis();
 		Display.setTitle("Spellcraft " + engine.version);
 		while(running) {
-			if ( System.currentTimeMillis() >= curTime + frameDelay ) {
-				delta = ((float)(System.currentTimeMillis() - curTime))/1000f;
+			if ( System.currentTimeMillis() > curTime + frameDelay ) {
 	    		curTime = System.currentTimeMillis();
-	 
 	    		
 	    		/*//Move?
 				if ( screen.getWidth() != getWidth() || screen.getHeight() != getHeight() ) {
@@ -379,8 +368,6 @@ implements Runnable {
 				keyFrame();
 				
 				Display.update();
-				
-				
 				
 				onPostRender();
 			} else {
@@ -515,7 +502,7 @@ implements Runnable {
 			//GL11.glColorMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_AMBIENT_AND_DIFFUSE );
 			
 
-			GL11.glEnable(GL11.GL_FOG);
+			//GL11.glEnable(GL11.GL_FOG);
 			
 			//GL11.glEnable(GL11.GL_LIGHTING);
 			
@@ -552,7 +539,6 @@ implements Runnable {
 		cam.perspective = cam.width/cam.height;
 		graphics.camera = cam;
 		
-		delta = 0;
 		curTime = 0;
 		cam.angle.x = (float) (-Math.PI/6);
 		EApplet.active = this;

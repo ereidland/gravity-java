@@ -13,6 +13,10 @@ public class Entity extends EObject {
 	
 	public EventList events;
 	
+	public void Kill() {
+		flags.setState("dead", State.True);
+	}
+	
 	public void onThink() {
 		State f = flags.getState("dead");
 		if ( !bStatic && (f == State.False || f == State.Undef || f == State.Either) ) {
@@ -21,10 +25,16 @@ public class Entity extends EObject {
 	}
 	
 	public float getOrbitalVelocity(float distance, float sourceMass) {
+		if ( distance == 0 ) return 0; // Better than returning infinity.
 		return (float)Math.sqrt(sourceMass/distance);
 	}
 	
+	public float getOrbitalVelocity(Entity other) {
+		return getOrbitalVelocity(pos.getDistance(other.pos), other.mass);
+	}
+	
 	public float getGravity(float distance, float sourceMass) {
+		if ( distance == 0 ) return 0;
 		return (mass*sourceMass)/(distance*distance);
 	}
 	
@@ -62,5 +72,7 @@ public class Entity extends EObject {
 		vel = Vector3.Zero();
 		angle = Vector3.Zero();
 		bStatic = false;
+		
+		flags.setState("dead", State.False);
 	}
 }

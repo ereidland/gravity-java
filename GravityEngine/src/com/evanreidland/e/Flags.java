@@ -53,10 +53,10 @@ public class Flags {
 			return matchesOther(oflags);
 		}
 		if ( oflags != null ) {
-			String[] keySet = (String[])flags.keySet().toArray();
+			Object[] keySet = flags.keySet().toArray();
 			
 			for ( int i = 0; i < keySet.length; i++ ) {
-				if ( getState(keySet[i]) != oflags.getState(keySet[i]) ) {
+				if ( getState((String)keySet[i]) != oflags.getState((String)keySet[i]) ) {
 					return false;
 				}
 			}
