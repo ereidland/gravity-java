@@ -114,7 +114,7 @@ public class GravityClient extends GameClient {
 		font.Render2d(font1, "Ang: " + ship.angle.clipAngle().toRoundedString(), graphics.camera.bottomLeft().plus(0, 32, 0), 16, false);
 		
 		float radarScale = 5;
-		graphics.putTranslation(graphics.camera.bottomLeft().plus(0, 0, 0).divide(1/radarScale), new Vector3(radarScale, radarScale, radarScale), Vector3.Zero());
+		graphics.putTranslation(graphics.camera.bottomLeft().plus(100, 100, 0).divide(radarScale), new Vector3(radarScale, radarScale, radarScale), Vector3.Zero());
 		onRender();
 		graphics.endTranslation();
 	}
