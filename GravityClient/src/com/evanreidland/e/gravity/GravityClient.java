@@ -3,6 +3,7 @@ package com.evanreidland.e.gravity;
 import com.evanreidland.e.Resource;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
+import com.evanreidland.e.roll;
 import com.evanreidland.e.client.EApplet;
 import com.evanreidland.e.client.EApplication;
 import com.evanreidland.e.client.GameClient;
@@ -27,6 +28,15 @@ public class GravityClient extends GameClient {
 	
 	Ship ship;
 	Planet planet;
+	
+	public void drawRing(Vector3 origin, float rad, int numPoints) {
+		Vector3 lp = origin.plus(Vector3.fromAngle2d(0).multipliedBy(rad));
+		for ( int i = 1; i <= numPoints; i++ ) {
+			Vector3 np = origin.plus(Vector3.fromAngle2d((i/(float)numPoints)*engine.Pi2).multipliedBy(rad));
+			graphics.drawLine(lp, np, 2, 1, 1, 1, 1);
+			lp.setAs(np);
+		}
+	}
 	
 	public void onUpdate() {
 		float speed = 2*getDelta();
@@ -53,14 +63,15 @@ public class GravityClient extends GameClient {
 			}
 			//ship.angle.clipAngle();
 			
-//			if ( input.getKeyState(key.KEY_CONTROL) ) {
-//				if ( input.getKeyState(key.KEY_LEFT) ) {
-//					ship.angle.y -= speed;
-//				}
-//				if ( input.getKeyState(key.KEY_RIGHT) ) {
-//					ship.angle.y += speed;
-//				}
-//			} else {
+			if ( input.getKeyState(key.KEY_CONTROL) ) {
+				float scalar = ship.getOrbitalVelocity(ship.pos.getDistance(planet.pos), planet.mass);
+				if ( input.getKeyState(key.KEY_LEFT) ) {
+					ship.vel = planet.pos.minus(ship.pos).getNormal().getAngle().getRight().multipliedBy(-scalar);
+				}
+				if ( input.getKeyState(key.KEY_RIGHT) ) {
+					ship.vel = planet.pos.minus(ship.pos).getNormal().getAngle().getRight().multipliedBy(scalar);
+				}
+			} else {
 				if ( ship.angle.x < engine.Pi ) {
 					speed = -speed;
 				}
@@ -70,7 +81,7 @@ public class GravityClient extends GameClient {
 				if ( input.getKeyState(key.KEY_RIGHT) ) {
 					ship.angle.z += speed;//Math.cos(ship.angle.y)*speed;
 				}
-//			}
+			}
 		}
 		
 		if ( input.getKeyState(key.KEY_SPACE) ) { 
@@ -81,16 +92,31 @@ public class GravityClient extends GameClient {
 		ents.list.onThink();
 		
 		graphics.camera.angle.setAs(ship.angle);//planet.pos.minus(ship.pos).getAngle());
+		graphics.camera.angle.x -= 0.5f;
 		graphics.camera.pos.setAs(ship.pos.plus(graphics.camera.getForward().multipliedBy(-5)));
 	}
 
 	public void onRender() {
 		ents.list.onRender();
+	
+		graphics.unbindTexture();
+		for ( int i = 1; i < 10; i++ ) {			
+			drawRing(planet.pos, i*2, i*20);
+		}
+		
+		for ( int i = 0; i < 50; i++ ) {
+			graphics.drawLine(planet.pos, planet.pos.plus(Vector3.fromAngle2d((i/50f)*engine.Pi2).multipliedBy(18)), 1, 1, 1, 0, 0.5f);
+		}
 	}
 
 	public void onRenderHUD() {
 		font.Render2d(font1, "Pos: " + ship.pos.toRoundedString(), graphics.camera.bottomLeft().plus(0, 16, 0), 16, false);
 		font.Render2d(font1, "Ang: " + ship.angle.clipAngle().toRoundedString(), graphics.camera.bottomLeft().plus(0, 32, 0), 16, false);
+		
+		float radarScale = 5;
+		graphics.putTranslation(graphics.camera.bottomLeft().plus(0, 0, 0).divide(1/radarScale), new Vector3(radarScale, radarScale, radarScale), Vector3.Zero());
+		onRender();
+		graphics.endTranslation();
 	}
 	
 	public void registerEntities() {
@@ -102,13 +128,13 @@ public class GravityClient extends GameClient {
 		planet = (Planet)ents.Create("planet");
 		
 		ship.model = shipModel;
-		ship.mass = 1;
+		ship.mass = 0.001f;
 		ship.bStatic = false;
 		
 		ship.pos = new Vector3(15, 0, 0);
 		
 		planet.mass = 100;
-		planet.radius = 5;
+		planet.radius = 8;
 		planet.sprite = planetSprite;
 		planet.bStatic = false;
 		
@@ -120,10 +146,10 @@ public class GravityClient extends GameClient {
 			Planet ent = (Planet)ents.Create("planet");
 			
 			ent.sprite = planet.sprite;
+			ent.mass = 0.0001f;
 			ent.radius = 1;
-			ent.mass = 0.00001f;
 			
-			float rad = 10;
+			float rad = (i + 1)*2;
 		
 			ent.bStatic = false;
 			
@@ -134,7 +160,7 @@ public class GravityClient extends GameClient {
 			
 			ent.pos.setAs(planet.pos.plus(Vector3.fromAngle2d(angle).multipliedBy(rad)));
 			
-			ent.pos.z = (float)Math.sin(angle*4)*2;
+			ent.pos.z = 0;//s(float)Math.sin(angle)*2;
 		}
 		
 		ship.angle = planet.pos.minus(ship.pos).getAngle();

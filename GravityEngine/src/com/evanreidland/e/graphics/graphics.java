@@ -72,6 +72,10 @@ public class graphics {
 		return engine.loadTexture(path);
 	}
 	
+	public static void unbindTexture() {
+		setTexture(null);
+	}
+	
 	public static void setTexture(Resource tex) {
 		if ( graphicsManager != null ) {
 			graphicsManager.setTexture(tex);

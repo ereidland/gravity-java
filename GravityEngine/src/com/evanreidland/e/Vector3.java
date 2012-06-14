@@ -123,7 +123,7 @@ public class Vector3 {
 		} else this.y = 0;
 		if ( z != 0 ) {
 			this.z /= z;
-		}
+		} else this.z = 0;
 		return this;
 	}
 	public Vector3 multiply(float scalar) {
@@ -137,6 +137,7 @@ public class Vector3 {
 			x /= scalar;
 			y /= scalar;
 			z /= scalar;
+		} else {
 			x = y = z = 0;
 		}
 		return this;

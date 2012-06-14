@@ -94,6 +94,7 @@ public class GLGraphicsManager extends GraphicsManager {
 		Texture t = tex != null ? (tex.isValid() ? (Texture)tex.getObject() : null) : null;
 		vbo.setTexture(t);
 		if ( t != null ) t.bind();
+		else Texture.unbind();
 	}
 	
 	public void passTriangle(float[] data) {
@@ -117,9 +118,11 @@ public class GLGraphicsManager extends GraphicsManager {
 		GL11.glBegin(GL11.GL_LINES);
 			GL11.glColor4f(r, g, b, a);
 			
-			GL11.glVertex2f(pos1.x, pos1.y);
+			GL11.glTexCoord2f(0, 0.5f);
+			GL11.glVertex3f(pos1.x, pos1.y, pos1.z);
 			
-			GL11.glVertex2f(pos2.x, pos2.y);
+			GL11.glTexCoord2f(1, 0.5f);
+			GL11.glVertex3f(pos2.x, pos2.y, pos2.z);
 		GL11.glEnd();
 	}
 	
