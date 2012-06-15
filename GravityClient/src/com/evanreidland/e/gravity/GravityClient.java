@@ -27,14 +27,14 @@ public class GravityClient extends GameClient {
 	
 	Sprite planetSprite;
 	
+	Resource skybox;
+	
 	Ship ship;
 	Planet planet;
 	
 	long nextShot;
 	
-	Vector3 orbitOffset = Vector3.Zero();
-	
-	float viewHeight = 5;
+	float viewHeight = 0.01f;
 	
 	public void drawRing(Vector3 origin, float rad, int numPoints) {
 		Vector3 lp = origin.plus(Vector3.fromAngle2d(0).multipliedBy(rad));
@@ -46,10 +46,10 @@ public class GravityClient extends GameClient {
 	}
 	
 	public void onUpdate() {
-		float speed = 2*getDelta();
+		float speed = getDelta();
 		if ( input.getKeyState(key.KEY_1) && Game.getTime() >= nextShot ) {
 			Entity ent = ents.Create("missile");
-			ent.pos = ship.pos.plus(ship.angle.getForward());
+			ent.pos = ship.pos.plus(ship.angle.getForward().multipliedBy(0.01f));
 			ent.vel = ship.vel.plus(ship.angle.getForward().multipliedBy(5));
 			nextShot = Game.getTime() + 100;
 		}
@@ -59,10 +59,10 @@ public class GravityClient extends GameClient {
 		if ( input.getKeyState(key.KEY_8) ) {
 			viewHeight -= speed;
 		}
-		if ( viewHeight < 0.5f ) viewHeight = 0.5f;
-		if ( viewHeight > 50 ) viewHeight = 50;
+		if ( viewHeight < 0.01f ) viewHeight = 0.01f;
+		if ( viewHeight > 1 ) viewHeight = 1;
 		if ( input.getKeyState(key.KEY_SHIFT) ) {
-			speed *= 2;
+			speed *= 10;
 			if ( input.getKeyState(key.KEY_UP) ) {
 				ship.vel.add(ship.angle.getForward().multipliedBy(speed));
 			}
@@ -76,40 +76,49 @@ public class GravityClient extends GameClient {
 				ship.vel.add(ship.angle.getRight().multipliedBy(speed));
 			}
 		} else {
-			if ( input.getKeyState(key.KEY_UP) ) {
-				orbitOffset.x += speed;
-			}
-			if ( input.getKeyState(key.KEY_DOWN) ) {
-				orbitOffset.x -= speed;
-			}
-			orbitOffset.clipAngle();
 			
 			if ( input.getKeyState(key.KEY_CONTROL) ) {
-				Vector3 inf = ents.list.getUniversalOrbitalVelocity(ship);
+				if ( input.getKeyState(key.KEY_UP) ) {
+					ship.vel.add(ship.angle.getUp().multipliedBy(speed));
+				}
+				if ( input.getKeyState(key.KEY_DOWN) ) {
+					ship.vel.add(ship.angle.getUp().multipliedBy(-speed));
+				}
 				if ( input.getKeyState(key.KEY_LEFT) ) {
-					ship.vel = inf.multipliedBy(-1);
+					ship.vel.add(ship.angle.getRight().multipliedBy(-speed));
 				}
 				if ( input.getKeyState(key.KEY_RIGHT) ) {
-					ship.vel = inf;
+					ship.vel.add(ship.angle.getRight().multipliedBy(speed));
+				}
+				
+				if ( input.getKeyState(key.KEY_C) ) {
+					ship.vel.setAs(0, 0, 0);
+					ship.angleVel.setAs(0, 0, 0);
 				}
 			} else {
 				if ( ship.angle.x < engine.Pi ) {
 					speed = -speed;
 				}
 				if ( input.getKeyState(key.KEY_LEFT) ) {
-					orbitOffset.z -= speed;//Math.cos(ship.angle.y)*speed;
+					ship.angleVel.z -= speed;//Math.cos(ship.angle.y)*speed;
 				}
 				if ( input.getKeyState(key.KEY_RIGHT) ) {
-					orbitOffset.z += speed;//Math.cos(ship.angle.y)*speed;
+					ship.angleVel.z += speed;//Math.cos(ship.angle.y)*speed;
+				}
+				
+				if ( input.getKeyState(key.KEY_UP) ) {
+					ship.angleVel.x += Math.abs(speed);
+				}
+				if ( input.getKeyState(key.KEY_DOWN) ) {
+					ship.angleVel.x -= Math.abs(speed);
 				}
 			}
 		}
 		
 		if ( input.getKeyState(key.KEY_SPACE) ) {
-			orbitOffset.setAs(0, 0, 0);
+			ship.angle.setAs(planet.pos.minus(ship.pos).getAngle());
+			ship.angleVel.setAs(planet.pos.minus(ship.pos.plus(ship.vel)).getAngle().minus(planet.pos.minus(ship.pos).getAngle()));
 		}
-		
-		ship.angle.setAs(planet.pos.minus(ship.pos).getAngle().plus(orbitOffset));
 		
 		ents.list.simulateGravity(getDelta());
 		ents.list.onThink();
@@ -129,17 +138,14 @@ public class GravityClient extends GameClient {
 		for ( int i = 0; i < 50; i++ ) {
 			graphics.drawLine(planet.pos, planet.pos.plus(Vector3.fromAngle2d((i/50f)*engine.Pi2).multipliedBy(900)), 1, 1, 1, 0, 0.5f);
 		}
+		
+		graphics.drawSkybox(skybox, graphics.camera.farDist - 1);
 	}
 
 	public void onRenderHUD() {
 		font.Render2d(font1, "Pos: " + ship.pos.toRoundedString(), graphics.camera.bottomLeft().plus(0, 16, 0), 16, false);
 		font.Render2d(font1, "Ang: " + ship.angle.clipAngle().toRoundedString(), graphics.camera.bottomLeft().plus(0, 32, 0), 16, false);
 		font.Render2d(font1, "Delta: " + Game.getDelta(), graphics.camera.bottomLeft().plus(0, 48, 0), 16, false);
-		
-		float radarScale = 5;
-		graphics.putTranslation(graphics.camera.topLeft().plus(100, -100, 0).divide(radarScale), new Vector3(radarScale, radarScale, radarScale), Vector3.Zero());
-		//onRender();
-		graphics.endTranslation();
 	}
 	
 	public void registerEntities() {
@@ -151,7 +157,7 @@ public class GravityClient extends GameClient {
 		planet = (Planet)ents.Create("planet");
 		
 		ship.model = shipModel;
-		ship.mass = 0.001f;
+		ship.mass = 0.0001f;
 		ship.bStatic = false;
 		ship.pos = new Vector3(200, 0, 0);
 		
@@ -164,14 +170,14 @@ public class GravityClient extends GameClient {
 		
 		ship.vel = new Vector3(0, ship.getOrbitalVelocity(ship.pos.x, planet.mass), 0);
 		
-		float num = 1;
+		float num = 10;
 		
 		for ( float i = 0; i < num; i++ ) {
 			Planet ent = (Planet)ents.Create("planet");
 			
-			ent.sprite = planet.sprite;
-			ent.mass = 10;
-			ent.radius = 1;
+			ent.sprite = new Sprite(0, 0, engine.loadTexture("planet2.png"));
+			ent.mass = 100;
+			ent.radius = 5;
 			
 			float rad = (i + 1)*100;
 		
@@ -194,11 +200,13 @@ public class GravityClient extends GameClient {
 		planetSprite = new Sprite(32, 32, engine.loadTexture("planet1.png"));
 		
 		generate.setModelType(ModelType.RenderList);
-		shipModel = generate.Cube(new Vector3(0, 0, 0), new Vector3(1, 1, 1), new Vector3());
-		shipModel.tex = graphics.loadTexture("shiptest1.png");
+		shipModel = generate.Cube(new Vector3(0, 0, 0), new Vector3(0.01f, 0.01f, 0.01f), new Vector3());
+		shipModel.tex = engine.loadTexture("shiptest1.png");
 		
 		font.buildFont("Courier New", 32, true, false);
 		font1 = engine.loadFont("Courier Newx32");
+		
+		skybox = engine.loadTexture("skybox1.png");
 	}
 	
 	public void loadSound() {
@@ -212,6 +220,8 @@ public class GravityClient extends GameClient {
 		loadGraphics();
 		loadSound();
 		createEntities();
+		
+		graphics.camera.farDist = 10000000;
 	}
 	
 	public static void main(String[] args) {

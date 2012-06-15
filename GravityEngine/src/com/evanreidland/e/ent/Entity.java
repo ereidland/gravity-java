@@ -5,7 +5,7 @@ import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
 
 public class Entity extends EObject {
-	public Vector3 pos, vel, angle;
+	public Vector3 pos, vel, angle, angleVel;
 	
 	public float radius, mass;
 	
@@ -21,6 +21,8 @@ public class Entity extends EObject {
 		State f = flags.getState("dead");
 		if ( !bStatic && (f == State.False || f == State.Undef || f == State.Either) ) {
 			pos.add(vel.multipliedBy(engine.getDelta()));
+			angle.add(angleVel.multipliedBy(engine.getDelta()));
+			angle.clipAngle();
 		}
 	}
 	
@@ -71,6 +73,7 @@ public class Entity extends EObject {
 		pos = Vector3.Zero();
 		vel = Vector3.Zero();
 		angle = Vector3.Zero();
+		angleVel = Vector3.Zero();
 		bStatic = false;
 		
 		flags.setState("dead", State.False);

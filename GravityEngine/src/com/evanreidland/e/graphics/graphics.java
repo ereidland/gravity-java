@@ -3,6 +3,7 @@ package com.evanreidland.e.graphics;
 import com.evanreidland.e.Resource;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
+import com.evanreidland.e.phys.Rect3;
 
 public class graphics {
 	public static Vector3 forward = Vector3.Zero(), up = Vector3.Zero(), right = Vector3.Zero();
@@ -28,6 +29,45 @@ public class graphics {
 	
 	public static void setRenderListClass(Class<? extends RenderList> renderClass) {
 		renderListClass = renderClass;
+	}
+	
+	public static void drawSkybox(Resource res, float radius) {
+		Rect3 r = new Rect3(new Vector3(-radius, -radius, -radius), new Vector3(radius, radius, radius));
+		
+		r.Shift(camera.pos);
+		
+		Quad q = new Quad();
+		graphics.setTexture(res);
+		
+		//Top
+		q.vert[0].pos = r.topRight(); q.vert[1].pos = r.topLeft();
+		q.vert[3].pos = r.topBRight(); q.vert[2].pos = r.topBLeft();
+		q.pass();
+		
+		//Bottom
+		q.vert[0].pos = r.bottomULeft(); q.vert[1].pos = r.bottomURight();
+		q.vert[3].pos = r.bottomLeft(); q.vert[2].pos = r.bottomRight();
+		q.pass();
+		
+		//Left
+		q.vert[0].pos = r.topBLeft(); q.vert[1].pos = r.topLeft();
+		q.vert[3].pos = r.bottomLeft(); q.vert[2].pos = r.bottomULeft();
+		q.pass();
+		
+		//Right
+		q.vert[0].pos = r.topRight(); q.vert[1].pos = r.topBRight();
+		q.vert[3].pos = r.bottomURight(); q.vert[2].pos = r.bottomRight();
+		q.pass();
+		
+		//Front
+		q.vert[0].pos = r.topLeft(); q.vert[1].pos = r.topRight();
+		q.vert[3].pos = r.bottomULeft(); q.vert[2].pos = r.bottomURight();
+		q.pass();
+		
+		//Back
+		q.vert[0].pos = r.topBRight(); q.vert[1].pos = r.topBLeft();
+		q.vert[3].pos = r.bottomRight(); q.vert[2].pos = r.bottomLeft();
+		q.pass();
 	}
 	
 	public static GraphicsData newData() {
