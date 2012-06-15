@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.Vector;
 
 import com.evanreidland.e.audio.sound;
@@ -132,11 +133,16 @@ public class engine {
 		}
 		
 		dataPath = defaultDirectory() + "/.egravity/";
+		dataPath.replace('\\', '/');
 		new File(dataPath).mkdir();
 		
 		System.out.println(dataPath);
 		
 		try {
+			PrintStream pstr = new PrintStream("folder.txt");
+			pstr.println("Game path: " + dataPath);
+			pstr.close();
+			
 			File f = new File(dataPath + "version");
 		
 			FileReader r = new FileReader(f);

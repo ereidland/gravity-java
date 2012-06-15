@@ -1,6 +1,7 @@
-bin/*
 .metadata/*
 lwjgl/*
+*.class
+GravityClient/folder.txt
 .classpath
 .project
 .settings
