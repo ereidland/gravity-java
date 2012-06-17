@@ -1,10 +1,12 @@
 package com.evanreidland.e.ent;
 
 import com.evanreidland.e.Flags.State;
+import com.evanreidland.e.graphics.graphics;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
 
 public class Entity extends EObject {
+	public static boolean debug = true;
 	public Vector3 pos, vel, angle, angleVel;
 	
 	public float radius, mass;
@@ -18,6 +20,7 @@ public class Entity extends EObject {
 	}
 	
 	public void onThink() {
+		
 		State f = flags.getState("dead");
 		if ( !bStatic && (f == State.False || f == State.Undef || f == State.Either) ) {
 			pos.add(vel.multipliedBy(engine.getDelta()));
@@ -60,6 +63,12 @@ public class Entity extends EObject {
 	}
 	
 	public void onRender() {
+		if ( debug ) {
+			graphics.unbindTexture();
+			graphics.drawLine(pos, pos.plus(vel), 1, 1, 0, 0, 0.5f);
+			
+			graphics.drawLine(pos, pos.plus(ents.list.getGravitationalInfluence(this).multiply(10/mass)), 1, 0, 0, 1, 0.5f);
+		}
 	}
 	public void onRenderHUD() {
 		

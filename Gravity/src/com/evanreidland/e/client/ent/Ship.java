@@ -14,11 +14,14 @@ public class Ship extends Entity {
 			model.angle.setAs(angle);
 			model.Render();
 		}
+		super.onRender();
 	}
 	public Ship(long id) {
 		super("ship", id);
 		
 		model = null;
+		
+		flags.setState("ship", true);
 	}
 
 }

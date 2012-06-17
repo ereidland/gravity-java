@@ -64,6 +64,7 @@ public class EntityList {
 	
 	public void removeWithFlags(Flags flags, boolean strict) {
 		int i = 0;
+		
 		while ( i < entities.size() ) {
 			if ( entities.get(i).matchesFlags(flags, strict) ) {
 				entities.remove(i);

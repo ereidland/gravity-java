@@ -77,6 +77,12 @@ public class Flags {
 		return state;
 	}
 	
+	public State setState(String name, boolean state) {
+		State s = state ? State.True : State.False;
+		flags.put(name, s);
+		return s;
+	}
+	
 	public State toggleState(String name) {
 		State s = flags.get(name);
 		if ( s != null ) {

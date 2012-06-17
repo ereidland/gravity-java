@@ -4,6 +4,7 @@ import com.evanreidland.e.Game;
 import com.evanreidland.e.Resource;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
+import com.evanreidland.e.roll;
 import com.evanreidland.e.client.EApplet;
 import com.evanreidland.e.client.EApplication;
 import com.evanreidland.e.client.GameClient;
@@ -78,6 +79,7 @@ public class GravityClient extends GameClient {
 		} else {
 			
 			if ( input.getKeyState(key.KEY_CONTROL) ) {
+				speed *= 10;
 				if ( input.getKeyState(key.KEY_UP) ) {
 					ship.vel.add(ship.angle.getUp().multipliedBy(speed));
 				}
@@ -146,6 +148,13 @@ public class GravityClient extends GameClient {
 		font.Render2d(font1, "Pos: " + ship.pos.toRoundedString(), graphics.camera.bottomLeft().plus(0, 16, 0), 16, false);
 		font.Render2d(font1, "Ang: " + ship.angle.clipAngle().toRoundedString(), graphics.camera.bottomLeft().plus(0, 32, 0), 16, false);
 		font.Render2d(font1, "Delta: " + Game.getDelta(), graphics.camera.bottomLeft().plus(0, 48, 0), 16, false);
+		
+		float s = 10;
+		graphics.unbindTexture();
+		graphics.drawLine(new Vector3(-s, 0, 0), new Vector3(0, -s, 0), 2, 1, 1, 1, 0.5f);
+		graphics.drawLine(new Vector3(0, -s, 0), new Vector3(s, 0, 0), 2, 1, 1, 1, 0.5f);
+		graphics.drawLine(new Vector3(s, 0, 0), new Vector3(0, s, 0), 2, 1, 1, 1, 0.5f);
+		graphics.drawLine(new Vector3(0, s, 0), new Vector3(-s, 0, 0), 2, 1, 1, 1, 0.5f);
 	}
 	
 	public void registerEntities() {
@@ -163,7 +172,7 @@ public class GravityClient extends GameClient {
 		
 		nextShot = 0;
 		
-		planet.mass = 100000;
+		planet.mass = 100;
 		planet.radius = 100;
 		planet.sprite = planetSprite;
 		planet.bStatic = true;
@@ -176,7 +185,7 @@ public class GravityClient extends GameClient {
 			Planet ent = (Planet)ents.Create("planet");
 			
 			ent.sprite = new Sprite(0, 0, engine.loadTexture("planet2.png"));
-			ent.mass = 100;
+			ent.mass = 10;
 			ent.radius = 5;
 			
 			float rad = (i + 1)*100;
@@ -190,7 +199,13 @@ public class GravityClient extends GameClient {
 			
 			ent.pos.setAs(planet.pos.plus(Vector3.fromAngle2d(angle).multipliedBy(rad)));
 			
-			ent.pos.z = 0;//s(float)Math.sin(angle)*2;
+			Planet moon = (Planet)ents.Create("planet");
+			moon.bStatic = false;
+			moon.sprite = new Sprite(0, 0, engine.loadTexture("moon1.png"));
+			moon.radius = ent.radius/3;
+			moon.mass = moon.radius/ent.radius;
+			moon.pos = ent.pos.plus(Vector3.fromAngle2d(roll.randomFloat(0, engine.Pi2)).multipliedBy(ent.radius + roll.randomFloat(1, 5)));
+			moon.vel = ent.vel.plus(ent.pos.minus(moon.pos).getAngle().getRight().multipliedBy(moon.getOrbitalVelocity(ent)));
 		}
 		
 		ship.angle = planet.pos.minus(ship.pos).getAngle();

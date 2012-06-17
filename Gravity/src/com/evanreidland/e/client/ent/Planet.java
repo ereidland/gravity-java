@@ -9,12 +9,15 @@ public class Planet extends Entity {
 		sprite.width = radius*0.5f;
 		sprite.height = radius*0.5f;
 		sprite.pos.setAs(pos);
-		
 		sprite.renderBillboard();
+		
+		super.onRender();
 	}
 	
 	public Planet(long id) {
 		super("planet", id);
 		bStatic = true;
+		
+		flags.setState("planet", true);
 	}
 }

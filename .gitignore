@@ -1,5 +1,6 @@
 .metadata/*
 lwjgl/*
+GravityClient/screenshots/*
 *.class
 GravityClient/folder.txt
 .classpath
