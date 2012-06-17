@@ -51,6 +51,9 @@ public class engine {
 	private static String dataPath = "";
 	
 	public static String getPath() {
+		if ( dataPath == "" ) {
+			dataPath = defaultDirectory();
+		}
 		return dataPath;
 	}
 	
