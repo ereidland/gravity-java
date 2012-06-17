@@ -5,6 +5,7 @@ import org.lwjgl.util.glu.GLU;
 
 import com.evanreidland.e.Resource;
 import com.evanreidland.e.Vector3;
+import com.evanreidland.e.engine;
 import com.evanreidland.e.graphics.Camera;
 import com.evanreidland.e.graphics.GraphicsManager;
 import com.evanreidland.e.graphics.RenderList;
@@ -84,7 +85,7 @@ public class GLGraphicsManager extends GraphicsManager {
 	}
 	
 	public static void setLWJGLPath() {
-		String dataPath = System.getenv("appdata") + "/.spellcraft/bin";
+		String dataPath = engine.getPath() + "/bin";
 		System.setProperty("java.library.path", dataPath);
 		System.setProperty("org.lwjgl.librarypath", dataPath);
 		System.setProperty("net.java.games.input.librarypath", dataPath);

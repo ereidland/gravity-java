@@ -11,7 +11,6 @@ import java.io.File;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.LWJGLException;
@@ -317,7 +316,7 @@ implements Runnable {
 	}
 	public void mainLoop() {
 		curTime = System.currentTimeMillis();
-		Display.setTitle("Spellcraft " + engine.version);
+		Display.setTitle("Gravitty " + engine.version);
 		while(running) {
 			if ( System.currentTimeMillis() > curTime + frameDelay ) {
 	    		curTime = System.currentTimeMillis();
