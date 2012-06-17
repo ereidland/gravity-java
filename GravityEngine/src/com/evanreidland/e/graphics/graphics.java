@@ -31,7 +31,7 @@ public class graphics {
 		renderListClass = renderClass;
 	}
 	
-	public static void drawSkybox(Resource res, float radius) {
+	public static void drawSkybox(Resource res, double radius) {
 		Rect3 r = new Rect3(new Vector3(-radius, -radius, -radius), new Vector3(radius, radius, radius));
 		
 		r.Shift(camera.pos);
@@ -122,7 +122,7 @@ public class graphics {
 		}
 	}
 	
-	public static void drawFont(Vector3 pos, String txt, float size) {
+	public static void drawFont(Vector3 pos, String txt, double size) {
 		if ( graphicsManager != null ) {
 			graphicsManager.drawFont(pos, txt, size);
 		}
@@ -198,7 +198,7 @@ public class graphics {
 	}
 	}
 	
-	public static void drawLine(Vector3 pos1, Vector3 pos2, float width, float r, float g, float b, float a) {
+	public static void drawLine(Vector3 pos1, Vector3 pos2, double width, double r, double g, double b, double a) {
 		if ( graphicsManager != null ) {
 			graphicsManager.drawLine(pos1, pos2, width, r, g, b, a);
 		}

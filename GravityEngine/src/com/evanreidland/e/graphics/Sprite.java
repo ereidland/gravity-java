@@ -6,14 +6,14 @@ import com.evanreidland.e.engine;
 
 public class Sprite {
 	public Vector3 pos, angle;
-	public float width, height;
+	public double width, height;
 	public Resource tex;
 	
-	public float cr, cg, cb, ca;
+	public double cr, cg, cb, ca;
 	
 	public void renderBillboard() {
-		float w2 = width*0.5f;
-		float h2 = height*0.5f;
+		double w2 = width*0.5f;
+		double h2 = height*0.5f;
 		
 		Vertex a = new Vertex(), b = new Vertex(), c = new Vertex(), d = new Vertex();
 		
@@ -41,8 +41,8 @@ public class Sprite {
 	}
 	
 	public void render2D() {
-		float w2 = width*0.5f;
-		float h2 = height*0.5f;
+		double w2 = width*0.5f;
+		double h2 = height*0.5f;
 		
 		Vertex a = new Vertex(), b = new Vertex(), c = new Vertex(), d = new Vertex();
 		
@@ -51,8 +51,8 @@ public class Sprite {
 		c.tx = 0; c.ty = 1;
 		d.tx = 1; d.ty = 1;
 		
-		Vector3 right = new Vector3((float)Math.cos(angle.z), (float)Math.sin(angle.z), 0),
-				up = new Vector3((float)Math.cos(angle.z + engine.Pi_2), (float)Math.sin(angle.z + engine.Pi_2), 0);
+		Vector3 right = new Vector3((double)Math.cos(angle.z), (double)Math.sin(angle.z), 0),
+				up = new Vector3((double)Math.cos(angle.z + engine.Pi_2), (double)Math.sin(angle.z + engine.Pi_2), 0);
 		
 		a.pos.setAs(pos.plus(up.multipliedBy(h2).plus(right.multipliedBy(w2))));
 		b.pos.setAs(pos.plus(up.multipliedBy(h2).plus(right.multipliedBy(-w2))));
@@ -68,7 +68,7 @@ public class Sprite {
 		graphics.passQuad(a, b, c, d);
 	}
 	
-	public Sprite(float width, float height, Resource tex) {
+	public Sprite(double width, double height, Resource tex) {
 		this.width = width;
 		this.height = height;
 		this.tex = tex;

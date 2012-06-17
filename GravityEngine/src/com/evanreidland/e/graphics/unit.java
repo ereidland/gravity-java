@@ -1,15 +1,15 @@
 package com.evanreidland.e.graphics;
 
 public class unit {
-	public static float getRatio(float curUnit, float maxUnit) {
+	public static double getRatio(double curUnit, double maxUnit) {
 		return maxUnit != 0 ? (curUnit/maxUnit) : 0;
 	}
 	
-	public static float roundedTo100(float f) {
+	public static double roundedTo100(double f) {
 		return ((int)(f*100))/100f;
 	}
 	
-	public static Quad generateQuad(float pointA, float pointB, float maxUnit, float numPerUnit) {
+	public static Quad generateQuad(double pointA, double pointB, double maxUnit, double numPerUnit) {
 		Quad q = new Quad();
 		q.vert[0].pos.setAs(-1, -1, 0);
 		q.vert[1].pos.setAs( 1, -1, 0);

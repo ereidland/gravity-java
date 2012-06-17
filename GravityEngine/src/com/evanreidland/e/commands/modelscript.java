@@ -15,7 +15,7 @@ public class modelscript {
 	
 	public static class SetAngle extends Function {
 		public Value Call(Stack args) {
-			angle.setAs(args.at(0).toFloat(), args.at(1).toFloat(), args.at(2).toFloat());
+			angle.setAs(args.at(0).toDouble(), args.at(1).toDouble(), args.at(2).toDouble());
 			return new Value();
 		}
 		public SetAngle() {
@@ -25,7 +25,7 @@ public class modelscript {
 	
 	public static class SetPos extends Function {
 		public Value Call(Stack args) {
-			pos.setAs(args.at(0).toFloat(), args.at(1).toFloat(), args.at(2).toFloat());
+			pos.setAs(args.at(0).toDouble(), args.at(1).toDouble(), args.at(2).toDouble());
 			return new Value();
 		}
 		public SetPos() {
@@ -35,7 +35,7 @@ public class modelscript {
 	
 	public static class SetScale extends Function {
 		public Value Call(Stack args) {
-			angle.setAs(args.at(0).toFloat(), args.at(1).toFloat(), args.at(2).toFloat());
+			angle.setAs(args.at(0).toDouble(), args.at(1).toDouble(), args.at(2).toDouble());
 			return new Value();
 		}
 		public SetScale() {

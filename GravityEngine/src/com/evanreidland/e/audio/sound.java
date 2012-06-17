@@ -14,7 +14,7 @@ public class sound {
 		manager = m;
 	}
 	
-	public static void Play(Resource sound, Vector3 pos, float pitch) {
+	public static void Play(Resource sound, Vector3 pos, double pitch) {
 		if ( manager != null ) {
 			manager.setPos(pos);
 			manager.setPitch(pitch);

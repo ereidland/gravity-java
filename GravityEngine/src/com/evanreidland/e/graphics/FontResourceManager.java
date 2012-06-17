@@ -34,10 +34,10 @@ public class FontResourceManager extends ResourceManager {
     			return Resource.newInvalid();
     		}
     		
-    		float baseSize = str.readByte();
-    		float padding = str.readByte();
-    		float areaSize = str.readShort();
-    		float[] widths = new float[256];
+    		double baseSize = str.readByte();
+    		double padding = str.readByte();
+    		double areaSize = str.readShort();
+    		double[] widths = new double[256];
     		for ( int i = 0; i < widths.length; i++ ) {
     			widths[i] = str.readByte()/baseSize;
     			

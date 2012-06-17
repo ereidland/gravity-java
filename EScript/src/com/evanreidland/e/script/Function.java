@@ -50,7 +50,7 @@ public abstract class Function {
 			Variable,
 			Value,
 			Int,
-			Float,
+			Double,
 			String,
 			Stack,
 			Null,

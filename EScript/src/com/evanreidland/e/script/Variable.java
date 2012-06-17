@@ -19,7 +19,7 @@ public class Variable extends Value {
 		super(value);
 		this.name = name;
 	}
-	public Variable(String name, float value) {
+	public Variable(String name, double value) {
 		super(value);
 		this.name = name;
 	}
@@ -38,7 +38,7 @@ public class Variable extends Value {
 			return this;
 		}
 		
-		public Value setFloat(float value) {
+		public Value setDouble(double value) {
 			return this;
 		}
 		

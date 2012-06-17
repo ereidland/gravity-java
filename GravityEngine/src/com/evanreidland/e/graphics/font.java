@@ -81,26 +81,26 @@ public class font {
     	return true;
     }
     
-    public static void Render(Resource res, String str, Vector3 pos, Vector3 right, Vector3 up, float size, boolean bCenter) {
+    public static void Render(Resource res, String str, Vector3 pos, Vector3 right, Vector3 up, double size, boolean bCenter) {
     	if ( res.getType() == ResourceType.Font ) {
     		graphics.setTexture((Resource)((FontGraphic)res).getObject());
     	}
     	graphics.passTriangleList(renderToTriList(res, str, pos, right, up, size, bCenter));
     }
     
-    public static TriList renderToTriList(Resource res, String str, Vector3 pos, Vector3 right, Vector3 up, float size, boolean bCenter) {
+    public static TriList renderToTriList(Resource res, String str, Vector3 pos, Vector3 right, Vector3 up, double size, boolean bCenter) {
     	TriList list = new TriList();
     	if ( res.getType() == ResourceType.Font ) {
     		FontGraphic font = (FontGraphic)res;
     		
-    		float curLen = 0;
+    		double curLen = 0;
     		
     		Vector3 basePos = bCenter ? pos.minus(right.multipliedBy(font.getStringWidth(str, size)*0.5f)) : pos.cloned();
     		
     		for ( int i = 0; i < str.length(); i++ ) {
     			char ch = str.charAt(i);
     			Quad q = font.buildQuad(ch);
-    			float chWidth = font.getCharWidth(ch)*size;
+    			double chWidth = font.getCharWidth(ch)*size;
     			q.applyToProjection(basePos.plus(right.multipliedBy(curLen + chWidth*0.5f)), right.multipliedBy(size), up.multipliedBy(size));
     			list.addQuad(q);
     			curLen += chWidth;
@@ -109,11 +109,11 @@ public class font {
     	return list;
     }
     
-    public static void Render3d(Resource res, String str, Vector3 pos, float size, boolean bCenter) {
+    public static void Render3d(Resource res, String str, Vector3 pos, double size, boolean bCenter) {
     	Render(res, str, pos, graphics.right, graphics.up, size, bCenter);
     }
     
-    public static void Render2d(Resource res, String str, Vector3 pos, float size, boolean bCenter) {
+    public static void Render2d(Resource res, String str, Vector3 pos, double size, boolean bCenter) {
     	Render(res, str, pos, new Vector3(1, 0, 0), new Vector3(0, 1, 0), size, bCenter);
     }
 }

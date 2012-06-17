@@ -65,11 +65,11 @@ public class ents {
 	}
 	
 	
-	public static SearchData traceToNearest(Vector3 start, Vector3 end, float radius, Flags flags) {
+	public static SearchData traceToNearest(Vector3 start, Vector3 end, double radius, Flags flags) {
 		return list != null ? list.traceToNearest(start, end, radius, flags) : new SearchData();
 	}
 	
-	public static SearchData findNearest(Vector3 origin, float radius, Flags flags) {
+	public static SearchData findNearest(Vector3 origin, double radius, Flags flags) {
 		return list != null ? list.findNearest(origin, radius, flags) : new SearchData();
 	}
 }

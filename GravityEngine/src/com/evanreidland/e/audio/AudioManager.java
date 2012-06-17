@@ -8,6 +8,6 @@ public abstract class AudioManager {
 	public abstract void Play(Resource sound);
 	public abstract void Stop(Resource sound);
 	public abstract void setPos(Vector3 pos);
-	public abstract void setPitch(float pitch);
+	public abstract void setPitch(double pitch);
 	public abstract void goToCamera();
 }

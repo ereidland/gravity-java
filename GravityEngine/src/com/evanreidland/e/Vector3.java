@@ -1,7 +1,7 @@
 package com.evanreidland.e;
 
 public class Vector3 {
-	public float x, y, z;
+	public double x, y, z;
 	
 	public String toString() {
 		return "(" + x + ", " + y + ", " + z + ")";
@@ -15,24 +15,24 @@ public class Vector3 {
 		return new Vector3();
 	}
 	
-	public static Vector3 New(float x, float y, float z ) {
+	public static Vector3 New(double x, double y, double z ) {
 		return new Vector3(x, y, z);
 	}
 	
-	public static Vector3 fromAngle2d(float f) {
-		return new Vector3((float)Math.cos(f), (float)Math.sin(f), 0);
+	public static Vector3 fromAngle2d(double f) {
+		return new Vector3((double)Math.cos(f), (double)Math.sin(f), 0);
 	}
 	
 	public static Vector3 fromAngle(Vector3 angle) {
 		return angle.getForward();
 	}
 	
-	public static Vector3 Projected(Vector3 right, Vector3 up, float x, float y) {
+	public static Vector3 Projected(Vector3 right, Vector3 up, double x, double y) {
 		return right.multipliedBy(x).plus(up.multipliedBy(y));
 	}
 	
-	public static Vector3 Projected(Vector3 right, Vector3 up, float angle) {
-		return Projected(right, up, (float)Math.cos(angle), (float)Math.sin(angle));
+	public static Vector3 Projected(Vector3 right, Vector3 up, double angle) {
+		return Projected(right, up, (double)Math.cos(angle), (double)Math.sin(angle));
 	}
 	
 	public static Vector3 normalFromPoints(Vector3 a, Vector3 b, Vector3 c) {
@@ -50,10 +50,10 @@ public class Vector3 {
 	}
 	
 	public static Vector3 RandomNormal() {
-		return new Vector3((float)(Math.random() - 0.5f)*2, (float)(Math.random() - 0.5f)*2, (float)(Math.random() - 0.5f)*2).Normalize();
+		return new Vector3((double)(Math.random() - 0.5f)*2, (double)(Math.random() - 0.5f)*2, (double)(Math.random() - 0.5f)*2).Normalize();
 	}
 	public static Vector3 Random() {
-		return new Vector3((float)Math.random(), (float)Math.random(), (float)Math.random());
+		return new Vector3((double)Math.random(), (double)Math.random(), (double)Math.random());
 	}
 	
 	public Vector3 setAs(Vector3 other) {
@@ -63,58 +63,58 @@ public class Vector3 {
 		return this;
 	}
 	
-	public void setX(float x) {
+	public void setX(double x) {
 		this.x = x;
 	}
-	public void setY(float y) {
+	public void setY(double y) {
 		this.y = y;
 	}
-	public void setZ(float z) {
+	public void setZ(double z) {
 		this.z = z;
 	}
 	
-	public float getX() {
+	public double getX() {
 		return x;
 	}
-	public float getY() {
+	public double getY() {
 		return y;
 	}
-	public float getZ() {
+	public double getZ() {
 		return z;
 	}
 	
-	public Vector3 setAs(float x, float y, float z) {
+	public Vector3 setAs(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		return this;
 	}
 	
-	public Vector3 add(float x, float y, float z) {
+	public Vector3 add(double x, double y, double z) {
 		this.x += x;
 		this.y += y;
 		this.z += z;
 		return this;
 	}
-	public Vector3 plus(float x, float y, float z) {
+	public Vector3 plus(double x, double y, double z) {
 		return cloned().add(x, y, z);
 	}
-	public Vector3 minus(float x, float y, float z) {
+	public Vector3 minus(double x, double y, double z) {
 		return cloned().subtract(x, y, z);
 	}
 	
-	public Vector3 subtract(float x, float y, float z) {
+	public Vector3 subtract(double x, double y, double z) {
 		return add(-x, -y, -z);
 	}
 	
-	public Vector3 multiply(float x, float y, float z) {
+	public Vector3 multiply(double x, double y, double z) {
 		this.x *= x;
 		this.y *= y;
 		this.z *= z;
 		return this;
 	}
 	
-	public Vector3 divide(float x, float y, float z) {
+	public Vector3 divide(double x, double y, double z) {
 		if ( x != 0 ) {
 			this.x /= x;
 		} else this.x = 0;
@@ -126,13 +126,13 @@ public class Vector3 {
 		} else this.z = 0;
 		return this;
 	}
-	public Vector3 multiply(float scalar) {
+	public Vector3 multiply(double scalar) {
 		this.x *= scalar;
 		this.y *= scalar;
 		this.z *= scalar;
 		return this;
 	}
-	public Vector3 divide(float scalar) {
+	public Vector3 divide(double scalar) {
 		if ( scalar != 0 ) {
 			x /= scalar;
 			y /= scalar;
@@ -142,17 +142,17 @@ public class Vector3 {
 		}
 		return this;
 	}
-	public Vector3 multipliedBy(float scalar) {
+	public Vector3 multipliedBy(double scalar) {
 		return cloned().multiply(scalar);
 	}
-	public Vector3 dividedBy(float scalar) {
+	public Vector3 dividedBy(double scalar) {
 		return cloned().divide(scalar);
 	}
 	
-	public Vector3 multipliedBy(float x, float y, float z) {
+	public Vector3 multipliedBy(double x, double y, double z) {
 		return cloned().multiply(x, y, z);
 	}
-	public Vector3 dividedBy(float x, float y, float z) {
+	public Vector3 dividedBy(double x, double y, double z) {
 		return cloned().divide(x, y, z);
 	}
 	
@@ -181,16 +181,16 @@ public class Vector3 {
 		return dividedBy(other.x, other.y, other.z);
 	}
 	
-	public float getDistance2D(Vector3 other) {
+	public double getDistance2D(Vector3 other) {
 		return getDistance2D(other.x, other.y);
 	}
-	public float getDistance(Vector3 other) {
+	public double getDistance(Vector3 other) {
 		return getDistance(other.x, other.y, other.z);
 	}
 	
-	public Vector3 Reduce(float howMuch) {
+	public Vector3 Reduce(double howMuch) {
 		Vector3 sub = multipliedBy(-howMuch);
-		float len = getLength();
+		double len = getLength();
 		if ( sub.getLength() > len ) {
 			return setAs(0, 0, 0);
 			//sub.Normalize().multiply(len);
@@ -198,7 +198,7 @@ public class Vector3 {
 		return add(sub);
 	}
 	
-	public Vector3 reducedBy(float howMuch) {
+	public Vector3 reducedBy(double howMuch) {
 		return cloned().Reduce(howMuch);
 	}
 	
@@ -254,7 +254,7 @@ public class Vector3 {
 		return this;
 	}
 	
-	public Vector3 clipMin(float minX, float minY, float minZ) {
+	public Vector3 clipMin(double minX, double minY, double minZ) {
 		if ( x < minX ) x = minX;
 		if ( y < minY ) y = minY;
 		if ( z < minZ ) z = minZ;
@@ -267,7 +267,7 @@ public class Vector3 {
 	
 	
 	
-	public Vector3 clipMax(float maxX, float maxY, float maxZ) {
+	public Vector3 clipMax(double maxX, double maxY, double maxZ) {
 		if ( x > maxX ) x = maxX;
 		if ( y > maxY ) y = maxY;
 		if ( z > maxZ ) z = maxZ;
@@ -284,47 +284,47 @@ public class Vector3 {
 			&& Math.signum(z) == Math.signum(other.z); 
 	}
 	
-	public float getLength2d() {
-		return (float)Math.sqrt(x*x + y*y);
+	public double getLength2d() {
+		return (double)Math.sqrt(x*x + y*y);
 	}
 	
-	public float getLength() {
-		return (float) Math.sqrt(x*x + y*y + z*z);
+	public double getLength() {
+		return (double) Math.sqrt(x*x + y*y + z*z);
 	}
-	public float getRoughLength() {
+	public double getRoughLength() {
 		return Math.abs(x) + Math.abs(y) + Math.abs(z);
 	}
 	
-	public float getDistance2D(float x, float y) {
+	public double getDistance2D(double x, double y) {
 		return new Vector3(x - this.x, y - this.y, 0).getLength2d();
 	}
-	public float getDistance(float x, float y, float z) {
+	public double getDistance(double x, double y, double z) {
 		return new Vector3(x - this.x, y - this.y, z - this.z).getLength();
 	}
 	public Vector3 getNormal() {
-		float len = getLength();
+		double len = getLength();
 		return len != 0 ? multipliedBy(1/len) : Vector3.Zero();
 	}
 	
 	public Vector3 Normalize() {
-		float len = getLength();
+		double len = getLength();
 		return len != 0 ? multiply(1/len) : Vector3.Zero();
 	}
 	
-	public float dotProduct() {
+	public double dotProduct() {
 		return x*x + y*y + z*z;
 	}
 	
-	public float dotProduct(Vector3 other) {
+	public double dotProduct(Vector3 other) {
 		return x*other.x + y*other.y + z*other.z;
 	}
 	
-	public float dotProduct2D() {
+	public double dotProduct2D() {
 		return x*x + y*y;
 	}
 	
 	public Vector3 Round(int decimals) {
-		float place = (int)Math.pow(10, decimals);
+		double place = (int)Math.pow(10, decimals);
 		x = Math.round(x*place)/place;
 		y = Math.round(y*place)/place;
 		z = Math.round(z*place)/place;
@@ -346,40 +346,40 @@ public class Vector3 {
 		return cloned().Abs();
 	}
 	
-	public float[] toArray() {
-		return new float[] { x, y, z};
+	public double[] toArray() {
+		return new double[] { x, y, z};
 	}
 	
 	
 	//Begin angle functions
-	public float getAngle2d() {
-		return (float)Math.atan2(y, x);
+	public double getAngle2d() {
+		return (double)Math.atan2(y, x);
 	}
 	
 	/*public Vector3 getAngle() {	
 		return new Vector3(
-				-(float)Math.atan2(Math.sqrt(x*x + y*y), z) + (float)Math.PI,
+				-(double)Math.atan2(Math.sqrt(x*x + y*y), z) + (double)Math.PI,
 				0,
-				(float)Math.atan2(y, x) - (float)Math.PI/2f);
+				(double)Math.atan2(y, x) - (double)Math.PI/2f);
 	}*/
 	
 	/*public Vector3 getAngle() {	
-		float len = getLength();
+		double len = getLength();
 		return new Vector3(
-				(float)Math.atan2(z, len),
+				(double)Math.atan2(z, len),
 				0,
-				(float)Math.atan2(x, y));
+				(double)Math.atan2(x, y));
 	}*/
 	
 	public Vector3 getAngle() {
-		float len = getLength2d();
+		double len = getLength2d();
 		return new Vector3(
-				len != 0 ? (float)(Math.atan(z/len) + engine.Pi_2) : 0,
+				len != 0 ? (double)(Math.atan(z/len) + engine.Pi_2) : 0,
 				0,
-				(float)Math.atan2(y, x) - engine.Pi_2);
+				(double)Math.atan2(y, x) - engine.Pi_2);
 	}
 	
-	public Vector3 Rotate2d(float howMuch) {
+	public Vector3 Rotate2d(double howMuch) {
 		return setAs(Vector3.fromAngle2d(getAngle2d()).multiply(getLength()));
 	}
 	
@@ -449,7 +449,7 @@ public class Vector3 {
 		return setAs(origin.plus(this.minus(origin).Rotate(howMuch)));
 	}
 	
-	public Vector3 getRotated2d(float howMuch) {
+	public Vector3 getRotated2d(double howMuch) {
 		return cloned().Rotate2d(howMuch);
 	}
 	public Vector3 getRotated(Vector3 howMuch) {
@@ -460,36 +460,36 @@ public class Vector3 {
 	}
 	/*public Vector3 getForward() {
 		return new Vector3(
-		-(float)(Math.sin(-z) * Math.sin(-x)),
-		-(float)(Math.cos(-z) * Math.sin(-x)),
-		-(float)(Math.cos(-x)));
+		-(double)(Math.sin(-z) * Math.sin(-x)),
+		-(double)(Math.cos(-z) * Math.sin(-x)),
+		-(double)(Math.cos(-x)));
 	}
 	*/
 	public Vector3 getForward() {
 		return new Vector3(
-		(float)(Math.cos(z + engine.Pi_2) * Math.sin(x)),
-		(float)(Math.sin(z + engine.Pi_2) * Math.sin(x)),
-		(float)(-Math.cos(x)));
+		(double)(Math.cos(z + engine.Pi_2) * Math.sin(x)),
+		(double)(Math.sin(z + engine.Pi_2) * Math.sin(x)),
+		(double)(-Math.cos(x)));
 	}
 	
 	public Vector3 getForwardXY() {
 		return new Vector3(
-				(float)(Math.cos(z + engine.Pi_2)),
-				(float)(Math.sin(z + engine.Pi_2)), 0);
+				(double)(Math.cos(z + engine.Pi_2)),
+				(double)(Math.sin(z + engine.Pi_2)), 0);
 	}
 	
 	public Vector3 getRight() {
 		return new Vector3(
-				(float)(Math.cos(z)),
-				(float)(Math.sin(z)), 0);
+				(double)(Math.cos(z)),
+				(double)(Math.sin(z)), 0);
 	}
 	
 	public Vector3 getUp() {
-		float anglex = x + engine.Pi_2;
+		double anglex = x + engine.Pi_2;
 		return new Vector3(
-				(float)(Math.cos(z + engine.Pi_2) * Math.sin(anglex)),
-				(float)(Math.sin(z + engine.Pi_2) * Math.sin(anglex)),
-				(float)(-Math.cos(anglex)));
+				(double)(Math.cos(z + engine.Pi_2) * Math.sin(anglex)),
+				(double)(Math.sin(z + engine.Pi_2) * Math.sin(anglex)),
+				(double)(-Math.cos(anglex)));
 	}
 
 	
@@ -521,7 +521,7 @@ public class Vector3 {
 	public Vector3 cloned() {
 		return new Vector3(this);
 	}
-	public Vector3(float x, float y, float z) {
+	public Vector3(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;

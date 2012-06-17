@@ -5,7 +5,7 @@ import com.evanreidland.e.Vector3;
 public class Projectile extends Entity {
 	public Vector3 origin;
 	public Entity shooter;
-	public float radius, range;
+	public double radius, range;
 	public Projectile(long id) {
 		super("projectile", id);
 		shooter = null;

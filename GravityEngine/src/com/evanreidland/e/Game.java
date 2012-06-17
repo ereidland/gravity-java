@@ -2,7 +2,7 @@ package com.evanreidland.e;
 
 public abstract class Game {
 	public static Vector3 mousePos = Vector3.Zero();
-	public static float getDelta() {
+	public static double getDelta() {
 		return engine.getDelta();
 	}
 	public static long getTime() {

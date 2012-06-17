@@ -19,9 +19,9 @@ public class basefunctions {
 					for ( int i = 1; i < args.size(); i++ ) {
 						first.setInt(first.toInt() + args.at(i).toInt());
 					}
-				} else if ( first.getType() == Type.Float ) {
+				} else if ( first.getType() == Type.Double ) {
 					for ( int i = 1; i < args.size(); i++ ) {
-						first.setFloat(first.toFloat() + args.at(i).toFloat());
+						first.setDouble(first.toDouble() + args.at(i).toDouble());
 					}
 				}
 				return new Value(first);
@@ -41,15 +41,15 @@ public class basefunctions {
 				Variable first = args.at(0);
 				if ( first.getType() == Type.String ) {
 					for ( int i = 1; i < args.size(); i++ ) {
-						first.setFloat(first.toFloat() - args.at(i).toFloat());
+						first.setDouble(first.toDouble() - args.at(i).toDouble());
 					}
 				} else if ( first.getType() == Type.Int ) {
 					for ( int i = 1; i < args.size(); i++ ) {
 						first.setInt(first.toInt() - args.at(i).toInt());
 					}
-				} else if ( first.getType() == Type.Float ) {
+				} else if ( first.getType() == Type.Double ) {
 					for ( int i = 1; i < args.size(); i++ ) {
-						first.setFloat(first.toFloat() - args.at(i).toFloat());
+						first.setDouble(first.toDouble() - args.at(i).toDouble());
 					}
 				}
 				return new Value(first);
@@ -68,29 +68,29 @@ public class basefunctions {
 				Variable first = args.at(0);
 				if ( first.getType() == Type.String ) {
 					for ( int i = 1; i < args.size(); i++ ) {
-						float f = args.at(i).toFloat();
-						if ( args.at(i).toFloat() != 0 ) {
-							first.setFloat(f != 0 ? first.toFloat() / args.at(i).toFloat() : 0);
+						double f = args.at(i).toDouble();
+						if ( args.at(i).toDouble() != 0 ) {
+							first.setDouble(f != 0 ? first.toDouble() / args.at(i).toDouble() : 0);
 						} else {
-							first.setFloat(0);
+							first.setDouble(0);
 						}
 					}
 				} else if ( first.getType() == Type.Int ) {
 					for ( int i = 1; i < args.size(); i++ ) {
-						float f = args.at(i).toFloat();
+						double f = args.at(i).toDouble();
 						if ( args.at(i).toInt() != 0 ) {
 							first.setInt(f != 0 ? first.toInt() / args.at(i).toInt() : 0);
 						} else {
 							first.setInt(0);
 						}
 					}
-				} else if ( first.getType() == Type.Float ) {
+				} else if ( first.getType() == Type.Double ) {
 					for ( int i = 1; i < args.size(); i++ ) {
-						float f = args.at(i).toFloat();
-						if ( args.at(i).toFloat() != 0 ) {
-							first.setFloat(f != 0 ? first.toFloat() / args.at(i).toFloat() : 0);
+						double f = args.at(i).toDouble();
+						if ( args.at(i).toDouble() != 0 ) {
+							first.setDouble(f != 0 ? first.toDouble() / args.at(i).toDouble() : 0);
 						} else {
-							first.setFloat(0);
+							first.setDouble(0);
 						}
 					}
 				}
@@ -112,15 +112,15 @@ public class basefunctions {
 				Variable first = args.at(0);
 				if ( first.getType() == Type.String ) {
 					for ( int i = 1; i < args.size(); i++ ) {
-						first.setFloat(first.toFloat() * args.at(i).toFloat());
+						first.setDouble(first.toDouble() * args.at(i).toDouble());
 					}
 				} else if ( first.getType() == Type.Int ) {
 					for ( int i = 1; i < args.size(); i++ ) {
 						first.setInt(first.toInt() * args.at(i).toInt());
 					}
-				} else if ( first.getType() == Type.Float ) {
+				} else if ( first.getType() == Type.Double ) {
 					for ( int i = 1; i < args.size(); i++ ) {
-						first.setFloat(first.toFloat() * args.at(i).toFloat());
+						first.setDouble(first.toDouble() * args.at(i).toDouble());
 					}
 				}
 				return new Value(first);
@@ -140,15 +140,15 @@ public class basefunctions {
 				Variable first = args.at(0);
 				if ( first.getType() == Type.String ) {
 					for ( int i = 1; i < args.size(); i++ ) {
-						first.setFloat((float)Math.pow(first.toFloat(), args.at(i).toFloat()));
+						first.setDouble((double)Math.pow(first.toDouble(), args.at(i).toDouble()));
 					}
 				} else if ( first.getType() == Type.Int ) {
 					for ( int i = 1; i < args.size(); i++ ) {
 						first.setInt((int)Math.pow(first.toInt(), args.at(i).toInt()));
 					}
-				} else if ( first.getType() == Type.Float ) {
+				} else if ( first.getType() == Type.Double ) {
 					for ( int i = 1; i < args.size(); i++ ) {
-						first.setFloat((float)Math.pow(first.toFloat(), args.at(i).toFloat()));
+						first.setDouble((double)Math.pow(first.toDouble(), args.at(i).toDouble()));
 					}
 				}
 				return new Value(first);
@@ -317,7 +317,7 @@ public class basefunctions {
 		
 		env.addFunction(new Help());
 		
-		env.add(new Variable.Constant("pi", new Value((float)Math.PI)));
+		env.add(new Variable.Constant("pi", new Value((double)Math.PI)));
 		env.add(new Variable("", 0f)); // Referenced by "@".
 	}
 }

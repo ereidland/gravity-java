@@ -11,7 +11,7 @@ public class EntityList {
 	private Vector<Entity> entities;
 	private HashMap<Long, Entity> entMap;
 	
-	public void simulateGravity(float delta) {
+	public void simulateGravity(double delta) {
 		for ( int i = 0; i < entities.size(); i++ ) {
 			Entity ent = entities.get(i);
 			if ( !ent.bStatic ) {
@@ -101,7 +101,7 @@ public class EntityList {
 		return entities.size();
 	}
 
-	public SearchData traceToNearest(Vector3 start, Vector3 end, float radius, Flags flags) {
+	public SearchData traceToNearest(Vector3 start, Vector3 end, double radius, Flags flags) {
 		SearchData data = new SearchData();
 		Line line = new Line(start, end);
 		for ( int i = 0; i < entities.size(); i++ ) {
@@ -111,7 +111,7 @@ public class EntityList {
 				Vector3 nearPos = line.nearestPoint(ent.pos);
 				if ( nearPos.minus(ent.pos).getLength2d() <= ent.radius + radius ) {
 					System.out.println("Possible match:" + ent.getID());
-					float len = ent.pos.minus(start).getLength2d() - (ent.radius + radius);
+					double len = ent.pos.minus(start).getLength2d() - (ent.radius + radius);
 					if ( !data.isPositive || len < data.length ) {
 						System.out.println("Match:" + ent.getID());
 						data.length = len;
@@ -125,7 +125,7 @@ public class EntityList {
 		return data;
 	}
 	
-	public SearchData findNearest(Vector3 origin, float radius, Flags flags) {
+	public SearchData findNearest(Vector3 origin, double radius, Flags flags) {
 		SearchData data = new SearchData();
 		for ( int i = 0; i < entities.size(); i++ ) {
 			Entity ent = entities.get(i);
@@ -134,7 +134,7 @@ public class EntityList {
 				continue;
 			}
 			
-			float len = ent.pos.minus(origin).getLength2d() - ent.radius;
+			double len = ent.pos.minus(origin).getLength2d() - ent.radius;
 			
 			if ( len < radius ) {
 				if ( !data.isPositive || len < data.length ) {

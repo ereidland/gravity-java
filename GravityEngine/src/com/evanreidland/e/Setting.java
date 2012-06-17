@@ -6,9 +6,9 @@ public class Setting {
 	public String getName() {
 		return name;
 	}
-	public float asFloat(float def) {
+	public double asDouble(double def) {
 		try {
-			return Float.valueOf(value);
+			return Double.valueOf(value);
 		} catch ( Exception e ) {
 			return def;
 		}
@@ -29,8 +29,8 @@ public class Setting {
 		}
 	}
 	
-	public float asFloat() {
-		return asFloat(0);
+	public double asDouble() {
+		return asDouble(0);
 	}
 	
 	public int asInt() {
@@ -45,8 +45,8 @@ public class Setting {
 		value = Integer.toString(num);
 	}
 	
-	public void setFloat(float num) {
-		value = Float.toString(num);
+	public void setDouble(double num) {
+		value = Double.toString(num);
 	}
 	
 	public void setBool(boolean state) {

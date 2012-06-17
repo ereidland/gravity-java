@@ -65,7 +65,7 @@ public class Script {
 				return new Variable("_l", base.substring(1, base.length()));
 			} else if ( (c == '-' && !base.contains(" ")) || (c >= '0' && c <= '9') || c == '.' ) {
 				if ( base.contains(".") ) {
-					return new Variable("_l", Float.valueOf(base));
+					return new Variable("_l", Double.valueOf(base));
 				} else {
 					return new Variable("_l", Integer.valueOf(base));
 				}

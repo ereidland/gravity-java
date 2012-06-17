@@ -35,19 +35,19 @@ public class GravityClient extends GameClient {
 	
 	long nextShot;
 	
-	float viewHeight = 0.01f;
+	double viewHeight = 0.01f;
 	
-	public void drawRing(Vector3 origin, float rad, int numPoints) {
+	public void drawRing(Vector3 origin, double rad, int numPoints) {
 		Vector3 lp = origin.plus(Vector3.fromAngle2d(0).multipliedBy(rad));
 		for ( int i = 1; i <= numPoints; i++ ) {
-			Vector3 np = origin.plus(Vector3.fromAngle2d((i/(float)numPoints)*engine.Pi2).multipliedBy(rad));
+			Vector3 np = origin.plus(Vector3.fromAngle2d((i/(double)numPoints)*engine.Pi2).multipliedBy(rad));
 			graphics.drawLine(lp, np, 1, 1, 1, 1, 0.5f);
 			lp.setAs(np);
 		}
 	}
 	
 	public void onUpdate() {
-		float speed = getDelta();
+		double speed = getDelta();
 		if ( input.getKeyState(key.KEY_1) && Game.getTime() >= nextShot ) {
 			Entity ent = ents.Create("missile");
 			ent.pos = ship.pos.plus(ship.angle.getForward().multipliedBy(0.01f));
@@ -149,7 +149,7 @@ public class GravityClient extends GameClient {
 		font.Render2d(font1, "Ang: " + ship.angle.clipAngle().toRoundedString(), graphics.camera.bottomLeft().plus(0, 32, 0), 16, false);
 		font.Render2d(font1, "Delta: " + Game.getDelta(), graphics.camera.bottomLeft().plus(0, 48, 0), 16, false);
 		
-		float s = 10;
+		double s = 10;
 		graphics.unbindTexture();
 		graphics.drawLine(new Vector3(-s, 0, 0), new Vector3(0, -s, 0), 2, 1, 1, 1, 0.5f);
 		graphics.drawLine(new Vector3(0, -s, 0), new Vector3(s, 0, 0), 2, 1, 1, 1, 0.5f);
@@ -179,22 +179,22 @@ public class GravityClient extends GameClient {
 		
 		ship.vel = new Vector3(0, ship.getOrbitalVelocity(ship.pos.x, planet.mass), 0);
 		
-		float num = 10;
+		double num = 10;
 		
-		for ( float i = 0; i < num; i++ ) {
+		for ( double i = 0; i < num; i++ ) {
 			Planet ent = (Planet)ents.Create("planet");
 			
 			ent.sprite = new Sprite(0, 0, engine.loadTexture("planet2.png"));
 			ent.mass = 10;
 			ent.radius = 5;
 			
-			float rad = (i + 1)*100;
+			double rad = (i + 1)*100;
 		
 			ent.bStatic = false;
 			
-			float angle = (i/num)*engine.Pi2;
+			double angle = (i/num)*engine.Pi2;
 			
-			ent.vel = new Vector3((float)Math.cos(angle + engine.Pi_2), (float)Math.sin(angle + engine.Pi_2), 0)
+			ent.vel = new Vector3((double)Math.cos(angle + engine.Pi_2), (double)Math.sin(angle + engine.Pi_2), 0)
 			.multipliedBy(ent.getOrbitalVelocity(rad, planet.mass));
 			
 			ent.pos.setAs(planet.pos.plus(Vector3.fromAngle2d(angle).multipliedBy(rad)));
@@ -204,7 +204,7 @@ public class GravityClient extends GameClient {
 			moon.sprite = new Sprite(0, 0, engine.loadTexture("moon1.png"));
 			moon.radius = ent.radius/3;
 			moon.mass = moon.radius/ent.radius;
-			moon.pos = ent.pos.plus(Vector3.fromAngle2d(roll.randomFloat(0, engine.Pi2)).multipliedBy(ent.radius + roll.randomFloat(1, 5)));
+			moon.pos = ent.pos.plus(Vector3.fromAngle2d(roll.randomDouble(0, engine.Pi2)).multipliedBy(ent.radius + roll.randomDouble(1, 5)));
 			moon.vel = ent.vel.plus(ent.pos.minus(moon.pos).getAngle().getRight().multipliedBy(moon.getOrbitalVelocity(ent)));
 		}
 		

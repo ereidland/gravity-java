@@ -29,7 +29,7 @@ public class ALAudioManager extends AudioManager {
 		alsound.sourcePos.setAs(pos);
 	}
 
-	public void setPitch(float pitch) {
+	public void setPitch(double pitch) {
 		alsound.pitch = pitch;
 	}
 	

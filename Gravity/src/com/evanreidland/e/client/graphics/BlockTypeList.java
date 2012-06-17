@@ -19,21 +19,21 @@ public class BlockTypeList {
 		return blockTypes.get(id);
 	}
 	
-	public float cellWidth() {
+	public double cellWidth() {
 		return grid.x(1);
 	}
-	public float cellHeight() {
+	public double cellHeight() {
 		return grid.y(1);
 	}
 	
-	public float topX(int id) {
+	public double topX(int id) {
 		BlockType t = getType(id);
 		if ( t != null ) {
 			return grid.x(t.getTX());
 		}
 		return 0;
 	}
-	public float topY(int id) {
+	public double topY(int id) {
 		BlockType t = getType(id);
 		if ( t != null ) {
 			return grid.y(t.getTY());
@@ -41,14 +41,14 @@ public class BlockTypeList {
 		return 0;
 	}
 	
-	public float bottomX(int id) {
+	public double bottomX(int id) {
 		BlockType t = getType(id);
 		if ( t != null ) {
 			return grid.x(t.getBX());
 		}
 		return 0;
 	}
-	public float bottomY(int id) {
+	public double bottomY(int id) {
 		BlockType t = getType(id);
 		if ( t != null ) {
 			return grid.y(t.getBY());
@@ -56,14 +56,14 @@ public class BlockTypeList {
 		return 0;
 	}
 	
-	public float leftX(int id) {
+	public double leftX(int id) {
 		BlockType t = getType(id);
 		if ( t != null ) {
 			return grid.x(t.getLX() );
 		}
 		return 0;
 	}
-	public float leftY(int id) {
+	public double leftY(int id) {
 		BlockType t = getType(id);
 		if ( t != null ) {
 			return grid.y(t.getLY());
@@ -71,14 +71,14 @@ public class BlockTypeList {
 		return 0;
 	}
 	
-	public float rightX(int id) {
+	public double rightX(int id) {
 		BlockType t = getType(id);
 		if ( t != null ) {
 			return grid.x(t.getRX() );
 		}
 		return 0;
 	}
-	public float rightY(int id) {
+	public double rightY(int id) {
 		BlockType t = getType(id);
 		if ( t != null ) {
 			return grid.y(t.getRY());
@@ -86,14 +86,14 @@ public class BlockTypeList {
 		return 0;
 	}
 	
-	public float frontX(int id) {
+	public double frontX(int id) {
 		BlockType t = getType(id);
 		if ( t != null ) {
 			return grid.x(t.getFX() );
 		}
 		return 0;
 	}
-	public float frontY(int id) {
+	public double frontY(int id) {
 		BlockType t = getType(id);
 		if ( t != null ) {
 			return grid.y(t.getFY());
@@ -101,14 +101,14 @@ public class BlockTypeList {
 		return 0;
 	}
 	
-	public float backX(int id) {
+	public double backX(int id) {
 		BlockType t = getType(id);
 		if ( t != null ) {
 			return grid.x(t.getBkX() );
 		}
 		return 0;
 	}
-	public float backY(int id) {
+	public double backY(int id) {
 		BlockType t = getType(id);
 		if ( t != null ) {
 			return grid.y(t.getBkY());

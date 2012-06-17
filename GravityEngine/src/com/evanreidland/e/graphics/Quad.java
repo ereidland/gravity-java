@@ -9,7 +9,7 @@ public class Quad {
 		graphics.passQuad(vert[0], vert[1], vert[2], vert[3]);
 	}
 	
-	public void setColor(float r, float g, float b, float a) {
+	public void setColor(double r, double g, double b, double a) {
 		for ( int i = 0; i < vert.length; i++ ) {
 			vert[i].r = r;
 			vert[i].g = g;

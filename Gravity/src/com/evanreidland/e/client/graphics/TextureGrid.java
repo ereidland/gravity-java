@@ -1,19 +1,19 @@
 package com.evanreidland.e.client.graphics;
 
 public class TextureGrid {
-	private float width, height;
+	private double width, height;
 	
-	public float x(float u) {
+	public double x(double u) {
 		return u/width;
 	}
-	public float y(float v) {
+	public double y(double v) {
 		return v/height;
 	}
 	
-	public float getWidth() {
+	public double getWidth() {
 		return width;
 	}
-	public float getHeight() {
+	public double getHeight() {
 		return height;
 	}
 	

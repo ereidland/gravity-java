@@ -11,6 +11,7 @@ import java.io.File;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.LWJGLException;
@@ -50,13 +51,13 @@ implements Runnable {
 	}
 	
 	public static EApplet active = null;
-	public float cursorX, cursorY;
+	public double cursorX, cursorY;
 	
 	Canvas screen;
 	Thread gameThread;
 	boolean running = false;
 	
-	protected float xmouse, ymouse, lxmouse, lymouse;
+	protected double xmouse, ymouse, lxmouse, lymouse;
 	Vector<EventKey> events;
 	StringBuilder typed;
 	char[] keys;
@@ -67,16 +68,16 @@ implements Runnable {
 
 	private long frameDelay;
 	
-	public float scale;
+	public double scale;
 	
 	public float clearR = 0.4f, clearG = 0.4f, clearB = 1;
 	
 	public Camera cam;
 	
-	public void setClearColor(float r, float g, float b) {
-		clearR = r;
-		clearG = g;
-		clearB = b;
+	public void setClearColor(double r, double g, double b) {
+		clearR = (float)r;
+		clearG = (float)g;
+		clearB = (float)b;
 	}
 	
 	public void setFrameDelay(long newDelay) {
@@ -88,15 +89,15 @@ implements Runnable {
 	}
 	
 	public Vector3 getMouseRatio() {
-		return new Vector3(xmouse/(float)getWidth(), ymouse/(float)getHeight(), 1);
+		return new Vector3(xmouse/(double)getWidth(), ymouse/(double)getHeight(), 1);
 	}
 	
 	public String getTyped() {
 		return typed.toString();
 	}
 	
-	public float getXMouse() { return xmouse; }
-	public float getYMouse() { return ymouse; }
+	public double getXMouse() { return xmouse; }
+	public double getYMouse() { return ymouse; }
 	
 	public boolean isKeyDown(int key) {
 		if ( key < 0 || key > 255 )
@@ -205,7 +206,7 @@ implements Runnable {
 			
 			GL11.glReadPixels(0, 0, screen.getWidth(), screen.getHeight(), GL11.GL_RGB, GL11.GL_FLOAT, b);
 			
-			FloatBuffer f = (FloatBuffer) b.asFloatBuffer();
+			DoubleBuffer f = (DoubleBuffer) b.asDoubleBuffer();
 			
 			for ( int x = 0; x < screen.getWidth(); x++ ) {
 				for ( int y = 0; y < screen.getHeight(); y++ ) {
@@ -213,9 +214,9 @@ implements Runnable {
 					//System.out.println("RGB: " + f.get(ppoint + 0) + ", " + f.get(ppoint + 1) + ", " + f.get(ppoint + 2));
 					renderedImage.setRGB(x, screen.getHeight() - 1 - y,
 							new Color(
-									f.get(ppoint + 0),
-									f.get(ppoint + 1),
-									f.get(ppoint + 2))
+									(float)f.get(ppoint + 0),
+									(float)f.get(ppoint + 1),
+									(float)f.get(ppoint + 2))
 							.getRGB());
 				}
 			}
@@ -445,22 +446,22 @@ implements Runnable {
 
 	protected void initGL() {
 		try {
-			//GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, /*insert FloatBuffer*/);
+			//GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, /*insert DoubleBuffer*/);
 			//GL11.glEnable(GL11.GL_CULL_FACE);
 			//GL11.glCullFace(GL11.GL_BACK);
 			/*GL11.glEnable(GL11.GL_LIGHTING);
 			try {
-				FloatBuffer a = FloatBuffer.allocate(4);
-				FloatBuffer b = FloatBuffer.allocate(4);
-				FloatBuffer c = FloatBuffer.allocate(4);
+				DoubleBuffer a = DoubleBuffer.allocate(4);
+				DoubleBuffer b = DoubleBuffer.allocate(4);
+				DoubleBuffer c = DoubleBuffer.allocate(4);
 				
-				FloatBuffer v = FloatBuffer.allocate(3);
+				DoubleBuffer v = DoubleBuffer.allocate(3);
 				
-				a.put(new float[] { 1.0f, 1.0f, 1.0f, 1.0f});
-				b.put(new float[] { 1.0f, 1.0f, 1.0f, 1.0f});
-				c.put(new float[] { 1.0f, 1.0f, 1.0f, 1.0f});
+				a.put(new double[] { 1.0f, 1.0f, 1.0f, 1.0f});
+				b.put(new double[] { 1.0f, 1.0f, 1.0f, 1.0f});
+				c.put(new double[] { 1.0f, 1.0f, 1.0f, 1.0f});
 				
-				v.put(new float[] {-0, 0, 0});
+				v.put(new double[] {-0, 0, 0});
 				
 				GL11.glEnable(GL11.GL_LIGHT0);
 				GL11.glLight(GL11.GL_LIGHT0, GL11.GL_AMBIENT, a);
@@ -540,12 +541,12 @@ implements Runnable {
 		graphics.camera = cam;
 		
 		curTime = 0;
-		cam.angle.x = (float) (-Math.PI/6);
+		cam.angle.x = (double) (-Math.PI/6);
 		EApplet.active = this;
 		engine.Initialize();
 	}
 	
-	protected void applyCursor(float x, float y) {
+	protected void applyCursor(double x, double y) {
 		if ( lockedMouse && freeLook ) {
 			cam.applyMouse(-x, -y, 0.005f);
 		}

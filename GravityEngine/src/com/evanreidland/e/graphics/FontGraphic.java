@@ -11,42 +11,42 @@ public class FontGraphic extends Resource {
 		return fontTexture;
 	}
 	
-	private float[] widths;
-	private float texSize, padding;
+	private double[] widths;
+	private double texSize, padding;
 	
-	public float getPadding() {
+	public double getPadding() {
 		return padding;
 	}
 	
-	public float getTextureRatio() {
+	public double getTextureRatio() {
 		return texSize;
 	}
 	
-	public float tx(char ch) {
+	public double tx(char ch) {
 		return ((ch % 16)/16f)*texSize;
 	}
-	public float ty(char ch) {
+	public double ty(char ch) {
 		return ((ch / 16)/16f)*texSize;
 	}
 	
-	public float interval() {
+	public double interval() {
 		return texSize*(0.0625f);
 	}
 	
-	public float interval(char ch) {
+	public double interval(char ch) {
 		return interval()*getCharWidth(ch);
 	}
 	
-	public float getCharWidth(char ch) {
+	public double getCharWidth(char ch) {
 		return (ch >= 0 && ch < 256 ? widths[ch] : 0);
 	}
 	
-	public float[] getWidths() {
+	public double[] getWidths() {
 		return widths;
 	}
 	
-	public float getStringWidth(String str, float size) {
-		float len = 0;
+	public double getStringWidth(String str, double size) {
+		double len = 0;
 		for ( int i = 0; i < str.length(); i++ ) {
 			len += getCharWidth(str.charAt(i))*size*(i == 0 || i == str.length() - 1 ? 0.5f : 1);
 		}
@@ -55,17 +55,17 @@ public class FontGraphic extends Resource {
 	
 	public Quad buildQuad(char ch) {
 		Quad q = new Quad();
-		float xsize = getCharWidth(ch);
-		q.vert[0].pos.setAs(-xsize*0.5f,  0.5f, 0);
-		q.vert[1].pos.setAs( xsize*0.5f,  0.5f, 0);
-		q.vert[2].pos.setAs( xsize*0.5f, -0.5f, 0);
-		q.vert[3].pos.setAs(-xsize*0.5f, -0.5f, 0);
+		double xsize = getCharWidth(ch);
+		q.vert[0].pos.setAs(-xsize*0.5,  0.5, 0);
+		q.vert[1].pos.setAs( xsize*0.5,  0.5, 0);
+		q.vert[2].pos.setAs( xsize*0.5, -0.5, 0);
+		q.vert[3].pos.setAs(-xsize*0.5, -0.5, 0);
 		
-		float tx = tx(ch),
+		double tx = tx(ch),
 			  ty = ty(ch);
 		
-		float xinterval = interval(ch);
-		float yinterval = interval();
+		double xinterval = interval(ch);
+		double yinterval = interval();
 		
 		q.vert[0].tx = tx; 				q.vert[0].ty = ty;
 		q.vert[1].tx = tx + xinterval; 	q.vert[1].ty = ty;
@@ -78,20 +78,20 @@ public class FontGraphic extends Resource {
 	public FontGraphic() {
 		super(ResourceType.Font, null, false);
 		fontTexture = null;
-		widths = new float[256];
+		widths = new double[256];
 		texSize = padding = 0;
 	}
 	
 	
 	
-	public FontGraphic(Resource fontTexture, float[] widths, float texSize, float padding) {
+	public FontGraphic(Resource fontTexture, double[] widths, double texSize, double padding) {
 		super(ResourceType.Font, fontTexture, true);
 		this.fontTexture = fontTexture;
 		this.widths = widths;
 		this.texSize = texSize;
 		this.padding = padding;
 		
-		float imageSize = fontTexture.info.get("width").toFloat();
+		double imageSize = fontTexture.info.get("width").toDouble();
 		if ( imageSize != 0 ) {
 			this.texSize /= imageSize;
 			this.padding /= imageSize;

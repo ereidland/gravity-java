@@ -9,7 +9,7 @@ public class Entity extends EObject {
 	public static boolean debug = true;
 	public Vector3 pos, vel, angle, angleVel;
 	
-	public float radius, mass;
+	public double radius, mass;
 	
 	public boolean bStatic;
 	
@@ -29,36 +29,36 @@ public class Entity extends EObject {
 		}
 	}
 	
-	public float getOrbitalVelocity(float distance, float sourceMass) {
+	public double getOrbitalVelocity(double distance, double sourceMass) {
 		if ( distance == 0 ) return 0; // Better than returning infinity.
-		return (float)Math.sqrt(sourceMass/distance);
+		return (double)Math.sqrt(sourceMass/distance);
 	}
 	
-	public float getOrbitalVelocity(Entity other) {
+	public double getOrbitalVelocity(Entity other) {
 		return getOrbitalVelocity(pos.getDistance(other.pos), other.mass);
 	}
 	
-	public float getGravity(float distance, float sourceMass) {
+	public double getGravity(double distance, double sourceMass) {
 		if ( distance == 0 ) return 0;
 		return (mass*sourceMass)/(distance*distance);
 	}
 	
-	public float getGravity(Vector3 source, float sourceMass) {
-		float radius = source.getDistance(pos);
+	public double getGravity(Vector3 source, double sourceMass) {
+		double radius = source.getDistance(pos);
 		return (mass*sourceMass)/(radius*radius);
 	}
 	
-	public float getGravity(Entity other) {
+	public double getGravity(Entity other) {
 		return getGravity(other.pos, other.mass);
 	}
 	
-	public void applyGravity(Vector3 source, float sourceMass, float delta) {
+	public void applyGravity(Vector3 source, double sourceMass, double delta) {
 		if ( mass != 0 ) {
 			vel.add(source.minus(pos).getNormal().multiply((getGravity(source, sourceMass)*delta)/mass));
 		}
 	}
 	
-	public void applyGravity(Entity other, float delta) {
+	public void applyGravity(Entity other, double delta) {
 		applyGravity(other.pos, other.mass, delta);
 	}
 	

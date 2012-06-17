@@ -76,15 +76,15 @@ public class Rect3 {
 	
 	
 	
-	public float getWidth() {
+	public double getWidth() {
 		return Math.abs(b.x - a.x);
 	}
 	
-	public float getHeight() {
+	public double getHeight() {
 		return Math.abs(b.y - a.y);
 	}
 	
-	public float getDepth() {
+	public double getDepth() {
 		return Math.abs(b.z - a.z);
 	}
 	

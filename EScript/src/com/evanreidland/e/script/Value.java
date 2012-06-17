@@ -4,7 +4,7 @@ public class Value {
 	public static enum Type {
 		String,
 		Int,
-		Float,
+		Double,
 		Null // Never supposed to happen.
 	}
 	
@@ -26,8 +26,8 @@ public class Value {
 					return Integer.valueOf((String)object).intValue();
 				case Int:
 					return ((Integer)object).intValue();
-				case Float:
-					return ((Float)object).intValue();
+				case Double:
+					return ((Double)object).intValue();
 				case Null:
 					return def;
 			}
@@ -41,15 +41,15 @@ public class Value {
 		return toInt(0);
 	}
 	
-	public float toFloat(float def) {
+	public double toDouble(double def) {
 		try {
 			switch(type) {
 				case String:
-					return Float.valueOf((String)object).floatValue();
+					return Double.valueOf((String)object).doubleValue();
 				case Int:
-					return ((Integer)object).floatValue();
-				case Float:
-					return ((Float)object).floatValue();
+					return ((Integer)object).doubleValue();
+				case Double:
+					return ((Double)object).doubleValue();
 				case Null:
 					return def;
 			}
@@ -59,8 +59,8 @@ public class Value {
 		return def;
 	}
 	
-	public float toFloat() {
-		return toFloat(0);
+	public double toDouble() {
+		return toDouble(0);
 	}
 	
 	public String toString() {
@@ -70,8 +70,8 @@ public class Value {
 					return (String)object;
 				case Int:
 					return ((Integer)object).toString();
-				case Float:
-					return ((Float)object).toString();
+				case Double:
+					return ((Double)object).toString();
 				case Null:
 					return "";
 			}
@@ -94,9 +94,9 @@ public class Value {
 		return this;
 	}
 	
-	public Value setFloat(float value) {
-		type = Type.Float;
-		object = (Float)value;
+	public Value setDouble(double value) {
+		type = Type.Double;
+		object = (Double)value;
 		return this;
 	}
 	
@@ -112,8 +112,8 @@ public class Value {
 	public Value(int value) {
 		setInt(value);
 	}
-	public Value(float value) {
-		setFloat(value);
+	public Value(double value) {
+		setDouble(value);
 	}
 	
 	public Value(Value other) {

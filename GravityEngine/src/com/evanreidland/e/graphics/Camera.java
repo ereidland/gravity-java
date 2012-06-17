@@ -3,7 +3,7 @@ package com.evanreidland.e.graphics;
 import com.evanreidland.e.Vector3;
 
 public class Camera {
-	public float fov, perspective, width, height, nearDist, farDist, orthoScale;
+	public double fov, perspective, width, height, nearDist, farDist, orthoScale;
 	public boolean is3D, ortho; // Use Orthographic projection? Default false. 
 	public Vector3 pos, angle;
 	
@@ -44,7 +44,7 @@ public class Camera {
 		
 	}
 	
-	public void applyMouse(float changeX, float changeY, float scalar, boolean restrict) {
+	public void applyMouse(double changeX, double changeY, double scalar, boolean restrict) {
 		angle.z -= changeX * scalar;
 		angle.x += changeY * scalar;
 		
@@ -57,7 +57,7 @@ public class Camera {
 		
 		if ( restrict ) {
 			if ( angle.x > 0 ) angle.x = 0;
-			if ( angle.x < -Math.PI ) angle.x = -(float)Math.PI;
+			if ( angle.x < -Math.PI ) angle.x = -(double)Math.PI;
 		} else {
 			while ( angle.x > Math.PI * 2 ) {
 				angle.x -= Math.PI * 2;
@@ -68,7 +68,7 @@ public class Camera {
 		}
 	}
 	
-	public void applyMouse(float changeX, float changeY, float scalar) {
+	public void applyMouse(double changeX, double changeY, double scalar) {
 		applyMouse(changeX, changeY, scalar, true);
 	}
 	

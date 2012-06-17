@@ -9,8 +9,8 @@ public class Texture {
     private int width;
     private int texWidth;
     private int texHeight;
-    private float widthRatio;
-    private float heightRatio;
+    private double widthRatio;
+    private double heightRatio;
     
     public String urlString = "";
     
@@ -47,18 +47,18 @@ public class Texture {
     public int getImageWidth() {
         return width;
     }
-    public float getHeight() {
+    public double getHeight() {
         return heightRatio;
     }
-    public float getWidth() {
+    public double getWidth() {
         return widthRatio;
     }
     
-    public float x(float r) {
+    public double x(double r) {
     	return r*widthRatio;
     }
     
-    public float y(float r) {
+    public double y(double r) {
     	return r*heightRatio;
     }
     public void setTextureHeight(int texHeight) {
@@ -71,12 +71,12 @@ public class Texture {
     }
     private void setHeight() {
         if (texHeight != 0) {
-            heightRatio = ((float) height)/texHeight;
+            heightRatio = ((double) height)/texHeight;
         }
     }
     private void setWidth() {
         if (texWidth != 0) {
-            widthRatio = ((float) width)/texWidth;
+            widthRatio = ((double) width)/texWidth;
         }
     }
 }

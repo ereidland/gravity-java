@@ -17,7 +17,7 @@ public class GLGraphicsManager extends GraphicsManager {
 		
 	}
 	
-	public void drawFont(Vector3 pos, String txt, float size) {
+	public void drawFont(Vector3 pos, String txt, double size) {
 		//TODO code.
 	}
 	
@@ -46,10 +46,10 @@ public class GLGraphicsManager extends GraphicsManager {
 			GL11.glMatrixMode(GL11.GL_PROJECTION);
 			GL11.glLoadIdentity();
 			if ( ortho ) {
-				float r = view.width/view.height;
+				double r = view.width/view.height;
 				GL11.glOrtho(-0.5f*view.orthoScale*r, 0.5f*view.orthoScale*r, -0.5f*view.orthoScale, 0.5f*view.orthoScale, view.nearDist, view.farDist);
 			} else {
-				GLU.gluPerspective(view.fov, view.width/view.height, view.nearDist, view.farDist);
+				GLU.gluPerspective((float)view.fov,(float)(view.width/view.height), (float)view.nearDist, (float)view.farDist);
 				//GLU.gluOrtho2D(-(view.width/2), (view.width/2), (view.height/2), -(view.height/2));
 			}
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
@@ -63,17 +63,17 @@ public class GLGraphicsManager extends GraphicsManager {
 			
 			//System.out.println("(" + Math.toDegrees(view.angle.x) + ", " + Math.toDegrees(view.angle.y) + ", " + Math.toDegrees(view.angle.z) + ")" );
 			
-			GL11.glTranslatef(-view.pos.x, -view.pos.y, -view.pos.z);
+			GL11.glTranslatef(-(float)view.pos.x, -(float)view.pos.y, -(float)view.pos.z);
 		} else {
 			GL11.glMatrixMode(GL11.GL_PROJECTION);
 			GL11.glLoadIdentity();
-			GLU.gluOrtho2D(-(view.width/2), (view.width/2), -(view.height/2), (view.height/2));
+			GLU.gluOrtho2D(-(float)(view.width/2), (float)(view.width/2), -(float)(view.height/2), (float)(view.height/2));
 			GL11.glDisable(GL11.GL_CULL_FACE);
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
 			
-			//GL11.glRotatef((float)Math.toDegrees(-view.angle.x), 1, 0, 0);
-			//GL11.glRotatef((float)Math.toDegrees(-view.angle.y), 0, 1, 0);
-			//GL11.glRotatef((float)Math.toDegrees(-view.angle.z), 0, 0, 1);
+			//GL11.glRotatef((double)Math.toDegrees(-view.angle.x), 1, 0, 0);
+			//GL11.glRotatef((double)Math.toDegrees(-view.angle.y), 0, 1, 0);
+			//GL11.glRotatef((double)Math.toDegrees(-view.angle.z), 0, 0, 1);
 			//GL11.glTranslatef(-view.pos.x, -view.pos.y, -view.pos.z);
 			GL11.glLoadIdentity();
 
@@ -112,25 +112,25 @@ public class GLGraphicsManager extends GraphicsManager {
 		return vbo.toTriangle(a, b, c);
 	}
 	
-	public void drawLine(Vector3 pos1, Vector3 pos2, float width, float r, float g, float b, float a) {
-		GL11.glLineWidth(width);
+	public void drawLine(Vector3 pos1, Vector3 pos2, double width, double r, double g, double b, double a) {
+		GL11.glLineWidth((float)width);
 		
 		GL11.glBegin(GL11.GL_LINES);
-			GL11.glColor4f(r, g, b, a);
+			GL11.glColor4f((float)r, (float)g, (float)b, (float)a);
 			
 			GL11.glTexCoord2f(0, 0.5f);
-			GL11.glVertex3f(pos1.x, pos1.y, pos1.z);
+			GL11.glVertex3f((float)pos1.x, (float)pos1.y, (float)pos1.z);
 			
 			GL11.glTexCoord2f(1, 0.5f);
-			GL11.glVertex3f(pos2.x, pos2.y, pos2.z);
+			GL11.glVertex3f((float)pos2.x, (float)pos2.y, (float)pos2.z);
 		GL11.glEnd();
 	}
 	
 	public void putTranslation(Vector3 offset, Vector3 scale, Vector3 angle) {
 		GL11.glPushMatrix();
-		GL11.glScalef(scale.x, scale.y, scale.z);
+		GL11.glScalef((float)scale.x, (float)scale.y, (float)scale.z);
 		
-		GL11.glTranslatef(offset.x, offset.y, offset.z);
+		GL11.glTranslatef((float)offset.x, (float)offset.y, (float)offset.z);
 		
 		GL11.glRotatef((float)Math.toDegrees(angle.z), 0, 0, 1);
 		GL11.glRotatef((float)Math.toDegrees(angle.y), 0, 1, 0);

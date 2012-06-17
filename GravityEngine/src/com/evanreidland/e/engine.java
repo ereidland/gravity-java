@@ -19,19 +19,19 @@ public class engine {
 	
 	private static long curID = 0;
 	
-	private static float delta;
+	private static double delta;
 	private static long lastTime;
 	
-	public static final float Pi = (float)Math.PI,
-							  Pi_2 = (float)(Math.PI*0.5),
-							  Pi_4 = (float)(Math.PI*0.25),
-							  Pi2 = (float)(Math.PI*2);
+	public static final double Pi = (double)Math.PI,
+							  Pi_2 = (double)(Math.PI*0.5),
+							  Pi_4 = (double)(Math.PI*0.25),
+							  Pi2 = (double)(Math.PI*2);
 	
 	public static Game game;
 	
 	public static String version = "";
 	
-	public static float getDelta() {
+	public static double getDelta() {
 		return delta;
 	}
 	

@@ -5,8 +5,8 @@ import java.util.Random;
 public class roll {
 	public static Random random = new Random();
 	
-	public static float Pi = (float)Math.PI;
-	public static float Pi2 = (float)Math.PI*2;
+	public static double Pi = (double)Math.PI;
+	public static double Pi2 = (double)Math.PI*2;
 	
 	public static void setSeed(long newSeed) {
 		random.setSeed(newSeed);
@@ -16,8 +16,8 @@ public class roll {
 		return min + Math.round(min + random.nextInt((max + 1) - min));
 	}
 	
-	public static float randomFloat(float min, float max) {
-		return min + (random.nextFloat() * (max - min));
+	public static double randomDouble(double min, double max) {
+		return min + (random.nextDouble() * (max - min));
 	}
 	
 	public static int Dice(int sides) {

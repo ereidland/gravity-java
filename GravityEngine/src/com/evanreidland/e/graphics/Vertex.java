@@ -4,7 +4,7 @@ import com.evanreidland.e.Vector3;
 
 public class Vertex {
 	public Vector3 pos, normal;
-	public float tx, ty, r, g, b, a;
+	public double tx, ty, r, g, b, a;
 	
 	public Vertex() {
 		pos = Vector3.Zero();

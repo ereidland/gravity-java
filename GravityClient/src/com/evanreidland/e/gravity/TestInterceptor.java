@@ -9,7 +9,7 @@ import com.evanreidland.e.client.ent.Ship;
 import com.evanreidland.e.graphics.generate;
 
 public class TestInterceptor extends Ship {
-	public float lifeRemaining;
+	public double lifeRemaining;
 	public void onThink() {
 		super.onThink();
 		angle = vel.getAngle();

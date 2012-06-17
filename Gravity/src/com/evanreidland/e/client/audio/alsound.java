@@ -23,7 +23,7 @@ public class alsound {
 	
 	private static HashMap<String, Integer> files = new HashMap<String, Integer>();
 	
-	public static float volume = 1f, pitch = 1f;
+	public static double volume = 1f, pitch = 1f;
 	
 	public static void goToCamera() {
 		listenerAt.setAs(graphics.forward);
@@ -53,21 +53,21 @@ public class alsound {
 	}
 	
 	public static void updateListener() {
-		flistenerPos.put(0, listenerPos.x);
-		flistenerPos.put(1, listenerPos.y);
-		flistenerPos.put(2, listenerPos.z);
+		flistenerPos.put(0, (float)listenerPos.x);
+		flistenerPos.put(1, (float)listenerPos.y);
+		flistenerPos.put(2, (float)listenerPos.z);
 		
-		flistenerVel.put(0, listenerVel.x);
-		flistenerVel.put(1, listenerVel.y);
-		flistenerVel.put(2, listenerVel.z);
+		flistenerVel.put(0, (float)listenerVel.x);
+		flistenerVel.put(1, (float)listenerVel.y);
+		flistenerVel.put(2, (float)listenerVel.z);
 		
-		flistenerOri.put(0, listenerAt.x);
-		flistenerOri.put(1, listenerAt.y);
-		flistenerOri.put(2, listenerAt.z);
+		flistenerOri.put(0, (float)listenerAt.x);
+		flistenerOri.put(1, (float)listenerAt.y);
+		flistenerOri.put(2, (float)listenerAt.z);
 		
-		flistenerOri.put(3, listenerUp.x);
-		flistenerOri.put(4, listenerUp.y);
-		flistenerOri.put(5, listenerUp.z);
+		flistenerOri.put(3, (float)listenerUp.x);
+		flistenerOri.put(4, (float)listenerUp.y);
+		flistenerOri.put(5, (float)listenerUp.z);
 		
 		AL10.alListener(AL10.AL_POSITION, flistenerPos);
 		AL10.alListener(AL10.AL_VELOCITY, flistenerVel);
@@ -75,16 +75,16 @@ public class alsound {
 	}
 	
 	private static void updateSource() {
-		fsourcePos.put(0, sourcePos.x);
-		fsourcePos.put(1, sourcePos.y);
-		fsourcePos.put(2, sourcePos.z);
+		fsourcePos.put(0, (float)sourcePos.x);
+		fsourcePos.put(1, (float)sourcePos.y);
+		fsourcePos.put(2, (float)sourcePos.z);
 		
-		fsourceVel.put(0, sourceVel.x);
-		fsourceVel.put(1, sourceVel.y);
-		fsourceVel.put(2, sourceVel.z);
+		fsourceVel.put(0, (float)sourceVel.x);
+		fsourceVel.put(1, (float)sourceVel.y);
+		fsourceVel.put(2, (float)sourceVel.z);
 	}
 	
-	public static void playSound(String reg, float pitch) {
+	public static void playSound(String reg, double pitch) {
 		int play = 0;
 		Integer snd = files.get(reg);
 		if ( snd == null ) return;
@@ -96,8 +96,8 @@ public class alsound {
 				AL10.alSourcei(sources.get(i), AL10.AL_BUFFER, buffers.get(snd));
 				AL10.alSource(sources.get(i), AL10.AL_POSITION, fsourcePos);
 				AL10.alSource(sources.get(i), AL10.AL_VELOCITY, fsourceVel);
-				AL10.alSourcef(sources.get(i), AL10.AL_PITCH, pitch);
-				AL10.alSourcef(sources.get(i), AL10.AL_GAIN, volume);
+				AL10.alSourcef(sources.get(i), AL10.AL_PITCH, (float)pitch);
+				AL10.alSourcef(sources.get(i), AL10.AL_GAIN, (float)volume);
 				AL10.alSourcePlay(sources.get(i));
 				return;
 			}

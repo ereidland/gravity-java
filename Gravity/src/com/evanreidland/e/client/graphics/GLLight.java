@@ -60,11 +60,11 @@ public class GLLight extends Light {
 				FloatBuffer cf = c.asFloatBuffer();
 				FloatBuffer vf = v.asFloatBuffer();
 				
-				af.put(new float[] { ambR, ambG, ambB, ambA });
-				bf.put(new float[] { diffR, diffG, diffB, diffA });
-				cf.put(new float[] { specR, specG, specB, specA });
+				af.put(new float[] { (float)ambR, (float)ambG, (float)ambB, (float)ambA });
+				bf.put(new float[] { (float)diffR, (float)diffG, (float)diffB, (float)diffA });
+				cf.put(new float[] { (float)specR, (float)specG, (float)specB, (float)specA });
 				
-				vf.put(new float[] { pos.x, pos.y, pos.z, 1.0f });
+				vf.put(new float[] { (float)pos.x, (float)pos.y, (float)pos.z, 1.0f });
 				
 				af.flip();
 				bf.flip();
