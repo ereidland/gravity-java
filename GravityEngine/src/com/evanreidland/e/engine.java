@@ -52,7 +52,7 @@ public class engine {
 	
 	public static String getPath() {
 		if ( dataPath == "" ) {
-			dataPath = defaultDirectory();
+			dataPath = defaultDirectory() + "/.egravity/";
 		}
 		return dataPath;
 	}
