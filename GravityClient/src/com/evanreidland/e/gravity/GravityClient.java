@@ -77,7 +77,6 @@ public class GravityClient extends GameClient {
 				ship.vel.add(ship.angle.getRight().multipliedBy(speed));
 			}
 		} else {
-			
 			if ( input.getKeyState(key.KEY_CONTROL) ) {
 				speed *= 10;
 				if ( input.getKeyState(key.KEY_UP) ) {

@@ -206,7 +206,7 @@ implements Runnable {
 			
 			GL11.glReadPixels(0, 0, screen.getWidth(), screen.getHeight(), GL11.GL_RGB, GL11.GL_FLOAT, b);
 			
-			DoubleBuffer f = (DoubleBuffer) b.asDoubleBuffer();
+			FloatBuffer f = (FloatBuffer) b.asFloatBuffer();
 			
 			for ( int x = 0; x < screen.getWidth(); x++ ) {
 				for ( int y = 0; y < screen.getHeight(); y++ ) {
