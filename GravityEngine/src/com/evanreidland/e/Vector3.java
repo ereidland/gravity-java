@@ -8,7 +8,7 @@ public class Vector3 {
 	}
 	
 	public String toRoundedString() {
-		return String.format("(%3.02f, %3.02f, %3.02f)", x, y, z);
+		return String.format("(%3.02d, %3.02d, %3.02d)", x, y, z);
 	}
 	
 	public static Vector3 Zero() {
@@ -20,7 +20,7 @@ public class Vector3 {
 	}
 	
 	public static Vector3 fromAngle2d(double f) {
-		return new Vector3((double)Math.cos(f), (double)Math.sin(f), 0);
+		return new Vector3(Math.cos(f), Math.sin(f), 0);
 	}
 	
 	public static Vector3 fromAngle(Vector3 angle) {
@@ -32,7 +32,7 @@ public class Vector3 {
 	}
 	
 	public static Vector3 Projected(Vector3 right, Vector3 up, double angle) {
-		return Projected(right, up, (double)Math.cos(angle), (double)Math.sin(angle));
+		return Projected(right, up, Math.cos(angle), Math.sin(angle));
 	}
 	
 	public static Vector3 normalFromPoints(Vector3 a, Vector3 b, Vector3 c) {
@@ -50,10 +50,10 @@ public class Vector3 {
 	}
 	
 	public static Vector3 RandomNormal() {
-		return new Vector3((double)(Math.random() - 0.5f)*2, (double)(Math.random() - 0.5f)*2, (double)(Math.random() - 0.5f)*2).Normalize();
+		return new Vector3((Math.random() - 0.5f)*2, (Math.random() - 0.5f)*2, (Math.random() - 0.5f)*2).Normalize();
 	}
 	public static Vector3 Random() {
-		return new Vector3((double)Math.random(), (double)Math.random(), (double)Math.random());
+		return new Vector3(Math.random(), Math.random(), Math.random());
 	}
 	
 	public Vector3 setAs(Vector3 other) {
@@ -285,11 +285,11 @@ public class Vector3 {
 	}
 	
 	public double getLength2d() {
-		return (double)Math.sqrt(x*x + y*y);
+		return Math.sqrt(x*x + y*y);
 	}
 	
 	public double getLength() {
-		return (double) Math.sqrt(x*x + y*y + z*z);
+		return  Math.sqrt(x*x + y*y + z*z);
 	}
 	public double getRoughLength() {
 		return Math.abs(x) + Math.abs(y) + Math.abs(z);
@@ -353,30 +353,30 @@ public class Vector3 {
 	
 	//Begin angle functions
 	public double getAngle2d() {
-		return (double)Math.atan2(y, x);
+		return Math.atan2(y, x);
 	}
 	
 	/*public Vector3 getAngle() {	
 		return new Vector3(
-				-(double)Math.atan2(Math.sqrt(x*x + y*y), z) + (double)Math.PI,
+				-Math.atan2(Math.sqrt(x*x + y*y), z) + Math.PI,
 				0,
-				(double)Math.atan2(y, x) - (double)Math.PI/2f);
+				Math.atan2(y, x) - Math.PI/2f);
 	}*/
 	
 	/*public Vector3 getAngle() {	
 		double len = getLength();
 		return new Vector3(
-				(double)Math.atan2(z, len),
+				Math.atan2(z, len),
 				0,
-				(double)Math.atan2(x, y));
+				Math.atan2(x, y));
 	}*/
 	
 	public Vector3 getAngle() {
 		double len = getLength2d();
 		return new Vector3(
-				len != 0 ? (double)(Math.atan(z/len) + engine.Pi_2) : 0,
+				len != 0 ? (Math.atan(z/len) + engine.Pi_2) : 0,
 				0,
-				(double)Math.atan2(y, x) - engine.Pi_2);
+				Math.atan2(y, x) - engine.Pi_2);
 	}
 	
 	public Vector3 Rotate2d(double howMuch) {
@@ -460,36 +460,36 @@ public class Vector3 {
 	}
 	/*public Vector3 getForward() {
 		return new Vector3(
-		-(double)(Math.sin(-z) * Math.sin(-x)),
-		-(double)(Math.cos(-z) * Math.sin(-x)),
-		-(double)(Math.cos(-x)));
+		-(Math.sin(-z) * Math.sin(-x)),
+		-(Math.cos(-z) * Math.sin(-x)),
+		-(Math.cos(-x)));
 	}
 	*/
 	public Vector3 getForward() {
 		return new Vector3(
-		(double)(Math.cos(z + engine.Pi_2) * Math.sin(x)),
-		(double)(Math.sin(z + engine.Pi_2) * Math.sin(x)),
-		(double)(-Math.cos(x)));
+		(Math.cos(z + engine.Pi_2) * Math.sin(x)),
+		(Math.sin(z + engine.Pi_2) * Math.sin(x)),
+		(-Math.cos(x)));
 	}
 	
 	public Vector3 getForwardXY() {
 		return new Vector3(
-				(double)(Math.cos(z + engine.Pi_2)),
-				(double)(Math.sin(z + engine.Pi_2)), 0);
+				(Math.cos(z + engine.Pi_2)),
+				(Math.sin(z + engine.Pi_2)), 0);
 	}
 	
 	public Vector3 getRight() {
 		return new Vector3(
-				(double)(Math.cos(z)),
-				(double)(Math.sin(z)), 0);
+				(Math.cos(z)),
+				(Math.sin(z)), 0);
 	}
 	
 	public Vector3 getUp() {
 		double anglex = x + engine.Pi_2;
 		return new Vector3(
-				(double)(Math.cos(z + engine.Pi_2) * Math.sin(anglex)),
-				(double)(Math.sin(z + engine.Pi_2) * Math.sin(anglex)),
-				(double)(-Math.cos(anglex)));
+				(Math.cos(z + engine.Pi_2) * Math.sin(anglex)),
+				(Math.sin(z + engine.Pi_2) * Math.sin(anglex)),
+				(-Math.cos(anglex)));
 	}
 
 	

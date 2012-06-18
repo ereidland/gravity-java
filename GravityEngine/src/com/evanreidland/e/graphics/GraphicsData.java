@@ -78,7 +78,8 @@ public class GraphicsData extends TriOperator {
 		size = new Vector3(1, 1, 1);
 		
 		data = new Vector<DataList>();
-		maxVerts = 4096;
+		
+		maxVerts = 2048;
 		elementSize = 16;
 	}
 	
