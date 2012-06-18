@@ -2,7 +2,7 @@ package com.evanreidland.e.client.graphics;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
+import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
@@ -16,9 +16,9 @@ import com.evanreidland.e.graphics.RenderList;
 import com.evanreidland.e.graphics.Vertex;
 
 public class vbo {
-	public static final int STRIDE = 64;//(3 + 3 + 4 + 2) * 4; // 3 for vertex, 3 for normal, 4 for color and 2 for texture coordinates and * 4 for bytes.
-	public static final int MAX_VERTS = 2048;//GL12.GL_MAX_ELEMENTS_INDICES;
-	private static int current = 0;//, currentElements = 0;
+	public static final int STRIDE = 128;//(3 + 3 + 4 + 2) * 8; // 3 for vertex, 3 for normal, 4 for color and 2 for texture coordinates and * 8 for bytes.
+	public static final int MAX_VERTS = 2048;
+	private static int current = 0;
 	
 	private static Texture tex = null;
 	public static void Begin(int id) {
@@ -32,7 +32,7 @@ public class vbo {
 		tex = newTex;
 	}
 	
-	private static FloatBuffer curBuff = ByteBuffer.allocateDirect(MAX_VERTS*STRIDE*4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+	private static DoubleBuffer curBuff = ByteBuffer.allocateDirect(MAX_VERTS*STRIDE*8).order(ByteOrder.nativeOrder()).asDoubleBuffer();
 	private static IntBuffer curElemBuff = ByteBuffer.allocateDirect(MAX_VERTS*4).order(ByteOrder.nativeOrder()).asIntBuffer();
 	private static int vp = 0;
 	
@@ -44,7 +44,7 @@ public class vbo {
 		current = id;
 	}
 	
-	public static void passToRenderList(float[] data, int count, RenderList rlist) {
+	public static void passToRenderList(double[] data, int count, RenderList rlist) {
 		for ( int i = 0; i < count; i++ ) {
 			Vertex[] tverts = new Vertex[3];
 			
@@ -73,7 +73,7 @@ public class vbo {
 		}
 	}
 	
-	public static void setBuffer(float[] data, int count) {
+	public static void setBuffer(double[] data, int count) {
 		drawBuffer();
 		curBuff.put(data);
 		vp = count;
@@ -86,7 +86,7 @@ public class vbo {
 		vp = 0;
 	}
 	
-	public static void passTriangle(float[] tri) {
+	public static void passTriangle(double[] tri) {
 		if ( vp >= MAX_VERTS - 3 ) {
 			drawBuffer();
 		}
@@ -99,7 +99,7 @@ public class vbo {
 	}
 	
 	
-	public static void passQuad(float[] quad) {
+	public static void passQuad(double[] quad) {
 		if ( vp >= MAX_VERTS - 4 ) {
 			drawBuffer();
 			clearBuffer();
@@ -115,72 +115,72 @@ public class vbo {
 		vp += 4;
 	}
 	
-	public static float[] toTriangle(Vertex a, Vertex b, Vertex c) {
-		return new float[] {
-				(float)a.pos.x, (float)a.pos.y, (float)a.pos.z,
-				(float)a.normal.x, (float)a.normal.y, (float)a.normal.z,
-				(float)a.r, (float)a.g, (float)a.b, (float)a.a,
-				(float)a.tx, (float)a.ty,
+	public static double[] toTriangle(Vertex a, Vertex b, Vertex c) {
+		return new double[] {
+				a.pos.x, a.pos.y, a.pos.z,
+				a.normal.x, a.normal.y, a.normal.z,
+				a.r, a.g, a.b, a.a,
+				a.tx, a.ty,
 				0, 0, 0, 0,
 				
-				(float)b.pos.x, (float)b.pos.y, (float)b.pos.z,
-				(float)b.normal.x, (float)b.normal.y, (float)b.normal.z,
-				(float)b.r, (float)b.g, (float)b.b, (float)b.a,
-				(float)b.tx, (float)b.ty,
+				b.pos.x, b.pos.y, b.pos.z,
+				b.normal.x, b.normal.y, b.normal.z,
+				b.r, b.g, b.b, b.a,
+				b.tx, b.ty,
 				0, 0, 0, 0,
 				
-				(float)c.pos.x, (float)c.pos.y, (float)c.pos.z,
-				(float)c.normal.x, (float)c.normal.y, (float)c.normal.z,
-				(float)c.r, (float)c.g, (float)c.b, (float)c.a,
-				(float)c.tx, (float)c.ty,
+				c.pos.x, c.pos.y, c.pos.z,
+				c.normal.x, c.normal.y, c.normal.z,
+				c.r, c.g, c.b, c.a,
+				c.tx, c.ty,
 				0, 0, 0, 0,
 		};
 	}
 	
-	public static float[] toQuad(Vertex a, Vertex b, Vertex c, Vertex d) {
-		return new float[] {
-				(float)a.pos.x, (float)a.pos.y, (float)a.pos.z,
-				(float)a.normal.x, (float)a.normal.y, (float)a.normal.z,
-				(float)a.r, (float)a.g, (float)a.b, (float)a.a,
-				(float)a.tx, (float)a.ty,
+	public static double[] toQuad(Vertex a, Vertex b, Vertex c, Vertex d) {
+		return new double[] {
+				a.pos.x, a.pos.y, a.pos.z,
+				a.normal.x, a.normal.y, a.normal.z,
+				a.r, a.g, a.b, a.a,
+				a.tx, a.ty,
 				0, 0, 0, 0,
 				
-				(float)b.pos.x, (float)b.pos.y, (float)b.pos.z,
-				(float)b.normal.x, (float)b.normal.y, (float)b.normal.z,
-				(float)b.r, (float)b.g, (float)b.b, (float)b.a,
-				(float)b.tx, (float)b.ty,
+				b.pos.x, b.pos.y, b.pos.z,
+				b.normal.x, b.normal.y, b.normal.z,
+				b.r, b.g, b.b, b.a,
+				b.tx, b.ty,
 				0, 0, 0, 0,
 				
-				(float)c.pos.x, (float)c.pos.y, (float)c.pos.z,
-				(float)c.normal.x, (float)c.normal.y, (float)c.normal.z,
-				(float)c.r, (float)c.g, (float)c.b, (float)c.a,
-				(float)c.tx, (float)c.ty,
+				c.pos.x, c.pos.y, c.pos.z,
+				c.normal.x, c.normal.y, c.normal.z,
+				c.r, c.g, c.b, c.a,
+				c.tx, c.ty,
 				0, 0, 0, 0,
 				
-				(float)d.pos.x, (float)d.pos.y, (float)d.pos.z,
-				(float)d.normal.x, (float)d.normal.y, (float)d.normal.z,
-				(float)d.r, (float)d.g, (float)d.b, (float)d.a,
-				(float)d.tx, (float)d.ty,
+				d.pos.x, d.pos.y, d.pos.z,
+				d.normal.x, d.normal.y, d.normal.z,
+				d.r, d.g, d.b, d.a,
+				d.tx, d.ty,
 				0, 0, 0, 0,
 		};
 	}
 	
-	public static float[] toTriangle(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 normal, float[][] texCoords, float r, float g, float b, float a) {
-		return new float[] {
-				(float)p1.x, (float)p1.y, (float)p1.z,
-				(float)normal.x, (float)normal.y, (float)normal.z,
+	public static double[] toTriangle(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 normal, double[][] texCoords, float r, float g, float b, float a) {
+		return new double[] {
+				p1.x, p1.y, p1.z,
+				normal.x, normal.y, normal.z,
 				  r, g, b, a,
 				  texCoords[0][0], texCoords[0][1],
 				  0, 0, 0, 0,
 				  
-				  (float)p2.x, (float)p2.y, (float)p2.z,
-				  (float)normal.x, (float)normal.y, (float)normal.z,
+				  p2.x, p2.y, p2.z,
+				  normal.x, normal.y, normal.z,
 				  r, g, b, a,
 				  texCoords[1][0], texCoords[1][1],
 				  0, 0, 0, 0,
 				  
-				  (float)p3.x, (float)p3.y, (float)p3.z,
-				  (float)normal.x, (float)normal.y, (float)normal.z,
+				  p3.x, p3.y, p3.z,
+				  normal.x, normal.y, normal.z,
 				  r, g, b, a,
 				  texCoords[2][0], texCoords[2][1],
 				  0, 0, 0, 0
@@ -188,40 +188,40 @@ public class vbo {
 	}
 	
 	
-	public static float[] toQuad(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, Vector3 normal, float[][] texCoords, float r, float g, float b, float a) {
-		return new float[] {
-				(float)p1.x, (float)p1.y, (float)p1.z,
-				(float)normal.x, (float)normal.y, (float)normal.z,
+	public static double[] toQuad(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, Vector3 normal, double[][] texCoords, float r, float g, float b, float a) {
+		return new double[] {
+				p1.x, p1.y, p1.z,
+				normal.x, normal.y, normal.z,
 				  r, g, b, a,
 				  texCoords[0][0], texCoords[0][1],
 				  0, 0, 0, 0,
 				  
-				  (float)p2.x, (float)p2.y, (float)p2.z,
-				  (float)normal.x, (float)normal.y, (float)normal.z,
+				  p2.x, p2.y, p2.z,
+				  normal.x, normal.y, normal.z,
 				  r, g, b, a,
 				  texCoords[1][0], texCoords[1][1],
 				  0, 0, 0, 0,
 				  
-				  (float)p3.x, (float)p3.y, (float)p3.z,
-				  (float)normal.x, (float)normal.y, (float)normal.z,
+				  p3.x, p3.y, p3.z,
+				  normal.x, normal.y, normal.z,
 				  r, g, b, a,
 				  texCoords[2][0], texCoords[2][1],
 				  0, 0, 0, 0,
 				  
-				  (float)p3.x, (float)p3.y, (float)p3.z,
-				  (float)normal.x, (float)normal.y, (float)normal.z,
+				  p3.x, p3.y, p3.z,
+				  normal.x, normal.y, normal.z,
 				  r, g, b, a,
 				  texCoords[2][0], texCoords[2][1],
 				  0, 0, 0, 0,
 				  
-				  (float)p4.x, (float)p4.y, (float)p4.z,
-				  (float)normal.x, (float)normal.y, (float)normal.z,
+				  p4.x, p4.y, p4.z,
+				  normal.x, normal.y, normal.z,
 				  r, g, b, a,
 				  texCoords[3][0], texCoords[3][1],
 				  0, 0, 0, 0,
 				  
-				  (float)p1.x, (float)p1.y, (float)p1.z,
-				  (float)normal.x, (float)normal.y, (float)normal.z,
+				  p1.x, p1.y, p1.z,
+				  normal.x, normal.y, normal.z,
 				  r, g, b, a,
 				  texCoords[0][0], texCoords[0][1],
 				  0, 0, 0, 0
@@ -246,20 +246,20 @@ public class vbo {
 		
 		ARBVertexBufferObject.glBindBufferARB( ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, current );
 		// vertices
-		int offset = 0 * 4; // 0 as its the first in the chunk, i.e. no offset. * 4 to convert to bytes.
-		GL11.glVertexPointer(3, GL11.GL_FLOAT, STRIDE, offset);
+		int offset = 0; // 0 as its the first in the chunk, i.e. no offset. * 8 to convert to bytes.
+		GL11.glVertexPointer(3, GL11.GL_DOUBLE, STRIDE, offset);
 		 
 		// normals
-		offset = 3 * 4; // 3 components is the initial offset from 0, then convert to bytes
-		GL11.glNormalPointer(GL11.GL_FLOAT, STRIDE, offset);
+		offset = 3 * 8; // 3 components is the initial offset from 0, then convert to bytes
+		GL11.glNormalPointer(GL11.GL_DOUBLE, STRIDE, offset);
 		 
 		// colors
-		offset = (3 + 3) * 4; // (6*4) is the number of byte to skip to get to the color chunk
-		GL11.glColorPointer(4, GL11.GL_FLOAT, STRIDE, offset);
+		offset = (3 + 3) * 8; // (6*8) is the number of byte to skip to get to the color chunk
+		GL11.glColorPointer(4, GL11.GL_DOUBLE, STRIDE, offset);
 		 
 		// texture coordinates
-		offset = (3 + 3 + 4) * 4;
-		GL11.glTexCoordPointer(2, GL11.GL_FLOAT, STRIDE, offset);
+		offset = (3 + 3 + 4) * 8;
+		GL11.glTexCoordPointer(2, GL11.GL_DOUBLE, STRIDE, offset);
 	}
 	
 	public static void init() {

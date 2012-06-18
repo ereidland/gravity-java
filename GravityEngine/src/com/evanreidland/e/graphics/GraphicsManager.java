@@ -18,12 +18,12 @@ public abstract class GraphicsManager {
 	
 	public abstract void setTexture(Resource tex);
 	
-	public abstract void passTriangle(float[] data);
+	public abstract void passTriangle(double[] data);
 	
-	public abstract void passList(float[] list, int numVerts);
-	public abstract void passListToRenderData(float[] list, int numVerts, RenderList rlist);
+	public abstract void passList(double[] list, int numVerts);
+	public abstract void passListToRenderData(double[] list, int numVerts, RenderList rlist);
 	
-	public abstract float[] toTriangle(Vertex a, Vertex b, Vertex c);
+	public abstract double[] toTriangle(Vertex a, Vertex b, Vertex c);
 	
 	public abstract void drawLine(Vector3 pos1, Vector3 pos2, double width, double r, double g, double b, double a);
 	

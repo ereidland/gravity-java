@@ -11,9 +11,9 @@ public class GraphicsData extends TriOperator {
 	
 	private class DataList {
 		public int numVerts;
-		public float[] data;
+		public double[] data;
 		public DataList() {
-			data = new float[maxVerts*elementSize];
+			data = new double[maxVerts*elementSize];
 			numVerts = 0;
 		}
 	}

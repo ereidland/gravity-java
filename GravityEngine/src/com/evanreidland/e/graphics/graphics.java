@@ -138,7 +138,7 @@ public class graphics {
 			passTriangle(t.vert[0], t.vert[1], t.vert[2]);
 		}
 	}
-	public static void passTriangle(float[] data) {
+	public static void passTriangle(double[] data) {
 		if ( graphicsManager != null ) {
 			graphicsManager.passTriangle(data);
 		}
@@ -148,25 +148,25 @@ public class graphics {
 			graphicsManager.passQuad(a, b, c, d);
 		}
 	}
-	public static void passList(float[] list, int numVerts) {
+	public static void passList(double[] list, int numVerts) {
 		if ( graphicsManager != null ) {
 			graphicsManager.passList(list, numVerts);
 		}
 	}
 	
-	public static void passListToRenderData(float[] list, int numVerts, RenderList rlist) {
+	public static void passListToRenderData(double[] list, int numVerts, RenderList rlist) {
 		if ( graphicsManager != null ) {
 			graphicsManager.passListToRenderData(list, numVerts, rlist);
 		}
 	}
 	
-	public static void appendList(float[] data, float[] toAppend, int insertIndex) {
+	public static void appendList(double[] data, double[] toAppend, int insertIndex) {
 		for ( int i = 0; i < toAppend.length; i++) {
 			data[insertIndex + i] = toAppend[i];
 		}
 	}
 	
-	public static float[] toTriangle(Vertex a, Vertex b, Vertex c) {
+	public static double[] toTriangle(Vertex a, Vertex b, Vertex c) {
 		if ( graphicsManager != null ) {
 			return graphicsManager.toTriangle(a, b, c);
 		}

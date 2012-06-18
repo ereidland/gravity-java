@@ -27,8 +27,8 @@ public class TestInterceptor extends Ship {
 		
 		lifeRemaining = 20;
 		
-		model = generate.Cube(Vector3.Zero(), new Vector3(0.01f, 0.01f, 0.02f), Vector3.Zero());
+		model = generate.Cube(Vector3.Zero(), new Vector3(0.01, 0.01, 0.02), Vector3.Zero());
 		model.tex = engine.loadTexture("shiptest1.png");
-		mass = 0.0000001f;
+		mass = 0.000000001;
 	}
 }

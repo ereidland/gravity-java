@@ -98,18 +98,18 @@ public class GLGraphicsManager extends GraphicsManager {
 		else Texture.unbind();
 	}
 	
-	public void passTriangle(float[] data) {
+	public void passTriangle(double[] data) {
 		vbo.passTriangle(data);
 	}
 	
-	public void passList(float[] list, int numVerts) {
+	public void passList(double[] list, int numVerts) {
 		vbo.setBuffer(list, numVerts);
 	}
-	public void passListToRenderData(float[] list, int numVerts, RenderList rlist) {
+	public void passListToRenderData(double[] list, int numVerts, RenderList rlist) {
 		vbo.passToRenderList(list, numVerts, rlist);
 	}
 	
-	public float[] toTriangle(Vertex a, Vertex b, Vertex c) {
+	public double[] toTriangle(Vertex a, Vertex b, Vertex c) {
 		return vbo.toTriangle(a, b, c);
 	}
 	
@@ -120,10 +120,10 @@ public class GLGraphicsManager extends GraphicsManager {
 			GL11.glColor4f((float)r, (float)g, (float)b, (float)a);
 			
 			GL11.glTexCoord2f(0, 0.5f);
-			GL11.glVertex3f((float)pos1.x, (float)pos1.y, (float)pos1.z);
+			GL11.glVertex3d((float)pos1.x, (float)pos1.y, (float)pos1.z);
 			
 			GL11.glTexCoord2f(1, 0.5f);
-			GL11.glVertex3f((float)pos2.x, (float)pos2.y, (float)pos2.z);
+			GL11.glVertex3d((float)pos2.x, (float)pos2.y, (float)pos2.z);
 		GL11.glEnd();
 	}
 	
