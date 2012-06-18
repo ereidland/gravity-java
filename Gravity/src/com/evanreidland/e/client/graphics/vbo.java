@@ -17,7 +17,7 @@ import com.evanreidland.e.graphics.Vertex;
 
 public class vbo {
 	public static final int STRIDE = 64;//(3 + 3 + 4 + 2) * 4; // 3 for vertex, 3 for normal, 4 for color and 2 for texture coordinates and * 4 for bytes.
-	public static final int MAX_VERTS = 4096;//GL12.GL_MAX_ELEMENTS_INDICES;
+	public static final int MAX_VERTS = 2048;//GL12.GL_MAX_ELEMENTS_INDICES;
 	private static int current = 0;//, currentElements = 0;
 	
 	private static Texture tex = null;
@@ -82,6 +82,7 @@ public class vbo {
 	
 	public static void clearBuffer() {
 		curBuff.clear();
+		curElemBuff.clear();
 		vp = 0;
 	}
 	
@@ -91,18 +92,27 @@ public class vbo {
 		}
 		
 		curBuff.put(tri);
+		for ( int i = 0; i < 3; i++ ) {
+			curElemBuff.put(vp + i);
+		}
 		vp += 3;
 	}
 	
 	
 	public static void passQuad(float[] quad) {
-		if ( vp >= MAX_VERTS - 6 ) {
+		if ( vp >= MAX_VERTS - 4 ) {
 			drawBuffer();
 			clearBuffer();
 		}
 		
 		curBuff.put(quad);
-		vp += 6;
+		curElemBuff.put(vp);
+		curElemBuff.put(vp + 1);
+		curElemBuff.put(vp + 2);
+		curElemBuff.put(vp + 2);
+		curElemBuff.put(vp + 3);
+		curElemBuff.put(vp);
+		vp += 4;
 	}
 	
 	public static float[] toTriangle(Vertex a, Vertex b, Vertex c) {
@@ -147,22 +157,10 @@ public class vbo {
 				(float)c.tx, (float)c.ty,
 				0, 0, 0, 0,
 				
-				(float)c.pos.x, (float)c.pos.y, (float)c.pos.z,
-				(float)c.normal.x, (float)c.normal.y, (float)c.normal.z,
-				(float)c.r, (float)c.g, (float)c.b, (float)c.a,
-				(float)c.tx, (float)c.ty,
-				0, 0, 0, 0,
-				
 				(float)d.pos.x, (float)d.pos.y, (float)d.pos.z,
 				(float)d.normal.x, (float)d.normal.y, (float)d.normal.z,
 				(float)d.r, (float)d.g, (float)d.b, (float)d.a,
 				(float)d.tx, (float)d.ty,
-				0, 0, 0, 0,
-				
-				(float)a.pos.x, (float)a.pos.y, (float)a.pos.z,
-				(float)a.normal.x, (float)a.normal.y, (float)a.normal.z,
-				(float)a.r, (float)a.g, (float)a.b, (float)a.a,
-				(float)a.tx, (float)a.ty,
 				0, 0, 0, 0,
 		};
 	}
@@ -272,26 +270,27 @@ public class vbo {
 		GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY); 
 		
 		current = newID();
-		//currentElements = newID();
-		//ARBVertexBufferObject.glBindBufferARB( ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, currentElements );
 		
 
-		for (int i = 0; i < MAX_VERTS; i++ ) {
-			curElemBuff.put(i);
-		}
-		
-		curElemBuff.flip();
+//		for (int i = 0; i < MAX_VERTS; i++ ) {
+//			curElemBuff.put(i);
+//		}
+//		
+//		curElemBuff.flip();
 		 
 		setup();
 	}
 	
-	private static void bufferData(int id, FloatBuffer buffer) {
+	private static void bufferData(int id) {
 		if (GLContext.getCapabilities().GL_ARB_vertex_buffer_object) {
-			if ( buffer.position() != 0 ) {
-				buffer.flip();
+			if ( curBuff.position() != 0 ) {
+				curBuff.flip();
+				curElemBuff.flip();
+				
+				ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, id);
+				
+				ARBVertexBufferObject.glBufferDataARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, curBuff, ARBVertexBufferObject.GL_STREAM_DRAW_ARB);
 			}
-			ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, id);
-			ARBVertexBufferObject.glBufferDataARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, buffer, ARBVertexBufferObject.GL_STREAM_DRAW_ARB);
 		}
 	}
 	
@@ -306,7 +305,7 @@ public class vbo {
 	public static void drawBuffer() {
 		if ( current != 0 && vp >= 3) {
 			setup();
-			bufferData(current, curBuff);
+			bufferData(current);
 			//gl.LineWidth(4);
 			if ( tex == null ) {
 				Texture.unbind();

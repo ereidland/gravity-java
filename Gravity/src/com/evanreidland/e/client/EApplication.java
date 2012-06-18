@@ -25,8 +25,6 @@ public class EApplication implements AppletStub {
 	}
 	
 	public void runApplet(String title) {
-		
-		
 		frame = new Frame(title);
 		frame.setResizable(true);
 		frame.setSize(width, height);
