@@ -79,9 +79,9 @@ public class generate {
 				   r = 1/(double)pointsPerArc;
 			
 			Tri tri = new Tri();
-			tri.vert[0].tx = 0; tri.vert[0].ty = 0;
 			tri.vert[1].tx = angle2/engine.Pi; tri.vert[1].ty = r;
 			tri.vert[2].tx = angle1/engine.Pi; tri.vert[2].ty = r;
+			tri.vert[0].tx = (tri.vert[1].tx + tri.vert[2].tx)*0.5; tri.vert[0].ty = 0;
 			
 			tri.vert[0].pos = new Vector3(0, 0, size.z);
 			tri.vert[1].pos = Vector3.pointOnSphere(Vector3.Zero(), size, angle2, r*engine.Pi);
@@ -92,9 +92,9 @@ public class generate {
 			r = (pointsPerArc - 1)/(double)pointsPerArc;
 			
 			tri = new Tri();
-			tri.vert[0].tx =0; tri.vert[0].ty = 1;
 			tri.vert[1].tx = angle1/engine.Pi; tri.vert[2].ty = r;
 			tri.vert[2].tx = angle2/engine.Pi; tri.vert[1].ty = r;
+			tri.vert[0].tx = (tri.vert[1].tx + tri.vert[2].tx)*0.5; tri.vert[0].ty = 1;
 			
 			tri.vert[0].pos = new Vector3(0, 0, -size.z);
 			tri.vert[1].pos = Vector3.pointOnSphere(Vector3.Zero(), size, angle1, r*engine.Pi);
