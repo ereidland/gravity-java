@@ -8,10 +8,12 @@ import com.evanreidland.e.phys.Rect3;
 public class graphics {
 	public static Vector3 forward = Vector3.Zero(), up = Vector3.Zero(), right = Vector3.Zero();
 	public static Camera camera = new Camera();
+	public static Scene scene = new Scene();
 	private static GraphicsManager graphicsManager = null;
 	private static Class<? extends GraphicsData> graphicsDataClass = null;
 	private static Class<? extends Light> lightClass = null;
 	private static Class<? extends RenderList> renderListClass = null;	
+	
 	public static void setGraphicsManager(GraphicsManager m) {
 		graphicsManager = m;
 	}

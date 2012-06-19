@@ -13,11 +13,12 @@ public class Planet extends Entity {
 			model.angle.setAs(angle);
 			model.Render();
 		}
-		/*sprite.width = radius*0.5f;
-		sprite.height = radius*0.5f;
-		sprite.pos.setAs(pos);
-		sprite.renderBillboard();
-		*/
+		if ( sprite != null ) {
+			sprite.width = radius*2;
+			sprite.height = radius*2;
+			sprite.pos.setAs(pos);
+			sprite.renderBillboard(true);
+		}
 		super.onRender();
 	}
 	

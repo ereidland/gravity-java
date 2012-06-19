@@ -58,7 +58,7 @@ public abstract class SceneObject {
 				break;
 		}
 		
-		child.Position();
+		if ( child != null ) child.Position();
 	}
 	
 	public final double getRoughDistance() {
@@ -74,16 +74,32 @@ public abstract class SceneObject {
 	public abstract void Render();
 	
 	public void Order() {
-		child.Order();
+		if ( child != null ) {
+			child.Order();
+		}
 	}
 	
 	public SceneObject() {
 		pos = Vector3.Zero();
+		offset = Vector3.Zero();
+		angle = Vector3.Zero();
+		angleOffset = Vector3.Zero();
+		roughDistance = -1;
+		anchorType = AnchorType.NONE;
+		child = new Scene();
+		child.setParentObject(this);
+	}
+	
+	public SceneObject(boolean initChild) {
+		pos = Vector3.Zero();
 		angle = Vector3.Zero();
 		roughDistance = -1;
 		anchorType = AnchorType.NONE;
-		
-		child = new Scene();
-		child.setParentObject(this);
+		if ( initChild ) {
+			child = new Scene();
+			child.setParentObject(this);
+		} else {
+			child = null;
+		}
 	}
 }

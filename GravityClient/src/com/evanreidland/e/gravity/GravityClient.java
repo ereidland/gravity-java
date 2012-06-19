@@ -14,7 +14,10 @@ import com.evanreidland.e.client.ent.Planet;
 import com.evanreidland.e.client.ent.Ship;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
+import com.evanreidland.e.graphics.BillboardSceneObject;
 import com.evanreidland.e.graphics.Model;
+import com.evanreidland.e.graphics.ModelSceneObject;
+import com.evanreidland.e.graphics.SceneObject;
 import com.evanreidland.e.graphics.Sprite;
 import com.evanreidland.e.graphics.font;
 import com.evanreidland.e.graphics.generate;
@@ -35,7 +38,7 @@ public class GravityClient extends GameClient {
 	
 	long nextShot;
 	
-	double viewHeight = 0.01f;
+	double viewHeight = 0.01;
 	
 	public void drawRing(Vector3 origin, double rad, int numPoints) {
 		Vector3 lp = origin.plus(Vector3.fromAngle2d(0).multipliedBy(rad));
@@ -129,18 +132,17 @@ public class GravityClient extends GameClient {
 	}
 
 	public void onRender() {
-		ents.list.onRender();
+		graphics.drawSkybox(skybox, graphics.camera.farDist - 1);
 	
 		graphics.unbindTexture();
 		for ( int i = 1; i < 10; i++ ) {			
 			drawRing(planet.pos, i*100, i*100);
 		}
-		
 		for ( int i = 0; i < 50; i++ ) {
 			graphics.drawLine(planet.pos, planet.pos.plus(Vector3.fromAngle2d((i/50f)*engine.Pi2).multipliedBy(900)), 1, 1, 1, 0, 0.5f);
 		}
-		
-		graphics.drawSkybox(skybox, graphics.camera.farDist - 1);
+		graphics.scene.Render();
+		ents.list.onRender();
 	}
 
 	public void onRenderHUD() {
@@ -171,12 +173,20 @@ public class GravityClient extends GameClient {
 		
 		nextShot = 0;
 		
-		planet.mass = 100;
+		planet.mass = 200;
 		planet.radius = 50;
-		planet.sprite = planetSprite;
-		planet.model = generate.Sphere(Vector3.Zero(), new Vector3(planet.radius, planet.radius, planet.radius), Vector3.Zero(), 40, 20);
-		planet.model.tex = engine.loadTexture("planet3.png");
-		planet.bStatic = true;
+		//planet.sprite = planetSprite;
+		planet.bStatic = false;
+		
+		Model model = generate.Sphere(Vector3.Zero(), new Vector3(planet.radius, planet.radius, planet.radius), Vector3.Zero(), 40, 80);
+		model.tex = engine.loadTexture("sun1.png");
+		SceneObject o = new ModelSceneObject(model);
+		graphics.scene.addObject(o, planet);
+		
+		planet.angleVel = Vector3.RandomNormal().multipliedBy(0.5);
+		
+		planetSprite.width = planetSprite.height = planet.radius*3;
+		graphics.scene.addObject(new BillboardSceneObject(planetSprite, true), planet, SceneObject.AnchorType.POS);
 		
 		ship.vel = new Vector3(0, ship.getOrbitalVelocity(ship.pos.x, planet.mass), 0);
 		
@@ -185,11 +195,14 @@ public class GravityClient extends GameClient {
 		for ( double i = 0; i < num; i++ ) {
 			Planet ent = (Planet)ents.Create("planet");
 			
-			ent.sprite = new Sprite(0, 0, engine.loadTexture("planet2.png"));
+			//ent.sprite = new Sprite(0, 0, engine.loadTexture("planet2.png"));
 			ent.mass = 10;
 			ent.radius = 2.5;
-			ent.model = generate.Sphere(Vector3.Zero(), new Vector3(ent.radius, ent.radius, ent.radius), Vector3.Zero(), 10, 10);
-			ent.model.tex = engine.loadTexture("planet3.png");
+			ent.angleVel = Vector3.RandomNormal().multipliedBy(0.5);
+			
+			model = generate.Sphere(Vector3.Zero(), new Vector3(ent.radius, ent.radius, ent.radius), Vector3.Zero(), 20, 40);
+			model.tex = engine.loadTexture("planet3.png");
+			graphics.scene.addObject(new ModelSceneObject(model), ent);
 			
 			double rad = (i + 1)*100;
 		
@@ -204,20 +217,23 @@ public class GravityClient extends GameClient {
 			
 			Planet moon = (Planet)ents.Create("planet");
 			moon.bStatic = false;
-			moon.sprite = new Sprite(0, 0, engine.loadTexture("moon1.png"));
+			//moon.sprite = new Sprite(0, 0, engine.loadTexture("moon1.png"));
 			moon.radius = ent.radius/3;
 			moon.mass = moon.radius/ent.radius;
 			moon.pos = ent.pos.plus(Vector3.fromAngle2d(roll.randomDouble(0, engine.Pi2)).multipliedBy(ent.radius + roll.randomDouble(1, 5)));
 			moon.vel = ent.vel.plus(ent.pos.minus(moon.pos).getAngle().getRight().multipliedBy(moon.getOrbitalVelocity(ent)));
-			moon.model = generate.Sphere(Vector3.Zero(), new Vector3(moon.radius, moon.radius, moon.radius), Vector3.Zero(), 10, 10);
-			moon.model.tex = engine.loadTexture("planet3.png");
+			moon.angleVel = Vector3.RandomNormal().multipliedBy(2);
+			
+			model = generate.Sphere(Vector3.Zero(), new Vector3(moon.radius, moon.radius, moon.radius), Vector3.Zero(), 15, 30);
+			model.tex = engine.loadTexture("planet3.png");
+			graphics.scene.addObject(new ModelSceneObject(model), moon);
 		}
 		
 		ship.angle = planet.pos.minus(ship.pos).getAngle();
 	}
 	
 	public void loadGraphics() {
-		planetSprite = new Sprite(32, 32, engine.loadTexture("planet1.png"));
+		planetSprite = new Sprite(32, 32, engine.loadTexture("glow2.png"));
 		
 		generate.setModelType(ModelType.RenderList);
 		shipModel = generate.Cube(new Vector3(0, 0, 0), new Vector3(0.01f, 0.01f, 0.01f), new Vector3());

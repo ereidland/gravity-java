@@ -495,7 +495,7 @@ implements Runnable {
 			GL11.glBlendFunc (GL11.GL_SRC_COLOR, GL11.GL_MULT);
 			GL11.glEnable (GL11.GL_BLEND);
 			
-			GL11.glAlphaFunc(GL11.GL_GREATER, 0.1f);
+			GL11.glAlphaFunc(GL11.GL_GREATER, 0);
 			GL11.glEnable(GL11.GL_ALPHA_TEST);
 			
 			//GL11.glEnable(GL11.GL_COLOR_MATERIAL);

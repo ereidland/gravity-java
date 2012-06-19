@@ -11,9 +11,9 @@ public class Sprite {
 	
 	public double cr, cg, cb, ca;
 	
-	public void renderBillboard() {
-		double w2 = width*0.5f;
-		double h2 = height*0.5f;
+	public void renderBillboard(boolean type) {
+		double w2 = width*0.5;
+		double h2 = height*0.5;
 		
 		Vertex a = new Vertex(), b = new Vertex(), c = new Vertex(), d = new Vertex();
 		
@@ -22,7 +22,7 @@ public class Sprite {
 		c.tx = 1; c.ty = 1;
 		d.tx = 0; d.ty = 1;
 		
-		Vector3 newAngle = graphics.forward.getAngle().plus(angle);
+		Vector3 newAngle = type ? graphics.camera.pos.minus(pos).getAngle().plus(angle) : graphics.forward.getAngle().plus(angle);
 		
 		Vector3 up = newAngle.getUp(), right = newAngle.getRight();
 		

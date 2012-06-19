@@ -6,7 +6,7 @@ import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
 
 public class Entity extends EObject {
-	public static boolean debug = true;
+	public static boolean debug = false;
 	public Vector3 pos, vel, angle, angleVel;
 	
 	public double radius, mass;
