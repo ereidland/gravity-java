@@ -11,7 +11,7 @@ public class TriList extends Vector<Tri> {
 		add(new Tri(a, b, c));
 	}
 	public void addTri(Tri tri) {
-		addTri(tri.vert[0], tri.vert[1], tri.vert[2]);
+		addTri(new Vertex(tri.vert[0]), new Vertex(tri.vert[1]), new Vertex(tri.vert[2]));
 	}
 	public void addQuad(Vertex a, Vertex b, Vertex c, Vertex d) {
 		addTri(a, b, c);

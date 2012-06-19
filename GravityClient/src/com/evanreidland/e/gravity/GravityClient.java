@@ -41,7 +41,7 @@ public class GravityClient extends GameClient {
 		Vector3 lp = origin.plus(Vector3.fromAngle2d(0).multipliedBy(rad));
 		for ( int i = 1; i <= numPoints; i++ ) {
 			Vector3 np = origin.plus(Vector3.fromAngle2d((i/(double)numPoints)*engine.Pi2).multipliedBy(rad));
-			graphics.drawLine(lp, np, 1, 1, 1, 1, 0.5f);
+			graphics.drawLine(lp, np, 1, 1, 1, 1, 0.5);
 			lp.setAs(np);
 		}
 	}
@@ -50,7 +50,7 @@ public class GravityClient extends GameClient {
 		double speed = getDelta();
 		if ( input.getKeyState(key.KEY_1) && Game.getTime() >= nextShot ) {
 			Entity ent = ents.Create("missile");
-			ent.pos = ship.pos.plus(ship.angle.getForward().multipliedBy(0.01f));
+			ent.pos = ship.pos.plus(ship.angle.getForward().multipliedBy(0.01));
 			ent.vel = ship.vel.plus(ship.angle.getForward().multipliedBy(5));
 			nextShot = Game.getTime() + 100;
 		}
@@ -60,7 +60,7 @@ public class GravityClient extends GameClient {
 		if ( input.getKeyState(key.KEY_8) ) {
 			viewHeight -= speed;
 		}
-		if ( viewHeight < 0.01f ) viewHeight = 0.01f;
+		if ( viewHeight < 0.01 ) viewHeight = 0.01;
 		if ( viewHeight > 1 ) viewHeight = 1;
 		if ( input.getKeyState(key.KEY_SHIFT) ) {
 			speed *= 10;
@@ -125,7 +125,7 @@ public class GravityClient extends GameClient {
 		ents.list.onThink();
 		
 		graphics.camera.angle.setAs(ship.angle);//planet.pos.minus(ship.pos).getAngle());
-		graphics.camera.pos.setAs(ship.pos.plus(graphics.camera.getForward().multipliedBy(-viewHeight*2.5f)).plus(graphics.camera.getUp().multipliedBy(viewHeight)));
+		graphics.camera.pos.setAs(ship.pos.plus(graphics.camera.getForward().multipliedBy(-viewHeight*2.5)).plus(graphics.camera.getUp().multipliedBy(viewHeight)));
 	}
 
 	public void onRender() {
@@ -165,15 +165,17 @@ public class GravityClient extends GameClient {
 		planet = (Planet)ents.Create("planet");
 		
 		ship.model = shipModel;
-		ship.mass = 0.0001f;
+		ship.mass = 0.0001;
 		ship.bStatic = false;
 		ship.pos = new Vector3(200, 0, 0);
 		
 		nextShot = 0;
 		
 		planet.mass = 100;
-		planet.radius = 100;
+		planet.radius = 50;
 		planet.sprite = planetSprite;
+		planet.model = generate.Sphere(Vector3.Zero(), new Vector3(planet.radius, planet.radius, planet.radius), Vector3.Zero(), 40, 20);
+		planet.model.tex = engine.loadTexture("planet3.png");
 		planet.bStatic = true;
 		
 		ship.vel = new Vector3(0, ship.getOrbitalVelocity(ship.pos.x, planet.mass), 0);
@@ -185,7 +187,9 @@ public class GravityClient extends GameClient {
 			
 			ent.sprite = new Sprite(0, 0, engine.loadTexture("planet2.png"));
 			ent.mass = 10;
-			ent.radius = 5;
+			ent.radius = 2.5;
+			ent.model = generate.Sphere(Vector3.Zero(), new Vector3(ent.radius, ent.radius, ent.radius), Vector3.Zero(), 10, 10);
+			ent.model.tex = engine.loadTexture("planet3.png");
 			
 			double rad = (i + 1)*100;
 		
@@ -205,6 +209,8 @@ public class GravityClient extends GameClient {
 			moon.mass = moon.radius/ent.radius;
 			moon.pos = ent.pos.plus(Vector3.fromAngle2d(roll.randomDouble(0, engine.Pi2)).multipliedBy(ent.radius + roll.randomDouble(1, 5)));
 			moon.vel = ent.vel.plus(ent.pos.minus(moon.pos).getAngle().getRight().multipliedBy(moon.getOrbitalVelocity(ent)));
+			moon.model = generate.Sphere(Vector3.Zero(), new Vector3(moon.radius, moon.radius, moon.radius), Vector3.Zero(), 10, 10);
+			moon.model.tex = engine.loadTexture("planet3.png");
 		}
 		
 		ship.angle = planet.pos.minus(ship.pos).getAngle();

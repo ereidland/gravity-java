@@ -13,6 +13,7 @@ public class Ship extends Entity {
 			model.pos.setAs(pos);
 			model.angle.setAs(angle);
 			model.Render();
+		} else {
 		}
 		super.onRender();
 	}

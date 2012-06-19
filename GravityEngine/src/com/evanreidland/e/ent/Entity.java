@@ -20,7 +20,6 @@ public class Entity extends EObject {
 	}
 	
 	public void onThink() {
-		
 		State f = flags.getState("dead");
 		if ( !bStatic && (f == State.False || f == State.Undef || f == State.Either) ) {
 			pos.add(vel.multipliedBy(engine.getDelta()));

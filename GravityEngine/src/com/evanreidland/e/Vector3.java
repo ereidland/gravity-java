@@ -8,7 +8,7 @@ public class Vector3 {
 	}
 	
 	public String toRoundedString() {
-		return String.format("(%3.02d, %3.02d, %3.02d)", x, y, z);
+		return String.format("(%3.02f, %3.02f, %3.02f)", x, y, z);
 	}
 	
 	public static Vector3 Zero() {
@@ -33,6 +33,10 @@ public class Vector3 {
 	
 	public static Vector3 Projected(Vector3 right, Vector3 up, double angle) {
 		return Projected(right, up, Math.cos(angle), Math.sin(angle));
+	}
+	
+	public static Vector3 pointOnSphere(Vector3 origin, Vector3 size, double x, double y) {
+		return origin.plus(Math.cos(x)*Math.sin(y)*size.x, Math.sin(x)*Math.sin(y)*size.y, Math.cos(y)*size.z); 
 	}
 	
 	public static Vector3 normalFromPoints(Vector3 a, Vector3 b, Vector3 c) {
@@ -384,6 +388,9 @@ public class Vector3 {
 	}
 	
 	public Vector3 Rotate(Vector3 howMuch) {
+		if ( howMuch.x == 0 && howMuch.y == 0 && howMuch.z == 0 ) {
+			return this;
+		}
 		
 		Vector3 cur = cloned();
 		

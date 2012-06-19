@@ -22,10 +22,10 @@ public class engine {
 	private static double delta;
 	private static long lastTime;
 	
-	public static final double Pi = (double)Math.PI,
-							  Pi_2 = (double)(Math.PI*0.5),
-							  Pi_4 = (double)(Math.PI*0.25),
-							  Pi2 = (double)(Math.PI*2);
+	public static final double Pi = Math.PI,
+							   Pi_2 = Math.PI*0.5,
+							   Pi_4 = Math.PI*0.25,
+							   Pi2 = Math.PI*2;
 	
 	public static Game game;
 	
