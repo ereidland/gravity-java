@@ -53,7 +53,7 @@ public class Flags {
 			return matchesOther(oflags);
 		}
 		if ( oflags != null ) {
-			Object[] keySet = flags.keySet().toArray();
+			Object[] keySet = oflags.flags.keySet().toArray();
 			
 			for ( int i = 0; i < keySet.length; i++ ) {
 				if ( getState((String)keySet[i]) != oflags.getState((String)keySet[i]) ) {
@@ -61,7 +61,7 @@ public class Flags {
 				}
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	public State getState(String name) {
@@ -94,6 +94,7 @@ public class Flags {
 	
 	//Format: [symbol][code]. ! for false, empty for true and | for either. e.g.: !canFly
 	public void addFlag(String code) {
+		if ( code.length() == 0 ) return;
 		int type = 0;
 		if ( code.charAt(0) == '!' ) {
 			type = 1;
@@ -122,6 +123,11 @@ public class Flags {
 	
 	public Flags() {
 		flags = new HashMap<String, State>();
+	}
+	
+	public Flags(String state) {
+		this();
+		addFlags(state.split(" "));
 	}
 	
 	public Flags(String[] list) {

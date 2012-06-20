@@ -62,6 +62,22 @@ public class EntityList {
 		return ent;
 	}
 	
+	public Entity get(int index) {
+		return index >= 0 && index < entities.size() ? entities.get(index) : null;
+	}
+	
+	public EntityList getWithFlags(Flags flags, boolean strict) {
+		EntityList list = new EntityList();
+		for ( int i = 0; i < entities.size(); i++ ) {
+			Entity ent = entities.get(i);
+			if ( ent.matchesFlags(flags, strict) ) {
+				list.add(ent);
+			}
+		}
+		
+		return list;
+	}
+	
 	public void removeWithFlags(Flags flags, boolean strict) {
 		int i = 0;
 		
