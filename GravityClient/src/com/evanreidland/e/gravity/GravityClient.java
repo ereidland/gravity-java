@@ -40,7 +40,7 @@ public class GravityClient extends GameClient {
 	
 	long nextShot;
 	
-	double viewHeight = 0.01;
+	double viewHeight = 0.01, deltaScaling = 1;
 	
 	public void drawRing(Vector3 origin, double rad, int numPoints) {
 		Vector3 lp = origin.plus(Vector3.fromAngle2d(0).multipliedBy(rad));
@@ -67,6 +67,23 @@ public class GravityClient extends GameClient {
 		}
 		if ( viewHeight < 0.01 ) viewHeight = 0.01;
 		if ( viewHeight > 1 ) viewHeight = 1;
+		
+		if ( input.getKeyState(key.KEY_3) ) {
+			deltaScaling += getDelta()*20;
+		}
+		if ( input.getKeyState(key.KEY_2) ) {
+			deltaScaling -= getDelta()*20;
+		}
+		if ( input.getKeyState(key.KEY_N) ) {
+			deltaScaling = 1;
+		}
+		if ( deltaScaling < 0.1 ) deltaScaling = 0.1f;
+		if ( deltaScaling > 100 ) deltaScaling = 100;
+		
+		for ( int i = 0; i < ents.list.getSize(); i++ ) {
+			ents.list.get(i).relativity = deltaScaling; // For now while I test this.
+		}
+		
 		if ( input.getKeyState(key.KEY_SHIFT) ) {
 			speed *= 10;
 			if ( input.getKeyState(key.KEY_UP) ) {
@@ -100,6 +117,7 @@ public class GravityClient extends GameClient {
 				if ( input.getKeyState(key.KEY_C) ) {
 					ship.vel.setAs(0, 0, 0);
 					ship.angleVel.setAs(0, 0, 0);
+					ship.bStatic = !ship.bStatic;
 				}
 			} else {
 				if ( ship.angle.x < engine.Pi ) {
@@ -205,7 +223,7 @@ public class GravityClient extends GameClient {
 			
 			//ent.sprite = new Sprite(0, 0, engine.loadTexture("planet2.png"));
 			ent.mass = 10;
-			ent.radius = 2.5;
+			ent.radius = (ent.mass/planet.mass)*planet.radius;
 			ent.angleVel = Vector3.RandomNormal().multipliedBy(0.5);
 			ent.flags.setState("draworbit", true);
 			
@@ -241,14 +259,14 @@ public class GravityClient extends GameClient {
 		num = 100;
 		for ( int i = 0; i < num; i++ ) {
 			Planet ent = (Planet)ents.Create("planet");
-			ent.radius = roll.randomDouble(0.2, 0.5);
-			ent.mass = ent.radius*0.25;
-			ent.pos = Vector3.fromAngle2d((i/(double)num)*engine.Pi2).multipliedBy(roll.randomDouble(1000, 1200));
+			ent.mass = roll.randomDouble(1, 2);
+			ent.radius = (ent.mass/planet.mass)*planet.radius;
+			ent.pos = Vector3.fromAngle2d((i/(double)num)*engine.Pi2).multipliedBy(roll.randomDouble(1200, 1300));
 			ent.angleVel = Vector3.RandomNormal().multipliedBy(0.5);
-			ent.vel = planet.pos.minus(ent.pos).getRight().multipliedBy(ent.getOrbitalVelocity(planet));
+			ent.vel = ent.pos.minus(planet.pos).getRight().multipliedBy(ent.getOrbitalVelocity(planet));
 			ent.bStatic = false;
 			
-			model = generate.Sphere(Vector3.Zero(), new Vector3(ent.radius, ent.radius, ent.radius), Vector3.Zero(), 4, 4);
+			model = generate.Sphere(Vector3.Zero(), new Vector3(ent.radius, ent.radius, ent.radius), Vector3.Zero(), 6, 5);
 			model.tex = engine.loadTexture("asteroid1.png");
 			graphics.scene.addObject(new ModelSceneObject(model), ent);
 		}

@@ -15,6 +15,8 @@ public class Entity extends EObject {
 	
 	public EventList events;
 	
+	public double relativity; // Possibly going to change visibility and make this a properly used variable.
+	
 	public void Kill() {
 		flags.setState("dead", State.True);
 	}
@@ -22,8 +24,8 @@ public class Entity extends EObject {
 	public void onThink() {
 		State f = flags.getState("dead");
 		if ( !bStatic && (f == State.False || f == State.Undef || f == State.Either) ) {
-			pos.add(vel.multipliedBy(engine.getDelta()));
-			angle.add(angleVel.multipliedBy(engine.getDelta()));
+			pos.add(vel.multipliedBy(engine.getDelta()*relativity));
+			angle.add(angleVel.multipliedBy(engine.getDelta()*relativity));
 			angle.clipAngle();
 		}
 	}
@@ -53,7 +55,7 @@ public class Entity extends EObject {
 	
 	public void applyGravity(Vector3 source, double sourceMass, double delta) {
 		if ( mass != 0 ) {
-			vel.add(source.minus(pos).getNormal().multiply((getGravity(source, sourceMass)*delta)/mass));
+			vel.add(source.minus(pos).getNormal().multiply((getGravity(source, sourceMass)*delta*relativity)/mass));
 		}
 	}
 	
@@ -83,6 +85,7 @@ public class Entity extends EObject {
 		angle = Vector3.Zero();
 		angleVel = Vector3.Zero();
 		bStatic = false;
+		relativity = 1;
 		
 		flags.setState("dead", State.False);
 	}
