@@ -222,7 +222,7 @@ public class GravityClient extends GameClient {
 		
 		planet.angleVel = Vector3.RandomNormal().multipliedBy(0.5);
 		
-		planetSprite.width = planetSprite.height = planet.radius*3;
+		planetSprite.width = planetSprite.height = planet.radius*4;
 		graphics.scene.addObject(new BillboardSceneObject(planetSprite, true), planet, SceneObject.AnchorType.POS);
 		
 		ship.vel = new Vector3(0, ship.getOrbitalVelocity(ship.pos.x, planet.mass), 0);
@@ -282,7 +282,7 @@ public class GravityClient extends GameClient {
 			graphics.scene.addObject(new ModelSceneObject(model), ent);
 		}
 		
-		num = 5;
+		num = 50;
 		for ( int i = 0; i < num; i++ ) {
 			Entity ent = ents.Create("enemy");
 			ent.pos.setAs(planet.pos.plus(Vector3.fromAngle2d((i/(double)num)*engine.Pi2).multipliedBy(250)));

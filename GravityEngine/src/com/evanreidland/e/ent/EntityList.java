@@ -159,7 +159,6 @@ public class EntityList {
 					data.ent = ent;
 					data.origin.setAs(origin);
 				}
-				System.out.println(len);
 			}
 		}
 		return data;
