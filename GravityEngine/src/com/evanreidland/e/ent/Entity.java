@@ -11,7 +11,7 @@ public class Entity extends EObject {
 	
 	public double radius, mass;
 	
-	public boolean bStatic;
+	public boolean bStatic, bSpawned;
 	
 	public EventList events;
 	
@@ -21,6 +21,13 @@ public class Entity extends EObject {
 		flags.setState("dead", State.True);
 	}
 	
+	public boolean isAlive() {
+		return flags.getState("dead") == State.False;
+	}
+	public boolean isDead() {
+		return flags.getState("dead") == State.True;
+	}
+	
 	public void onThink() {
 		State f = flags.getState("dead");
 		if ( !bStatic && (f == State.False || f == State.Undef || f == State.Either) ) {
@@ -28,6 +35,10 @@ public class Entity extends EObject {
 			angle.add(angleVel.multipliedBy(engine.getDelta()*relativity));
 			angle.clipAngle();
 		}
+	}
+	
+	public void onDie() {
+		
 	}
 	
 	public double getOrbitalVelocity(double distance, double sourceMass) {
@@ -63,6 +74,8 @@ public class Entity extends EObject {
 		applyGravity(other.pos, other.mass, delta);
 	}
 	
+	
+	// Possibly going to remove this. If something should be rendered, it should use a SceneObject.
 	public void onRender() {
 		if ( debug ) {
 			graphics.unbindTexture();
@@ -75,7 +88,21 @@ public class Entity extends EObject {
 		
 	}
 	public void Spawn() {
+		bSpawned = true;
+		onSpawn();
+	}
+	
+	public void onSpawn() {
 		
+	}
+	
+	//Potential break. I'm not sure I like this, but it's useful.
+	public void Setup(Object[] args) {
+		
+	}
+	
+	protected Object getArg(Object[] args, int index, Object def) {
+		return index >= 0 && index < args.length ? args[index] : def;
 	}
 	
 	public Entity(String className, long id) {

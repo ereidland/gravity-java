@@ -142,6 +142,19 @@ public class GLGraphicsManager extends GraphicsManager {
 	public void endTranslation() {
 		GL11.glPopMatrix();
 	}
+	
+	public void setClipping(double x, double y, double width, double height) {
+		GL11.glEnable(GL11.GL_SCISSOR_TEST);
+		int ix = graphics.toPixelX(x),
+			iy = graphics.toPixelY(y),
+			iwidth = graphics.toPixelX(width),
+			iheight = graphics.toPixelY(height);
+		GL11.glScissor(ix, iy, iwidth, iheight);
+	}
+
+	public void endClipping() {
+		GL11.glDisable(GL11.GL_SCISSOR_TEST);
+	}
 
 	public void endFrame() {
 		vbo.drawBuffer();

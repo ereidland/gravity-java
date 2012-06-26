@@ -6,6 +6,9 @@ public class Setting {
 	public String getName() {
 		return name;
 	}
+	public boolean isDefined() {
+		return !name.equals("!null");
+	}
 	public double asDouble(double def) {
 		try {
 			return Double.valueOf(value);
@@ -22,11 +25,13 @@ public class Setting {
 	}
 	
 	public boolean asBool(boolean def) {
-		try {
-			return Boolean.valueOf(value);
-		} catch ( Exception e ) {
-			return def;
+		if ( isDefined() && value.length() > 0 ) {
+			return (value.toLowerCase().equals("true") || value.equals("1")) ? true
+				: (value.toLowerCase().equals("false") || value.equals("0")) ? false
+				: def;
+					
 		}
+		return def;
 	}
 	
 	public double asDouble() {

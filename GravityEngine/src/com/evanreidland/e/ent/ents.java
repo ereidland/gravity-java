@@ -64,6 +64,22 @@ public class ents {
 		return factory != null ? factory.CreateForced(forcedID) : null;
 	}
 	
+	public static Entity Create(String className, Object[] args) {
+		Entity ent = Create(className);
+		if ( ent != null ) {
+			ent.Setup(args);
+		}
+		return ent;
+	}
+	
+	public static Entity createWithID(String className, long forcedID, Object[] args) {
+		Entity ent = createWithID(className, forcedID);
+		if ( ent != null ) {
+			ent.Setup(args);
+		}
+		return ent;
+	}
+	
 	
 	public static SearchData traceToNearest(Vector3 start, Vector3 end, double radius, Flags flags) {
 		return list != null ? list.traceToNearest(start, end, radius, flags) : new SearchData();

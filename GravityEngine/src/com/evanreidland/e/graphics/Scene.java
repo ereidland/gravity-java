@@ -14,36 +14,39 @@ public class Scene extends SceneObject {
 	public int getObjectCount() {
 		return objects.size();
 	}
-	public void addObject(SceneObject object) {
+	public SceneObject addObject(SceneObject object) {
 		double dist = object.calcRoughDistance();
 		for ( int i = 0; i < objects.size(); i++ ) {
 			double otherDist = objects.get(i).getRoughDistance();
 			if ( dist > otherDist ) {
 				objects.insertElementAt(object, i);
-				return;
+				return object;
 			}
 		}
 		objects.add(object);
+		return object;
 	}
 	
-	public void addObject(SceneObject object, Entity parent, AnchorType anchorType) {
+	public SceneObject addObject(SceneObject object, Entity parent, AnchorType anchorType) {
 		addObject(object);
 		object.setParentEntity(parent);
 		object.anchorType = anchorType;
+		return object;
 	}
 	
-	public void addObject(SceneObject object, Entity parent) {
-		addObject(object, parent, AnchorType.POS_ANGLE);
+	public SceneObject addObject(SceneObject object, Entity parent) {
+		return addObject(object, parent, AnchorType.POS_ANGLE);
 	}
 	
-	public void addObject(SceneObject object, SceneObject parent, AnchorType anchorType) {
+	public SceneObject addObject(SceneObject object, SceneObject parent, AnchorType anchorType) {
 		parent.child.addObject(object);
 		object.setParentObject(parent);
 		object.anchorType = anchorType;
+		return object;
 	}
 	
-	public void addObject(SceneObject object, SceneObject parent) {
-		addObject(object, parent, AnchorType.POS_ANGLE);
+	public SceneObject addObject(SceneObject object, SceneObject parent) {
+		return addObject(object, parent, AnchorType.POS_ANGLE);
 	}
 	
 	public void Position() {

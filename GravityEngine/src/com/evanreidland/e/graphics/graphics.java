@@ -205,4 +205,22 @@ public class graphics {
 			graphicsManager.drawLine(pos1, pos2, width, r, g, b, a);
 		}
 	}
+	
+	public static void setClipping(double x, double y, double width, double height) {
+		if ( graphicsManager != null ) {
+			graphicsManager.setClipping(x, y, width, height);
+		}
+	}
+	public static void endClipping() {
+		if ( graphicsManager != null ) {
+			graphicsManager.endClipping();
+		}
+	}
+	
+	public static int toPixelX(double screenX) {
+		return (int)((screenX/camera.width) + 0.5);
+	}
+	public static int toPixelY(double screenY) {
+		return (int)((screenY/camera.height) + 0.5);
+	}
 }

@@ -186,6 +186,7 @@ public class GravityClient extends GameClient {
 	
 	public void registerEntities() {
 		ents.Register("missile", TestInterceptor.class);
+		ents.Register("explosion", Explosion.class);
 	}
 	
 	public void createEntities() {

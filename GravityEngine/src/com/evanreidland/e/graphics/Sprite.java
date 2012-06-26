@@ -12,9 +12,6 @@ public class Sprite {
 	public double cr, cg, cb, ca;
 	
 	public void renderBillboard(boolean type) {
-		double w2 = width*0.5;
-		double h2 = height*0.5;
-		
 		Vertex a = new Vertex(), b = new Vertex(), c = new Vertex(), d = new Vertex();
 		
 		a.tx = 0; a.ty = 0;
@@ -22,14 +19,17 @@ public class Sprite {
 		c.tx = 1; c.ty = 1;
 		d.tx = 0; d.ty = 1;
 		
-		Vector3 newAngle = type ? graphics.camera.pos.minus(pos).getAngle().plus(angle) : graphics.forward.getAngle().plus(angle);
+		Vector3 newAngle = type ? graphics.camera.pos.minus(pos).getAngle() : graphics.forward.getAngle();
 		
-		Vector3 up = newAngle.getUp(), right = newAngle.getRight();
+		newAngle.add(angle.multipliedBy(1, 0, 1));
 		
-		a.pos.setAs(pos.plus(up.multipliedBy(-h2).plus(right.multipliedBy(-w2))));
-		b.pos.setAs(pos.plus(up.multipliedBy(-h2).plus(right.multipliedBy(w2))));
-		c.pos.setAs(pos.plus(up.multipliedBy(h2).plus(right.multipliedBy(w2))));
-		d.pos.setAs(pos.plus(up.multipliedBy(h2).plus(right.multipliedBy(-w2))));
+		Vector3 up = newAngle.getUp().multipliedBy(width*0.5), right = newAngle.getRight().multipliedBy(width*0.5);
+		
+		
+		a.pos.setAs(pos.plus(Vector3.Projected(right, up, angle.y + engine.Pi_2 + engine.Pi_4)));
+		b.pos.setAs(pos.plus(Vector3.Projected(right, up, angle.y + engine.Pi_4)));
+		c.pos.setAs(pos.plus(Vector3.Projected(right, up, angle.y - engine.Pi_4)));
+		d.pos.setAs(pos.plus(Vector3.Projected(right, up, angle.y - engine.Pi_2 - engine.Pi_4)));
 		
 		a.r = cr; a.g = cg; a.b = cb; a.a = ca;
 		b.r = cr; b.g = cg; b.b = cb; b.a = ca;
@@ -51,8 +51,8 @@ public class Sprite {
 		c.tx = 0; c.ty = 1;
 		d.tx = 1; d.ty = 1;
 		
-		Vector3 right = new Vector3((double)Math.cos(angle.z), (double)Math.sin(angle.z), 0),
-				up = new Vector3((double)Math.cos(angle.z + engine.Pi_2), (double)Math.sin(angle.z + engine.Pi_2), 0);
+		Vector3 right = new Vector3((double)Math.cos(angle.y), (double)Math.sin(angle.y), 0),
+				up = new Vector3((double)Math.cos(angle.y + engine.Pi_2), (double)Math.sin(angle.y + engine.Pi_2), 0);
 		
 		a.pos.setAs(pos.plus(up.multipliedBy(h2).plus(right.multipliedBy(w2))));
 		b.pos.setAs(pos.plus(up.multipliedBy(h2).plus(right.multipliedBy(-w2))));

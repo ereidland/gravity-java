@@ -28,7 +28,11 @@ public abstract class GraphicsManager {
 	public abstract void drawLine(Vector3 pos1, Vector3 pos2, double width, double r, double g, double b, double a);
 	
 	public abstract void putTranslation(Vector3 offset, Vector3 scale, Vector3 angle);
+	
 	public abstract void endTranslation();
+	
+	public abstract void setClipping(double x, double y, double width, double height);
+	public abstract void endClipping();
 	
 	public abstract void endFrame();
 }

@@ -82,8 +82,10 @@ public class EntityList {
 		int i = 0;
 		
 		while ( i < entities.size() ) {
-			if ( entities.get(i).matchesFlags(flags, strict) ) {
+			Entity ent = entities.get(i);
+			if ( ent.matchesFlags(flags, strict) ) {
 				entities.remove(i);
+				ent.onDie();
 			} else {
 				i++;
 			}
