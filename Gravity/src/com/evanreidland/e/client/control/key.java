@@ -54,7 +54,7 @@ public final class key {
 	public static final int KEY_SPACE = Keyboard.KEY_SPACE;
 	public static final int KEY_SHIFT = Keyboard.KEY_LSHIFT;
 	public static final int KEY_CONTROL = Keyboard.KEY_LCONTROL;
-	public static final int KEY_ESCAPE = 4;
+	public static final int KEY_ESCAPE = 254;
 	public static final int KEY_ENTER = Keyboard.KEY_RETURN;
 	
 	public static final int KEY_QUOTE = Keyboard.KEY_APOSTROPHE;

@@ -54,9 +54,16 @@ public class GravityClient extends GameClient {
 	public void onUpdate() {
 		double speed = getDelta();
 		if ( input.getKeyState(key.KEY_1) && Game.getTime() >= nextShot ) {
-			Entity ent = ents.Create("missile");
-			ent.pos = ship.pos.plus(ship.angle.getForward().multipliedBy(0.01));
-			ent.vel = ship.vel.plus(ship.angle.getForward().multipliedBy(5));
+			Entity ent = ents.Create("missile",
+					new Object[] {
+						ship.pos.plus(ship.angle.getForward().multipliedBy(0.01)),
+						ship.vel.plus(ship.angle.getForward().multipliedBy(2)),
+						false,
+						null,
+						1d,
+						10d,
+					});
+			ent.Spawn();
 			nextShot = Game.getTime() + 100;
 		}
 		if ( input.getKeyState(key.KEY_9) ) {
@@ -187,6 +194,7 @@ public class GravityClient extends GameClient {
 	public void registerEntities() {
 		ents.Register("missile", TestInterceptor.class);
 		ents.Register("explosion", Explosion.class);
+		ents.Register("enemy", TestEnemy.class);
 	}
 	
 	public void createEntities() {
@@ -197,6 +205,8 @@ public class GravityClient extends GameClient {
 		ship.mass = 0.0001;
 		ship.bStatic = false;
 		ship.pos = new Vector3(150, 0, 0);
+		ship.flags.setState("player", true);
+		ship.flags.setState("targetable", true);
 		
 		nextShot = 0;
 		
@@ -270,6 +280,15 @@ public class GravityClient extends GameClient {
 			model = generate.Sphere(Vector3.Zero(), new Vector3(ent.radius, ent.radius, ent.radius), Vector3.Zero(), 6, 5);
 			model.tex = engine.loadTexture("asteroid1.png");
 			graphics.scene.addObject(new ModelSceneObject(model), ent);
+		}
+		
+		num = 5;
+		for ( int i = 0; i < num; i++ ) {
+			Entity ent = ents.Create("enemy");
+			ent.pos.setAs(planet.pos.plus(Vector3.fromAngle2d((i/(double)num)*engine.Pi2).multipliedBy(250)));
+			ent.pos.minus(planet.pos).getRight().multipliedBy(ent.getOrbitalVelocity(planet));
+			ent.mass = 0.0001;
+			ent.Spawn();
 		}
 		
 		ship.angle = planet.pos.minus(ship.pos).getAngle();

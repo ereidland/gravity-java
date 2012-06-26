@@ -125,13 +125,11 @@ public class EntityList {
 		for ( int i = 0; i < entities.size(); i++ ) {
 			Entity ent = entities.get(i);
 			
-			if ( flags == null || ent.matchesFlags(flags, false) ) {
+			if ( flags == null || ent.matchesFlags(flags, true) ) {
 				Vector3 nearPos = line.nearestPoint(ent.pos);
 				if ( nearPos.minus(ent.pos).getLength2d() <= ent.radius + radius ) {
-					System.out.println("Possible match:" + ent.getID());
 					double len = ent.pos.minus(start).getLength2d() - (ent.radius + radius);
 					if ( !data.isPositive || len < data.length ) {
-						System.out.println("Match:" + ent.getID());
 						data.length = len;
 						data.isPositive = true;
 						data.ent = ent;
@@ -148,7 +146,7 @@ public class EntityList {
 		for ( int i = 0; i < entities.size(); i++ ) {
 			Entity ent = entities.get(i);
 			
-			if ( flags != null && !ent.matchesFlags(flags, false) ) {
+			if ( flags != null && !ent.matchesFlags(flags, true) ) {
 				continue;
 			}
 			
@@ -161,6 +159,7 @@ public class EntityList {
 					data.ent = ent;
 					data.origin.setAs(origin);
 				}
+				System.out.println(len);
 			}
 		}
 		return data;

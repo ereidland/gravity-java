@@ -58,6 +58,19 @@ public class GUI {
 		}
 	}
 	
+	public void layoutObject(GUIObject object) {
+		
+	}
+	
+	public void Layout() {
+		for ( int i = 0; i < objects.size(); i++ ) {
+			GUIObject object = objects.get(i);
+			if ( object.parent != null ) {
+				//TODO code.
+			}
+		}
+	}
+	
 	public GUI() {
 		objects = new Vector<GUIObject>();
 		objectsMap = new HashMap<String, GUIObject>();

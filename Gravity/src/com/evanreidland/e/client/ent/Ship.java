@@ -9,12 +9,12 @@ public class Ship extends Entity {
 		super.onThink();
 	}
 	public void onRender() {
-		if ( model != null ) {
-			model.pos.setAs(pos);
-			model.angle.setAs(angle);
-			model.Render();
-		} else {
-		}
+//		if ( model != null ) {
+//			model.pos.setAs(pos);
+//			model.angle.setAs(angle);
+//			model.Render();
+//		} else {
+//		}
 		super.onRender();
 	}
 	public Ship(long id) {
