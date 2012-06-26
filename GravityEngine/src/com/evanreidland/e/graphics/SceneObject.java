@@ -9,6 +9,7 @@ public abstract class SceneObject {
 		POS,
 		POS_ANGLE,
 	}
+	public boolean zOrder = false;
 	public Vector3 pos, angle, offset, angleOffset;
 	private double roughDistance;
 	
@@ -88,6 +89,7 @@ public abstract class SceneObject {
 		anchorType = AnchorType.NONE;
 		child = new Scene();
 		child.setParentObject(this);
+		zOrder = true;
 	}
 	
 	public SceneObject(boolean initChild) {
@@ -95,6 +97,7 @@ public abstract class SceneObject {
 		angle = Vector3.Zero();
 		roughDistance = -1;
 		anchorType = AnchorType.NONE;
+		zOrder = false;
 		if ( initChild ) {
 			child = new Scene();
 			child.setParentObject(this);

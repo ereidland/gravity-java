@@ -14,17 +14,23 @@ public class Scene extends SceneObject {
 	public int getObjectCount() {
 		return objects.size();
 	}
-	public SceneObject addObject(SceneObject object) {
-		double dist = object.calcRoughDistance();
-		for ( int i = 0; i < objects.size(); i++ ) {
-			double otherDist = objects.get(i).getRoughDistance();
-			if ( dist > otherDist ) {
-				objects.insertElementAt(object, i);
-				return object;
+	public SceneObject addObject(SceneObject object, boolean order) {
+		if ( order ) {
+			double dist = object.calcRoughDistance();
+			for ( int i = 0; i < objects.size(); i++ ) {
+				double otherDist = objects.get(i).getRoughDistance();
+				if ( dist > otherDist ) {
+					objects.insertElementAt(object, i);
+					return object;
+				}
 			}
 		}
 		objects.add(object);
 		return object;
+	}
+	
+	public SceneObject addObject(SceneObject object) {
+		return addObject(object, true);
 	}
 	
 	public SceneObject addObject(SceneObject object, Entity parent, AnchorType anchorType) {
@@ -55,6 +61,7 @@ public class Scene extends SceneObject {
 		}
 	}
 	public void Render() {
+		if ( objects.size() == 0 ) return;
 		if ( autoRemove ) {
 			bringOutTheDead();
 		}
@@ -71,12 +78,33 @@ public class Scene extends SceneObject {
 	
 	public void Order() {
 		Vector<SceneObject> currentObjects = new Vector<SceneObject>(objects);
+		Vector<SceneObject> orderedObjects = new Vector<SceneObject>();
 		
 		objects = new Vector<SceneObject>();
 		for ( int i = 0; i < currentObjects.size(); i++ ) {
 			SceneObject object = currentObjects.get(i);
-			addObject(object);
 			object.Order();
+			if ( object.zOrder ) {
+				boolean added = false;
+				double dist = object.calcRoughDistance();
+				for ( int j = 0; j < orderedObjects.size(); j++ ) {
+					double otherDist = orderedObjects.get(j).getRoughDistance();
+					if ( dist > otherDist ) {
+						orderedObjects.insertElementAt(object, j);
+						added = true;
+						break;
+					}
+				}
+				if ( !added ) {
+					orderedObjects.add(object);
+				}
+			} else {
+				objects.add(object);
+			}
+		}
+		
+		for ( int i = 0; i < orderedObjects.size(); i++ ) {
+			objects.add(orderedObjects.get(i));
 		}
 	}
 	

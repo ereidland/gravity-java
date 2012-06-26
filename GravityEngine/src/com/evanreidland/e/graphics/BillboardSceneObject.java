@@ -15,6 +15,7 @@ public class BillboardSceneObject extends SceneObject {
 	public BillboardSceneObject(Sprite sprite, boolean type) {
 		this.sprite = sprite;
 		this.type = type;
+		this.zOrder = true;
 	}
 
 }
