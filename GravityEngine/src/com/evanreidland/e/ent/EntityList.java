@@ -10,11 +10,12 @@ import com.evanreidland.e.phys.Line;
 public class EntityList {
 	private Vector<Entity> entities;
 	private HashMap<Long, Entity> entMap;
+	public double ignoreThreshold = 0.001;
 	
 	public void simulateGravity(double delta) {
 		for ( int i = 0; i < entities.size(); i++ ) {
 			Entity ent = entities.get(i);
-			if ( !ent.bStatic ) {
+			if ( !ent.bStatic && Math.abs(ent.mass) > ignoreThreshold ) {
 				for ( int j = 0; j < entities.size(); j++ ) {
 					if ( i == j ) continue;
 					Entity other = entities.get(j);

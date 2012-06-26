@@ -282,7 +282,7 @@ public class GravityClient extends GameClient {
 			graphics.scene.addObject(new ModelSceneObject(model), ent);
 		}
 		
-		num = 50;
+		num = 10;
 		for ( int i = 0; i < num; i++ ) {
 			Entity ent = ents.Create("enemy");
 			ent.pos.setAs(planet.pos.plus(Vector3.fromAngle2d((i/(double)num)*engine.Pi2).multipliedBy(250)));
