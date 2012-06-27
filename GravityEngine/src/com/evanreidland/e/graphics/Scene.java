@@ -7,7 +7,7 @@ import com.evanreidland.e.ent.Entity;
 
 // Potential break. Maybe SceneObjects should use an ID system so that they can't add recursively?
 public class Scene extends SceneObject {
-	private Vector<SceneObject> objects;
+	private Vector<SceneObject> objects, orderedObjects;
 	
 	public boolean autoRemove, autoPosition, autoOrder;
 	
@@ -17,15 +17,17 @@ public class Scene extends SceneObject {
 	public SceneObject addObject(SceneObject object, boolean order) {
 		if ( order ) {
 			double dist = object.calcRoughDistance();
-			for ( int i = 0; i < objects.size(); i++ ) {
-				double otherDist = objects.get(i).getRoughDistance();
+			for ( int i = 0; i < orderedObjects.size(); i++ ) {
+				double otherDist = orderedObjects.get(i).getRoughDistance();
 				if ( dist > otherDist ) {
-					objects.insertElementAt(object, i);
+					orderedObjects.insertElementAt(object, i);
 					return object;
 				}
 			}
+			orderedObjects.add(object);
+		} else {
+			objects.add(object);
 		}
-		objects.add(object);
 		return object;
 	}
 	
@@ -59,9 +61,13 @@ public class Scene extends SceneObject {
 		for ( int i = 0; i < objects.size(); i++ ) {
 			objects.get(i).Position();
 		}
+		
+		for ( int i = 0; i < orderedObjects.size(); i++ ) {
+			orderedObjects.get(i).Position();
+		}
 	}
 	public void Render() {
-		if ( objects.size() == 0 ) return;
+		if ( objects.size() == 0 && orderedObjects.size() == 0 ) return;
 		if ( autoRemove ) {
 			bringOutTheDead();
 		}
@@ -74,37 +80,52 @@ public class Scene extends SceneObject {
 		for ( int i = 0; i < objects.size(); i++ ) {
 			objects.get(i).Render();
 		}
+		for ( int i = 0; i < orderedObjects.size(); i++ ) {
+			orderedObjects.get(i).Render();
+		}
 	}
 	
 	public void Order() {
-		Vector<SceneObject> currentObjects = new Vector<SceneObject>(objects);
-		Vector<SceneObject> orderedObjects = new Vector<SceneObject>();
 		
-		objects = new Vector<SceneObject>();
-		for ( int i = 0; i < currentObjects.size(); i++ ) {
+		int i = 0;
+		while ( i < objects.size() ) {
+			SceneObject object = objects.get(i);
+			if ( object.zOrder ) {
+				objects.remove(i);
+				orderedObjects.add(object);
+			} else {
+				i++;
+			}
+		}
+		
+		Vector<SceneObject> currentObjects = new Vector<SceneObject>(orderedObjects);
+		Vector<SceneObject> newOrderedObjects = new Vector<SceneObject>();
+		
+		for ( i = 0; i < currentObjects.size(); i++ ) {
 			SceneObject object = currentObjects.get(i);
 			object.Order();
 			if ( object.zOrder ) {
 				boolean added = false;
 				double dist = object.calcRoughDistance();
-				for ( int j = 0; j < orderedObjects.size(); j++ ) {
-					double otherDist = orderedObjects.get(j).getRoughDistance();
+				for ( int j = 0; j < newOrderedObjects.size(); j++ ) {
+					double otherDist = newOrderedObjects.get(j).getRoughDistance();
 					if ( dist > otherDist ) {
-						orderedObjects.insertElementAt(object, j);
+						newOrderedObjects.insertElementAt(object, j);
 						added = true;
 						break;
 					}
 				}
 				if ( !added ) {
-					orderedObjects.add(object);
+					newOrderedObjects.add(object);
 				}
 			} else {
 				objects.add(object);
 			}
 		}
 		
-		for ( int i = 0; i < orderedObjects.size(); i++ ) {
-			objects.add(orderedObjects.get(i));
+		orderedObjects = new Vector<SceneObject>();
+		for ( i = 0; i < newOrderedObjects.size(); i++ ) {
+			orderedObjects.add(newOrderedObjects.get(i));
 		}
 	}
 	
@@ -118,15 +139,28 @@ public class Scene extends SceneObject {
 				}
 			}
 		}
-		
 		for ( int i = 0; i < dead.size(); i++ ) {
 			objects.remove(dead.get(i));
+		}
+		
+		dead.clear();
+		for ( int i = 0; i < orderedObjects.size(); i++ ) {
+			SceneObject object = orderedObjects.get(i);
+			if ( object.getParentEntity() != null ) {
+				if ( object.getParentEntity().flags.getState("dead") == State.True ) {
+					dead.add(object);
+				}
+			}
+		}
+		for ( int i = 0; i < dead.size(); i++ ) {
+			orderedObjects.remove(dead.get(i));
 		}
 	}
 	
 	public Scene() {
 		super(false);
 		objects = new Vector<SceneObject>();
+		orderedObjects = new Vector<SceneObject>();
 		autoRemove = true;
 		autoPosition = true;
 		autoOrder = true;
