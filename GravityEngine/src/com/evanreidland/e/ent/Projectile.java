@@ -12,7 +12,7 @@ public class Projectile extends Entity {
 		origin = Vector3.Zero();
 		radius = range = 1;
 		
-		flags.addFlags(eflags.projectile);
+		flags.add(eflags.projectile);
 	}
 
 }

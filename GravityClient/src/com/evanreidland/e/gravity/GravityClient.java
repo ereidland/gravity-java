@@ -242,6 +242,10 @@ public class GravityClient extends GameClient {
 			model.tex = engine.loadTexture("planet3.png");
 			graphics.scene.addObject(new ModelSceneObject(model), ent);
 			
+			Sprite sprite = new Sprite(0, 0, engine.loadTexture("glow2.png"));
+			sprite.width = sprite.height = ent.radius*4;
+			graphics.scene.addObject(new BillboardSceneObject(sprite, true), ent, SceneObject.AnchorType.POS);
+			
 			double rad = (i + 2)*100;
 		
 			ent.bStatic = false;
@@ -267,12 +271,12 @@ public class GravityClient extends GameClient {
 			graphics.scene.addObject(new ModelSceneObject(model), moon);
 		}
 		
-		num = 100;
+		num = 250;
 		for ( int i = 0; i < num; i++ ) {
 			Planet ent = (Planet)ents.Create("planet");
-			ent.mass = roll.randomDouble(1, 2);
-			ent.radius = (ent.mass/planet.mass)*planet.radius;
-			ent.pos = Vector3.fromAngle2d((i/(double)num)*engine.Pi2).multipliedBy(roll.randomDouble(1200, 1300));
+			ent.mass = roll.randomDouble(0.0005, 0.001);
+			ent.radius = (ent.mass/planet.mass)*planet.radius*1000; 
+			ent.pos = Vector3.fromAngle2d((i/(double)num)*engine.Pi2).multipliedBy(roll.randomDouble(500, 600));
 			ent.angleVel = Vector3.RandomNormal().multipliedBy(0.5);
 			ent.vel = ent.pos.minus(planet.pos).getRight().multipliedBy(ent.getOrbitalVelocity(planet));
 			ent.bStatic = false;

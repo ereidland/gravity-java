@@ -34,8 +34,12 @@ public class TestInterceptor extends Entity {
 		}
 		
 		if ( target != null ) {
-			Vector3 targetVel = target.minus(pos).Normalize().multipliedBy(thrust);
-			vel.add(targetVel.minus(vel).Normalize().multipliedBy(Game.getDelta()*10));
+			if ( target.minus(pos).getLength() < radius ) {
+				Kill();
+			} else {
+				Vector3 targetVel = target.minus(pos).Normalize().multipliedBy(thrust);
+				vel.add(targetVel.minus(vel).Normalize().multipliedBy(Game.getDelta()*10));
+			}
 		}
 		
 		angle = vel.getAngle();
@@ -86,5 +90,6 @@ public class TestInterceptor extends Entity {
 		
 		force = 10;
 		thrust = 1; // Not relative to mass.
+		radius = 5;
 	}
 }

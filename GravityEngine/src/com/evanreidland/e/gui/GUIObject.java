@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import com.evanreidland.e.Settings;
 import com.evanreidland.e.Vector3;
+import com.evanreidland.e.graphics.Quad;
 import com.evanreidland.e.phys.Rect3;
 
 public class GUIObject {
@@ -68,6 +69,18 @@ public class GUIObject {
 		return false;
 	}
 	public void onType(char key) {
+	}
+	
+	public void renderQuadOnRect(Quad quad, Rect3 rect) {
+		quad.vert[0].pos = rect.topLeft();
+		quad.vert[1].pos = rect.topRight();
+		quad.vert[2].pos = rect.bottomRight();
+		quad.vert[3].pos = rect.bottomLeft();
+		quad.pass();
+	}
+	
+	public void renderQuadOnRect(Quad quad) {
+		renderQuadOnRect(quad, rect);
 	}
 	
 	

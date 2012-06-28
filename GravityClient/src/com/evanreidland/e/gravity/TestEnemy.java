@@ -40,16 +40,13 @@ public class TestEnemy extends Entity {
 	}
 	
 	public void onSpawn() {
-		Model model = generate.Sphere(Vector3.Zero(), new Vector3(1, 1, 2), Vector3.Zero(), 20, 20);
+		Model model = generate.Sphere(Vector3.Zero(), new Vector3(0.01, 0.01, 0.02), Vector3.Zero(), 10, 10);
 		model.tex = engine.loadTexture("shiptest1.png");
 		graphics.scene.addObject(new ModelSceneObject(model), this);
 	}
 
 	public TestEnemy(long id) {
 		super("enemy", id);
-		
-		flags.setState("enemy", true);
-		flags.setState("targetable", true);
 		
 		bStatic = false;
 		mass = 0.00001;

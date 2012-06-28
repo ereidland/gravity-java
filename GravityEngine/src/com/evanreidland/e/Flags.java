@@ -93,31 +93,35 @@ public class Flags {
 	}
 	
 	//Format: [symbol][code]. ! for false, empty for true and | for either. e.g.: !canFly
-	public void addFlag(String code) {
-		if ( code.length() == 0 ) return;
-		int type = 0;
-		if ( code.charAt(0) == '!' ) {
-			type = 1;
-		} else if ( code.charAt(0) == '|' ) {
-			type = 2;
+	public void add(String code) {
+		if ( code.contains(" ") ) {
+			add(code.split(" "));
+		} else {
+			if ( code.length() == 0 ) return;
+			int type = 0;
+			if ( code.charAt(0) == '!' ) {
+				type = 1;
+			} else if ( code.charAt(0) == '|' ) {
+				type = 2;
+			}
+			
+			setState(type > 0 ? code.substring(1, code.length()) : code, type == 0 ? State.True : type == 1 ? State.False : State.Either );
 		}
-		
-		setState(type > 0 ? code.substring(1, code.length()) : code, type == 0 ? State.True : type == 1 ? State.False : State.Either );
 	}
 	
-	public void addFlags(String[] codes) {
+	public void add(String[] codes) {
 		for ( int i = 0; i < codes.length; i++ ) {
-			addFlag(codes[i]);
+			add(codes[i]);
 		}
 	}
 	
-	public void addFlags(Flags other) {
-		addFlags(other.getFlagCodes());
+	public void add(Flags other) {
+		add(other.getFlagCodes());
 	}
 	
-	public void addFlags(Flags[] flags) {
+	public void add(Flags[] flags) {
 		for ( int i = 0; i < flags.length; i++ ) {
-			addFlags(flags[i]);
+			add(flags[i]);
 		}
 	}
 	
@@ -127,16 +131,16 @@ public class Flags {
 	
 	public Flags(String state) {
 		this();
-		addFlags(state.split(" "));
+		add(state.split(" "));
 	}
 	
 	public Flags(String[] list) {
 		this();
-		addFlags(list);
+		add(list);
 	}
 	
 	public Flags(Flags[] flags) {
 		this();
-		addFlags(flags);
+		add(flags);
 	}
 }
