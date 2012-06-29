@@ -9,6 +9,8 @@ import com.evanreidland.e.audio.sound;
 import com.evanreidland.e.client.audio.ALAudioManager;
 import com.evanreidland.e.client.audio.ALAudioResourceManager;
 import com.evanreidland.e.client.audio.alsound;
+import com.evanreidland.e.client.control.input;
+import com.evanreidland.e.client.control.key;
 import com.evanreidland.e.client.ent.register;
 import com.evanreidland.e.client.graphics.GLGraphicsManager;
 import com.evanreidland.e.client.graphics.GLLight;
@@ -16,8 +18,25 @@ import com.evanreidland.e.client.graphics.GLRenderList;
 import com.evanreidland.e.client.graphics.TextureResourceManager;
 import com.evanreidland.e.client.graphics.VBOGraphicsData;
 import com.evanreidland.e.graphics.graphics;
+import com.evanreidland.e.gui.hud;
 
 public abstract class GameClient extends Game {
+	
+	public void onUpdate() {
+		if ( input.isKeyDown(key.MOUSE_LBUTTON) ) {
+			if ( hud.gui != null ) {
+				hud.gui.onClick(Game.mousePos.x, Game.mousePos.y);
+			}
+		}
+	}
+	
+	public void onRenderHUD() {
+		hud.gui.Render();
+	}
+	
+	public void onRender() {
+		
+	}
 	
 	public void onInit() {
 		graphics.setGraphicsManager(new GLGraphicsManager());

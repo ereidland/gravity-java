@@ -21,7 +21,9 @@ public class GUIObject {
 		if ( this.gui == null ) {
 			this.gui = gui;
 			for ( int i = 0; i < children.size(); i++ ) {
-				gui.addObject(children.get(i));
+				GUIObject object = children.get(i);
+				gui.addObject(object);
+				object.setGUI(gui);
 			}
 			return true;
 		}
@@ -39,11 +41,23 @@ public class GUIObject {
 		 childrenMap.put(object.getName(), object);
 		 if ( gui != null ) {
 			 gui.addObject(object);
+			 object.setGUI(gui);
 		 }
 		 return object;
 	}
 	public GUIObject getObject(String name) {
-		return childrenMap.get(name);
+		GUIObject object = childrenMap.get(name);
+		if ( object != null ) {
+			return object;
+		} else {
+			for ( int i = 0; i < children.size(); i++ ) {
+				object = children.get(i).getObject(name);
+				if ( object != null ) {
+					return object;
+				}
+			}
+		}
+		return null;
 	}
 	public GUIObject removeObject(GUIObject object) {
 		children.remove(object);
@@ -54,21 +68,32 @@ public class GUIObject {
 		return object;
 	}
 	
-	public void onRender() {
+	public void Render() {
+		onRender();
 		for ( int i = 0; i < children.size(); i++ ) {
-			children.get(i).onRender();
+			children.get(i).Render();
 		}
+	}
+	public void Update() {
+		onUpdate();
+		for ( int i = 0; i < children.size(); i++ ) {
+			children.get(i).Update();
+		}
+	}
+	
+	public void onRender() {
+		
 	}
 	public void onUpdate() {
-		for ( int i = 0; i < children.size(); i++ ) {
-			children.get(i).onUpdate();
-		}
+		
 	}
+	
 	//Note: Returning true means that this object absorbs the event.
 	public boolean onClick(double x, double y) {
 		return false;
 	}
 	public void onType(char key) {
+		
 	}
 	
 	public void renderQuadOnRect(Quad quad, Rect3 rect) {
@@ -82,7 +107,6 @@ public class GUIObject {
 	public void renderQuadOnRect(Quad quad) {
 		renderQuadOnRect(quad, rect);
 	}
-	
 	
 	public GUIObject(String name) { 
 		this.name = name;

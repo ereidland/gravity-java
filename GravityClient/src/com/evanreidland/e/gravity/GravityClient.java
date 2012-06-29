@@ -52,6 +52,7 @@ public class GravityClient extends GameClient {
 	}
 	
 	public void onUpdate() {
+		super.onUpdate();
 		double speed = getDelta();
 		if ( input.getKeyState(key.KEY_1) && Game.getTime() >= nextShot ) {
 			Entity ent = ents.Create("missile",
@@ -159,6 +160,7 @@ public class GravityClient extends GameClient {
 	}
 
 	public void onRender() {
+		super.onRender();
 		graphics.drawSkybox(skybox, graphics.camera.farDist - 1);
 	
 		graphics.unbindTexture();
@@ -179,6 +181,7 @@ public class GravityClient extends GameClient {
 	}
 
 	public void onRenderHUD() {
+		super.onRenderHUD();
 		font.Render2d(font1, "Pos: " + ship.pos.toRoundedString(), graphics.camera.bottomLeft().plus(0, 16, 0), 16, false);
 		font.Render2d(font1, "Ang: " + ship.angle.clipAngle().toRoundedString(), graphics.camera.bottomLeft().plus(0, 32, 0), 16, false);
 		font.Render2d(font1, "Delta: " + Game.getDelta(), graphics.camera.bottomLeft().plus(0, 48, 0), 16, false);

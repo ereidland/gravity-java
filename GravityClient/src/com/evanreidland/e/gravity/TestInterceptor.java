@@ -85,7 +85,7 @@ public class TestInterceptor extends Entity {
 		super("missile", id);
 		
 		lifeRemaining = 10;
-		mass = 0.000000001;
+		mass = 0.000001;
 		target = null;
 		
 		force = 10;

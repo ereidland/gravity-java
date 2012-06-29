@@ -3,6 +3,7 @@ package com.evanreidland.e.gui;
 import java.util.HashMap;
 import java.util.Vector;
 
+//Note: Although GUIObjects can have child objects, all objects are added to the GUI the object is a part of.
 public class GUI {
 	private Vector<GUIObject> objects;
 	private HashMap<String, GUIObject> objectsMap;
@@ -13,6 +14,23 @@ public class GUI {
 			objectsMap.put(object.getName(), object);
 		}
 		return object;
+	}
+	
+	public void Render() {
+		for ( int i = 0; i < objects.size(); i++ ) {
+			GUIObject object = objects.get(i);
+			if ( object.parent == null ) {
+				object.Render();
+			}
+		}
+	}
+	public void Update() {
+		for ( int i = 0; i < objects.size(); i++ ) {
+			GUIObject object = objects.get(i);
+			if ( object.parent == null ) {
+				object.Update();
+			}
+		}
 	}
 	
 	public GUIObject getObject(String name) {
@@ -59,15 +77,30 @@ public class GUI {
 	}
 	
 	public void layoutObject(GUIObject object) {
-		
+		//TODO code.
 	}
 	
 	public void Layout() {
 		for ( int i = 0; i < objects.size(); i++ ) {
 			GUIObject object = objects.get(i);
 			if ( object.parent != null ) {
-				//TODO code.
+				layoutObject(object);
 			}
+		}
+	}
+	
+	public boolean onClick(double x, double y) {
+		for ( int i = 0; i < objects.size(); i++ ) {
+			GUIObject object = objects.get(i);
+			if ( object.parent == null ) {
+				object.onClick(x, y);
+			}
+		}
+		return false;
+	}
+	public void onType(char key) {
+		for ( int i = 0; i < objects.size(); i++ ) {
+			objects.get(i).onType(key);
 		}
 	}
 	
