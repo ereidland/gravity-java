@@ -23,10 +23,16 @@ import com.evanreidland.e.gui.hud;
 public abstract class GameClient extends Game {
 	
 	public void onUpdate() {
+		hud.gui.Update();
 		if ( input.isKeyDown(key.MOUSE_LBUTTON) ) {
 			if ( hud.gui != null ) {
 				hud.gui.onClick(Game.mousePos.x, Game.mousePos.y);
 			}
+		}
+		
+		String typed = input.getTyped();
+		for ( int i = 0; i < typed.length(); i++ ) {
+			hud.gui.onType(typed.charAt(i));
 		}
 	}
 	

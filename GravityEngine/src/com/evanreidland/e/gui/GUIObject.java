@@ -22,6 +22,10 @@ public class GUIObject {
 	public Layout layout;
 	public Vector3 layoutOrigin;
 	
+	public void Position(Vector3 topLeft) {
+		rect.Shift(topLeft.minus(rect.a));
+	}
+	
 	public boolean remove() {
 		boolean removed = false;
 		if ( gui != null ) {
@@ -131,10 +135,10 @@ public class GUIObject {
 	}
 	
 	public void renderQuadOnRect(Quad quad, Rect3 rect) {
-		quad.vert[0].pos = rect.topLeft();
-		quad.vert[1].pos = rect.topRight();
-		quad.vert[2].pos = rect.bottomRight();
-		quad.vert[3].pos = rect.bottomLeft();
+		quad.vert[0].pos = new Vector3(rect.a.x, rect.a.y, 0);
+		quad.vert[1].pos = new Vector3(rect.b.x, rect.a.y, 0);
+		quad.vert[2].pos = new Vector3(rect.b.x, rect.b.y, 0);
+		quad.vert[3].pos = new Vector3(rect.a.x, rect.b.y, 0);
 		quad.pass();
 	}
 	

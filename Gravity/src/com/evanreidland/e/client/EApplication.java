@@ -4,14 +4,17 @@ import java.applet.Applet;
 import java.applet.AppletContext;
 import java.applet.AppletStub;
 import java.awt.Frame;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.net.InetAddress;
 
+import javax.swing.JFrame;
+
 public class EApplication implements AppletStub {
 	private Applet applet;
-	private Frame frame;
+	private JFrame frame;
 	
 	public int width, height;
 	public EApplication(Applet applet) {
@@ -24,35 +27,50 @@ public class EApplication implements AppletStub {
 		return applet;
 	}
 	
+	public void runApplet(String title, boolean fullScreen) {
+			frame = new JFrame(title);
+			if ( fullScreen ) {
+				frame.setResizable(false);
+				frame.setUndecorated(true);
+				
+				Toolkit toolkit = Toolkit.getDefaultToolkit();  
+				width = (int)toolkit.getScreenSize().getWidth();  
+				height = (int)toolkit.getScreenSize().getHeight();
+			} else {
+				frame.setResizable(true);
+			}
+			frame.setAlwaysOnTop(false);
+			frame.setFocusable(true);
+			
+			frame.setSize(width, height);
+			 frame.addWindowListener(new WindowAdapter() {
+				 public void windowLostFocus(WindowEvent event) {
+					 System.out.println("!!M!M!M!");
+					 frame.setState(Frame.ICONIFIED);
+				 }
+				 public void windowGainedFocus(WindowEvent event) {
+					 System.out.println("WASDASDG");
+					 frame.setState(Frame.NORMAL);
+				 }
+				 public void windowClosing(WindowEvent event) {
+					 applet.stop();
+					 applet.destroy();
+					 System.exit(0);
+				 }
+			});
+			frame.add(applet);
+			applet.setStub(this);
+			
+			
+			frame.setVisible(true);
+			applet.init();
+			frame.pack();
+			frame.setSize(width, height);
+			applet.start();
+	}
+	
 	public void runApplet(String title) {
-		frame = new Frame(title);
-		frame.setResizable(true);
-		frame.setSize(width, height);
-		 frame.addWindowListener(new WindowAdapter() {
-			 public void windowClosing(WindowEvent event) {
-				 applet.stop();
-				 applet.destroy();
-				 System.exit(0);
-			 }
-		});
-		frame.add(applet);
-		applet.setStub(this);
-		
-		/*Display.setTitle(title);
-		try {
-			Display.setDisplayMode(new DisplayMode(width, height));
-		
-			Display.setFullscreen(false);
-			Display.create();
-		}
-		catch (LWJGLException e) {
-			System.out.println("Could not set display mode " + width + "x" + height + "!");
-		}*/
-		frame.setVisible(true);
-		applet.init();
-		frame.pack();
-		frame.setSize(width, height);
-		applet.start();
+		runApplet(title, false);
 	}
 	
 	public void switchApplet(Applet applet) {
@@ -93,7 +111,6 @@ public class EApplication implements AppletStub {
 		java.net.URL u = null;
 		try {
 			u = new java.net.URL("file:/" + host + '/');
-			//System.out.println("run path: " + u);
 	    } catch (Exception e){
 	    	
 	    }

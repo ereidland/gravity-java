@@ -303,7 +303,7 @@ implements Runnable {
 			
 			screen.setFocusable(true);
 			screen.requestFocus();
-			screen.setIgnoreRepaint(true);
+			screen.setIgnoreRepaint(false);
 			
 			add(screen);
 			
@@ -534,7 +534,7 @@ implements Runnable {
 		cam.height = getHeight() - (getInsets().top + getInsets().bottom);
 		cam.fov = 60;
 		cam.nearDist = 0.1f;
-		cam.farDist = 1000;
+		cam.farDist = 100000000000d;
 		cam.is3D = true;
 		cam.perspective = cam.width/cam.height;
 		graphics.camera = cam;

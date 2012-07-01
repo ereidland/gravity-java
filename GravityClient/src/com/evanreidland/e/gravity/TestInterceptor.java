@@ -3,18 +3,14 @@ package com.evanreidland.e.gravity;
 import com.evanreidland.e.Game;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
-import com.evanreidland.e.Flags.State;
 import com.evanreidland.e.client.control.input;
 import com.evanreidland.e.client.control.key;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
-import com.evanreidland.e.graphics.BillboardSceneObject;
 import com.evanreidland.e.graphics.Model;
 import com.evanreidland.e.graphics.ModelSceneObject;
-import com.evanreidland.e.graphics.Sprite;
 import com.evanreidland.e.graphics.generate;
 import com.evanreidland.e.graphics.graphics;
-import com.evanreidland.e.graphics.SceneObject.AnchorType;
 
 public class TestInterceptor extends Entity {
 	public double lifeRemaining;
@@ -45,7 +41,7 @@ public class TestInterceptor extends Entity {
 		angle = vel.getAngle();
 	}
 	public void onDie() {
-		Entity ent = ents.Create("explosion", new Double[] { 0d, 10d, 0.5d, 1d, 0d });
+		Entity ent = ents.Create("explosion", new Double[] { 0d, 0.5d, 0.5d, 1d, 0d });
 		if ( ent != null ) {
 			ent.pos.setAs(pos);
 			ent.vel.setAs(vel);
@@ -67,19 +63,19 @@ public class TestInterceptor extends Entity {
 		model.tex = engine.loadTexture("shiptest1.png");
 		graphics.scene.addObject(new ModelSceneObject(model), this);
 		
-		if ( flags.getState("enemy") == State.True ) {
-			Sprite sprite = new Sprite(2, 2, engine.loadTexture("target1.png"));
-			sprite.cr = 1;
-			sprite.cg = 0.25;
-			sprite.cb = 0;
-			sprite.ca = 0.25;
-			graphics.scene.addObject(
-					new BillboardSceneObject(
-							sprite,
-							true),
-					this,
-					AnchorType.POS);
-		}
+//		if ( flags.getState("enemy") == State.True ) {
+//			Sprite sprite = new Sprite(2, 2, engine.loadTexture("target1.png"));
+//			sprite.cr = 1;
+//			sprite.cg = 0.25;
+//			sprite.cb = 0;
+//			sprite.ca = 0.25;
+//			graphics.scene.addObject(
+//					new BillboardSceneObject(
+//							sprite,
+//							true),
+//					this,
+//					AnchorType.POS);
+//		}
 	}
 	public TestInterceptor(long id) {
 		super("missile", id);
@@ -90,6 +86,6 @@ public class TestInterceptor extends Entity {
 		
 		force = 10;
 		thrust = 1; // Not relative to mass.
-		radius = 5;
+		radius = 0.5;
 	}
 }

@@ -8,16 +8,16 @@ public class Camera {
 	public Vector3 pos, angle;
 	
 	public Vector3 topLeft() {
-		return new Vector3(-width*0.5f, -height*0.5f, 0);
+		return new Vector3(-width*0.5f, height*0.5f, 0);
 	}
 	public Vector3 topRight() {
-		return new Vector3(width*0.5f, -height*0.5f, 0);
+		return new Vector3(width*0.5f, height*0.5f, 0);
 	}
 	public Vector3 bottomLeft() {
 		return new Vector3(-width*0.5f, -height*0.5f, 0);
 	}
 	public Vector3 bottomRight() {
-		return new Vector3(width*0.5f, height*0.5f, 0);
+		return new Vector3(width*0.5f, -height*0.5f, 0);
 	}
 	
 	public Vector3 toScreen(Vector3 v) {

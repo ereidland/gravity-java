@@ -21,6 +21,8 @@ import com.evanreidland.e.engine;
 public class font {
     public static final byte version = 1;
     
+    public static double r = 1, g = 1, b = 1, a = 1;
+    
     public static boolean buildFont(String fontName, int baseSize, boolean bold, boolean antiAlias) {
     	try {
     		Font font = new Font(fontName, bold ? Font.BOLD : Font.PLAIN, baseSize);
@@ -81,6 +83,14 @@ public class font {
     	return true;
     }
     
+    public static double getWidth(Resource res, String str, double size) {
+    	if ( res.getType() == ResourceType.Font ) {
+    		FontGraphic font = (FontGraphic)res;
+    		return font.getStringWidth(str, size);
+    	}
+    	return 0;
+    }
+    
     public static void Render(Resource res, String str, Vector3 pos, Vector3 right, Vector3 up, double size, boolean bCenter) {
     	if ( res.getType() == ResourceType.Font ) {
     		graphics.setTexture((Resource)((FontGraphic)res).getObject());
@@ -100,6 +110,7 @@ public class font {
     		for ( int i = 0; i < str.length(); i++ ) {
     			char ch = str.charAt(i);
     			Quad q = font.buildQuad(ch);
+    			q.setColor(r, g, b, a);
     			double chWidth = font.getCharWidth(ch)*size;
     			q.applyToProjection(basePos.plus(right.multipliedBy(curLen + chWidth*0.5f)), right.multipliedBy(size), up.multipliedBy(size));
     			list.addQuad(q);
