@@ -3,10 +3,21 @@ package com.evanreidland.e.gui;
 import java.util.HashMap;
 import java.util.Vector;
 
+import com.evanreidland.e.Vector3;
+
 //Note: Although GUIObjects can have child objects, all objects are added to the GUI the object is a part of.
 public class GUI {
+	public static enum Layout {
+		DEFAULT,
+		RIGHT_DOWN,
+		RIGHT,
+		DOWN,
+	}
 	private Vector<GUIObject> objects;
 	private HashMap<String, GUIObject> objectsMap;
+	
+	public Layout layout;
+	public Vector3 layoutOrigin;
 	
 	public GUIObject addObject(GUIObject object) {
 		if ( !objects.contains(object) ) {
@@ -19,7 +30,7 @@ public class GUI {
 	public void Render() {
 		for ( int i = 0; i < objects.size(); i++ ) {
 			GUIObject object = objects.get(i);
-			if ( object.parent == null ) {
+			if ( object.parent == null && !object.settings.get("hidden").asBool() ) {
 				object.Render();
 			}
 		}
@@ -39,8 +50,12 @@ public class GUI {
 	
 	public GUIObject removeObject(GUIObject object) {
 		if ( object != null ) {
-			objects.remove(object);
-			objectsMap.remove(object.getName());
+			if ( object.getGUI() != null ) {
+				object.remove();
+			} else {
+				objects.remove(object);
+				objectsMap.remove(object.getName());
+			}
 		}
 		return object;
 	}
@@ -60,19 +75,19 @@ public class GUI {
 		return children;
 	}
 	
-	public void changeSetting(String objectName, String name, String newValue) {
+	public void set(String objectName, String name, String newValue) {
 		GUIObject object = getObject(objectName);
 		if ( object != null ) {
 			object.settings.set(name, newValue);
 		}
 	}
 	
-	public void changeSettingForChildren(String objectName, String name, String newValue) {
+	public void setForChildren(String objectName, String name, String newValue) {
 		Vector<GUIObject> children = getObjectChildren(objectName);
 		for ( int i = 0; i < children.size(); i++ ) {
 			GUIObject object = children.get(i);
 			object.settings.set(name, newValue);
-			changeSettingForChildren(object.getName(), name, newValue);
+			setForChildren(object.getName(), name, newValue);
 		}
 	}
 	
@@ -92,8 +107,10 @@ public class GUI {
 	public boolean onClick(double x, double y) {
 		for ( int i = 0; i < objects.size(); i++ ) {
 			GUIObject object = objects.get(i);
-			if ( object.parent == null ) {
-				object.onClick(x, y);
+			if ( object.parent == null && object.rect.containsPoint(new Vector3(x, y, 0)) ) {
+				if ( object.onClick(x, y) ) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -107,5 +124,8 @@ public class GUI {
 	public GUI() {
 		objects = new Vector<GUIObject>();
 		objectsMap = new HashMap<String, GUIObject>();
+		
+		layout = Layout.RIGHT_DOWN;
+		layoutOrigin = Vector3.Zero();
 	}
 }

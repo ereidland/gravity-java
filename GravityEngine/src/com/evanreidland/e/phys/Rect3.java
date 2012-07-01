@@ -23,6 +23,9 @@ public class Rect3 {
 					return true;
 		return false;
 	}
+	public boolean containsPoint(Vector3 point) {
+		return point.x >= a.x && point.y >= a.y && point.z >= a.z && point.x <= b.x && point.y <= b.y && point.z <= b.z;
+	}
 	
 	
 	public Vector3 topLeft() {

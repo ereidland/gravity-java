@@ -40,15 +40,15 @@ public class hud {
 		return new Vector<GUIObject>();
 	}
 	
-	public void changeSetting(String objectName, String name, String newValue) {
+	public void set(String objectName, String name, String newValue) {
 		if ( gui != null ) {
-			gui.changeSetting(objectName, name, newValue);
+			gui.set(objectName, name, newValue);
 		}
 	}
 	
-	public void changeSettingForChildren(String objectName, String name, String newValue) {
+	public void setForChildren(String objectName, String name, String newValue) {
 		if ( gui != null ) {
-			gui.changeSettingForChildren(objectName, name, newValue);
+			gui.setForChildren(objectName, name, newValue);
 		}
 	}
 	

@@ -122,7 +122,7 @@ public class GravityClient extends GameClient {
 					ship.vel.add(ship.angle.getRight().multipliedBy(speed));
 				}
 				
-				if ( input.getKeyState(key.KEY_C) ) {
+				if ( input.isKeyDown(key.KEY_C) ) {
 					ship.vel.setAs(0, 0, 0);
 					ship.angleVel.setAs(0, 0, 0);
 					ship.bStatic = !ship.bStatic;

@@ -85,7 +85,7 @@ public class GLGraphicsManager extends GraphicsManager {
 	}
 	
 	public static void setLWJGLPath() {
-		String dataPath = engine.getPath() + "/bin";
+		String dataPath = engine.getPath() + "bin";
 		System.setProperty("java.library.path", dataPath);
 		System.setProperty("org.lwjgl.librarypath", dataPath);
 		System.setProperty("net.java.games.input.librarypath", dataPath);

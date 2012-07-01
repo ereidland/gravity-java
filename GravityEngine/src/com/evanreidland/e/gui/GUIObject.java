@@ -6,6 +6,7 @@ import java.util.Vector;
 import com.evanreidland.e.Settings;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.graphics.Quad;
+import com.evanreidland.e.gui.GUI.Layout;
 import com.evanreidland.e.phys.Rect3;
 
 public class GUIObject {
@@ -17,6 +18,26 @@ public class GUIObject {
 	public GUI getGUI() {
 		return gui;
 	}
+	
+	public Layout layout;
+	public Vector3 layoutOrigin;
+	
+	public boolean remove() {
+		boolean removed = false;
+		if ( gui != null ) {
+			GUI prevGUI = gui;
+			gui = null;
+			prevGUI.removeObject(this);
+			removed = true;
+		}
+		if ( parent != null ) {
+			GUIObject prevParent = parent;
+			parent = null;
+			prevParent.removeObject(this);
+		}
+		return removed;
+	}
+	
 	public boolean setGUI(GUI gui) { 
 		if ( this.gui == null ) {
 			this.gui = gui;
@@ -29,6 +50,7 @@ public class GUIObject {
 		}
 		return false;
 	}
+	//Really not sure I like this.
 	public Settings settings;
 	public Rect3 rect;
 	public boolean bFocused, bClicked;
@@ -45,6 +67,7 @@ public class GUIObject {
 		 }
 		 return object;
 	}
+	
 	public GUIObject getObject(String name) {
 		GUIObject object = childrenMap.get(name);
 		if ( object != null ) {
@@ -59,11 +82,13 @@ public class GUIObject {
 		}
 		return null;
 	}
+	
 	public GUIObject removeObject(GUIObject object) {
-		children.remove(object);
-		childrenMap.remove(object.getName());
-		if ( gui != null ) {
-			gui.removeObject(object);
+		if ( object.gui != null ) {
+			object.remove();
+		} else {
+			children.remove(object);
+			childrenMap.remove(object.getName());
 		}
 		return object;
 	}
@@ -84,16 +109,25 @@ public class GUIObject {
 	public void onRender() {
 		
 	}
+	
 	public void onUpdate() {
 		
 	}
 	
 	//Note: Returning true means that this object absorbs the event.
 	public boolean onClick(double x, double y) {
+		for ( int i = 0; i < children.size(); i++ ) {
+			GUIObject object = children.get(i);
+			if ( object.rect.containsPoint(new Vector3(x, y, 0)) ) {
+				if ( object.onClick(x, y) ) {
+					return true;
+				}
+			}
+		}
 		return false;
 	}
+	
 	public void onType(char key) {
-		
 	}
 	
 	public void renderQuadOnRect(Quad quad, Rect3 rect) {
@@ -121,5 +155,8 @@ public class GUIObject {
 		childrenMap = new HashMap<String, GUIObject>();
 		
 		gui = null;
+		
+		layout = Layout.DEFAULT;
+		layoutOrigin = Vector3.Zero();
 	}
 }
