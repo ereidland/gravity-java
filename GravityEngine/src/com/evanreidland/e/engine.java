@@ -40,7 +40,7 @@ public class engine {
 	}
 	
 	private static Vector<String> log = new Vector<String>();
-	public static int maxLogs = 4;
+	public static int maxLogs = 10;
 	
 	public static Vector<String> getLog() {
 		return new Vector<String>(log);
