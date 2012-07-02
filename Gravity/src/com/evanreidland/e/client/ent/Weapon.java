@@ -9,8 +9,9 @@ public class Weapon {
 	private DamageType mDamageType;
 	private Ship mWeaponOwner;
 	
-	public Weapon() {
-		
+	public Weapon(String weaponConfig) {
+		this.mBaseDamage = ServerConfig.getConfigFloat(weaponConfig + "BaseDamage");
+		this.mDamageType = DamageType.valueOf(ServerConfig.getConfigString(weaponConfig + "DamageType"));
 	}
 	
 	public Weapon(String weaponConfig, Ship owner) {

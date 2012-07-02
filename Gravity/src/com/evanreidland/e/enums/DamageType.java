@@ -4,4 +4,5 @@ public enum DamageType {
 	None,
 	Disable,
 	IgnoreShield,
+	Disruptor,
 }
