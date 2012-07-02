@@ -4,12 +4,13 @@ import com.evanreidland.e.Vector3;
 
 public class phys {
 	public static Vector3 getTargetPoint(Vector3 launcherPos, Vector3 launcherVel, Vector3 targetPos, Vector3 targetVel, double shotVel) {
-		Vector3 pos = targetPos.cloned();
-		double lengthDelta = launcherPos.getDistance(targetPos.plus(targetVel.plus(launcherVel))) - launcherPos.getDistance(targetPos);
-		if ( lengthDelta != 0 && shotVel != 0 ) {
-			double moveScalar = lengthDelta/shotVel;
-			return targetPos.plus(targetVel.Normalize().multipliedBy(moveScalar*launcherPos.getDistance(targetPos)));
+		
+		double dist = launcherPos.getDistance(targetPos);
+		
+		if ( dist != 0 && shotVel != 0 ) {
+			double lengthDelta = shotVel - (launcherPos.getDistance(targetPos.plus(targetVel)) - dist);
+			return targetPos.plus(targetVel.multipliedBy(dist/lengthDelta));
 		}
-		return pos;
+		return targetPos.cloned();
 	}
 }

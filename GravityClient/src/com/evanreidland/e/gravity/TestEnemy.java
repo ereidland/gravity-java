@@ -20,19 +20,20 @@ public class TestEnemy extends Entity {
 		angle.setAs(vel.getAngle());
 		SearchData data = ents.findNearest(pos, 10000000, new Flags("player targetable"));
 		if ( data.isPositive ) {
-			Vector3 targetVel = data.ent.pos.minus(pos).Normalize().multipliedBy(1);
-			vel.add(targetVel.minus(vel).Normalize().multipliedBy(Game.getDelta()*2));
+//			Vector3 targetVel = data.ent.pos.minus(pos).Normalize().multipliedBy(1);
+//			vel.add(targetVel.minus(vel).Normalize().multipliedBy(Game.getDelta()*2));
 			
 			if ( Game.getTime() > nextShot && data.length < 50 ) {
 				nextShot = Game.getTime() + 100;
 				
-				double shotSpeed = 2;
+				double shotSpeed = 5;
+				Vector3 launchPos = pos.plus(angle.getForward().multipliedBy(0.01));
 				Vector3 targetPoint = phys.getTargetPoint(pos, vel, data.ent.pos, data.ent.vel, shotSpeed);
 				
 				Entity ent = ents.Create("missile",
 						new Object[] {
-							pos.plus(angle.getForward().multipliedBy(0.01)),
-							vel.plus(targetPoint.minus(pos).Normalize().multipliedBy(shotSpeed)),
+							launchPos,
+							targetPoint.minus(pos).Normalize().multipliedBy(shotSpeed),
 							true,
 							null,
 							20d,

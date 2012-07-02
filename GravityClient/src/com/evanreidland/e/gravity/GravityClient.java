@@ -195,7 +195,7 @@ public class GravityClient extends GameClient {
 		int num = 20;
 		for ( int i = 0; i < num; i++ ) {
 			Entity ent = ents.Create("enemy");
-			ent.pos.setAs(Vector3.fromAngle2d((i/(double)num)*engine.Pi2).multipliedBy(1));
+			ent.pos.setAs(Vector3.fromAngle2d((i/(double)num)*engine.Pi2).multipliedBy(2));
 			ent.mass = 0.0001;
 			ent.Spawn();
 		}
