@@ -210,7 +210,6 @@ public class vbo {
 	}
 	
 	private static void bufferData(int id) {
-		System.out.println("{ " + vp + ", " + curElemBuff.position() + "} @ " + System.currentTimeMillis() );
 		if (GLContext.getCapabilities().GL_ARB_vertex_buffer_object) {
 			if ( curBuff.position() != 0 ) {
 				curBuff.flip();

@@ -47,7 +47,6 @@ public class TestEnemy extends Entity {
 		flags.setState("self", false);
 		if ( data.isPositive ) {
 			if ( data.length < radius ) {
-				System.out.println("!@#!@#!@#");
 				pos.setAs(data.ent.pos.plus(pos.minus(data.ent.pos).Normalize().multipliedBy(radius)));
 			}
 		}
