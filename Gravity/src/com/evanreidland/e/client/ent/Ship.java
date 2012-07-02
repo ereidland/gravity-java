@@ -44,8 +44,8 @@ public class Ship extends Entity {
 		flags.setState("ship", true);
 	}
 	
-	public Ship(long id, String shipType) {
-		super("ship", id);
+	public Ship(String shipType) {
+		super("ship");
 		
 		//grab the different ship settings and set defaults
 		mMaxHullDurability = ServerConfig.getConfigFloat(shipType + "HullDurability");
