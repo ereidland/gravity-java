@@ -59,6 +59,19 @@ public class ents {
 	}
 	
 	// Note: Should only be called client-side after a signal from the server.
+	public static Entity Create(Entity ent, long targetID) {
+		if ( list != null ) {
+			ent.Be(targetID);
+			list.add(ent);
+		}
+		return ent;
+	}
+	
+	public static Entity Create(Entity ent) {
+		return Create(ent, ID.newID());
+	}
+	
+	// Note: Should only be called client-side after a signal from the server.
 	public static Entity createWithID(String className, long forcedID) {
 		ClassFactory factory = factories.get(className);
 		return factory != null ? factory.CreateForced(forcedID) : null;

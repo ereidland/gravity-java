@@ -11,7 +11,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GLContext;
 
-import com.evanreidland.e.Vector3;
 import com.evanreidland.e.graphics.RenderList;
 import com.evanreidland.e.graphics.Vertex;
 
@@ -32,7 +31,7 @@ public class vbo {
 		tex = newTex;
 	}
 	
-	private static DoubleBuffer curBuff = ByteBuffer.allocateDirect(MAX_VERTS*STRIDE*8).order(ByteOrder.nativeOrder()).asDoubleBuffer();
+	private static DoubleBuffer curBuff = ByteBuffer.allocateDirect(MAX_VERTS*STRIDE).order(ByteOrder.nativeOrder()).asDoubleBuffer();
 	private static IntBuffer curElemBuff = ByteBuffer.allocateDirect(MAX_VERTS*4).order(ByteOrder.nativeOrder()).asIntBuffer();
 	private static int vp = 0;
 	
@@ -87,7 +86,7 @@ public class vbo {
 	}
 	
 	public static void passTriangle(double[] tri) {
-		if ( vp >= MAX_VERTS - 3 ) {
+		if ( vp >= MAX_VERTS - 3 || curElemBuff.position() >= curElemBuff.capacity() - 3 ) {
 			drawBuffer();
 		}
 		
@@ -100,9 +99,8 @@ public class vbo {
 	
 	
 	public static void passQuad(double[] quad) {
-		if ( vp >= MAX_VERTS - 4 ) {
+		if ( vp >= MAX_VERTS - 4 || curElemBuff.position() >= curElemBuff.capacity() - 6 ) {
 			drawBuffer();
-			clearBuffer();
 		}
 		
 		curBuff.put(quad);
@@ -164,69 +162,6 @@ public class vbo {
 				0, 0, 0, 0,
 		};
 	}
-	
-	public static double[] toTriangle(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 normal, double[][] texCoords, float r, float g, float b, float a) {
-		return new double[] {
-				p1.x, p1.y, p1.z,
-				normal.x, normal.y, normal.z,
-				  r, g, b, a,
-				  texCoords[0][0], texCoords[0][1],
-				  0, 0, 0, 0,
-				  
-				  p2.x, p2.y, p2.z,
-				  normal.x, normal.y, normal.z,
-				  r, g, b, a,
-				  texCoords[1][0], texCoords[1][1],
-				  0, 0, 0, 0,
-				  
-				  p3.x, p3.y, p3.z,
-				  normal.x, normal.y, normal.z,
-				  r, g, b, a,
-				  texCoords[2][0], texCoords[2][1],
-				  0, 0, 0, 0
-		};
-	}
-	
-	
-	public static double[] toQuad(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, Vector3 normal, double[][] texCoords, float r, float g, float b, float a) {
-		return new double[] {
-				p1.x, p1.y, p1.z,
-				normal.x, normal.y, normal.z,
-				  r, g, b, a,
-				  texCoords[0][0], texCoords[0][1],
-				  0, 0, 0, 0,
-				  
-				  p2.x, p2.y, p2.z,
-				  normal.x, normal.y, normal.z,
-				  r, g, b, a,
-				  texCoords[1][0], texCoords[1][1],
-				  0, 0, 0, 0,
-				  
-				  p3.x, p3.y, p3.z,
-				  normal.x, normal.y, normal.z,
-				  r, g, b, a,
-				  texCoords[2][0], texCoords[2][1],
-				  0, 0, 0, 0,
-				  
-				  p3.x, p3.y, p3.z,
-				  normal.x, normal.y, normal.z,
-				  r, g, b, a,
-				  texCoords[2][0], texCoords[2][1],
-				  0, 0, 0, 0,
-				  
-				  p4.x, p4.y, p4.z,
-				  normal.x, normal.y, normal.z,
-				  r, g, b, a,
-				  texCoords[3][0], texCoords[3][1],
-				  0, 0, 0, 0,
-				  
-				  p1.x, p1.y, p1.z,
-				  normal.x, normal.y, normal.z,
-				  r, g, b, a,
-				  texCoords[0][0], texCoords[0][1],
-				  0, 0, 0, 0
-		};
-	}	
 
 	public static int newID() {
 		  if (GLContext.getCapabilities().GL_ARB_vertex_buffer_object) {
@@ -271,17 +206,11 @@ public class vbo {
 		
 		current = newID();
 		
-
-//		for (int i = 0; i < MAX_VERTS; i++ ) {
-//			curElemBuff.put(i);
-//		}
-//		
-//		curElemBuff.flip();
-		 
 		setup();
 	}
 	
 	private static void bufferData(int id) {
+		System.out.println("{ " + vp + ", " + curElemBuff.position() + "} @ " + System.currentTimeMillis() );
 		if (GLContext.getCapabilities().GL_ARB_vertex_buffer_object) {
 			if ( curBuff.position() != 0 ) {
 				curBuff.flip();
@@ -304,15 +233,13 @@ public class vbo {
 	
 	public static void drawBuffer() {
 		if ( current != 0 && vp >= 3) {
-			setup();
 			bufferData(current);
-			//gl.LineWidth(4);
 			if ( tex == null ) {
 				Texture.unbind();
 			} else {
 				tex.bind();
 			}
-			GL12.glDrawRangeElements(GL11.GL_TRIANGLES, 0, vp, curElemBuff);
+			GL12.glDrawRangeElements(GL11.GL_TRIANGLES, 0, vp - 1, curElemBuff);
 			clearBuffer();
 			GL11.glFlush();
 		}

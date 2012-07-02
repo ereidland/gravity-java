@@ -105,6 +105,10 @@ public class Entity extends EObject {
 		return index >= 0 && index < args.length ? args[index] : def;
 	}
 	
+	public Entity(String className) {
+		super(className);
+	}
+	
 	public Entity(String className, long id) {
 		super(className, id);
 		pos = Vector3.Zero();

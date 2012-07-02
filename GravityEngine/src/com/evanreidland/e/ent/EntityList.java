@@ -58,6 +58,7 @@ public class EntityList {
 	}
 	
 	public Entity remove(Entity ent) {
+		ID.removeID(ent.getID());
 		entities.remove(ent);
 		entMap.remove(ent.getID());
 		return ent;

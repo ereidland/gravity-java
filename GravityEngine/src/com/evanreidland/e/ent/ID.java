@@ -24,6 +24,10 @@ public class ID {
 		usedIDs.put(forcedID, object);
 	}
 	
+	public static void removeID(long id) {
+		usedIDs.remove(id);
+	}
+	
 	public static long registerID(long desired, EObject object) {
 		while ( usedIDs.containsKey(desired) ) {
 			desired++;

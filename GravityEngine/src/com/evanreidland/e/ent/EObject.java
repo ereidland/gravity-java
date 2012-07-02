@@ -1,7 +1,6 @@
 package com.evanreidland.e.ent;
 
 import com.evanreidland.e.Flags;
-
 public class EObject {
 	public Flags flags;
 	private String className;
@@ -21,8 +20,11 @@ public class EObject {
 		return className;
 	}
 	
+	public void Be(long targetID) {
+		id = ID.registerID(targetID, this);
+	}
 	public void Be() {
-		id = ID.registerID(id, this);
+		Be(id);
 	}
 	
 	protected void beForced() {
@@ -34,5 +36,9 @@ public class EObject {
 		
 		flags = new Flags();
 		this.id = id;
+	}
+	
+	public EObject(String className) {
+		this(className, 0);
 	}
 }
