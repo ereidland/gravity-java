@@ -24,7 +24,7 @@ public class TestEnemy extends Entity {
 			vel.add(targetVel.minus(vel).Normalize().multipliedBy(Game.getDelta()*2));
 			
 			if ( Game.getTime() > nextShot && data.length < 50 ) {
-				nextShot = Game.getTime() + 100;
+				nextShot = Game.getTime() + 1000;
 				
 				double shotSpeed = 5;
 				Vector3 launchPos = pos.plus(angle.getForward().multipliedBy(0.01));
