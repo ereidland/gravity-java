@@ -191,7 +191,7 @@ public class GravityClient extends GameClient {
 		
 		nextShot = 0;
 		
-		int num = 10;
+		int num = 20;
 		for ( int i = 0; i < num; i++ ) {
 			Entity ent = ents.Create("enemy");
 			ent.pos.setAs(Vector3.fromAngle2d((i/(double)num)*engine.Pi2).multipliedBy(1));
