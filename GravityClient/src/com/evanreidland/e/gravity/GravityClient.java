@@ -14,6 +14,7 @@ import com.evanreidland.e.config.ServerConfig;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.graphics.Model;
+import com.evanreidland.e.graphics.ModelSceneObject;
 import com.evanreidland.e.graphics.font;
 import com.evanreidland.e.graphics.generate;
 import com.evanreidland.e.graphics.graphics;
@@ -179,27 +180,15 @@ public class GravityClient extends GameClient {
 	}
 	
 	public void createEntities() { 
-		
-		Ship otherShip = new Ship("dreadnought");
-		
-		ents.Create(otherShip);
-		
-		otherShip.pos = new Vector3(2, 0, 0);
-		ship.flags.setState("player", true);
-		ship.flags.setState("targetable", true);
-		ship.model = shipModel;
-		ship.mass = 0.0001;
-		ship.bStatic = false;
-		
-		
 		ship = (Ship)ents.Create("ship");
 		
 		ship.model = shipModel;
 		ship.mass = 0.0001;
 		ship.bStatic = false;
 		ship.pos = new Vector3(2, 0, 0);
-		ship.flags.setState("player", true);
-		ship.flags.setState("targetable", true);
+		ship.flags.add("player targetable");
+		
+		graphics.scene.addObject(new ModelSceneObject(shipModel), ship);
 		
 		nextShot = 0;
 		
@@ -236,13 +225,13 @@ public class GravityClient extends GameClient {
 	
 	public void onInit() {
 		super.onInit();
+		ServerConfig.setupConfigs();
 		
 		registerEntities();
 		loadGraphics();
 		loadSound();
 		buildGUI();
 		createEntities();
-		ServerConfig.setupConfigs();
 		
 		graphics.camera.farDist = 1000000000d;
 	}
