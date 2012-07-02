@@ -7,6 +7,7 @@ public class ServerConfig {
 	
 	public static void setupConfigs()
 	{
+		configConstants = new HashMap<String, Object>();
 		configConstants.put("dreadnoughtHullDurability", 10000.0f);
 		configConstants.put("dreadnoughtShieldPower", 5000.0f);
 		configConstants.put("dreadnoughtMaxEnergy", 5000.0f);

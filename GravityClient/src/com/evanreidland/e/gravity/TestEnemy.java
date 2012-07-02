@@ -41,6 +41,16 @@ public class TestEnemy extends Entity {
 				ent.Spawn();
 			}
 		}
+		
+		flags.setState("self", true);
+		data = ents.findNearest(pos, 1, new Flags("enemy targetable !self"));
+		flags.setState("self", false);
+		if ( data.isPositive ) {
+			if ( data.length < radius ) {
+				System.out.println("!@#!@#!@#");
+				pos.setAs(data.ent.pos.plus(pos.minus(data.ent.pos).Normalize().multipliedBy(radius)));
+			}
+		}
 	}
 	
 	public void onSpawn() {
@@ -54,6 +64,9 @@ public class TestEnemy extends Entity {
 		
 		bStatic = false;
 		mass = 0.00001;
+		radius = 0.5;
+		
+		flags.add("enemy targetable");
 	}
 
 }
