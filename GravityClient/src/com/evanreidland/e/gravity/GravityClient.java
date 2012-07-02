@@ -10,6 +10,7 @@ import com.evanreidland.e.client.GameClient;
 import com.evanreidland.e.client.control.input;
 import com.evanreidland.e.client.control.key;
 import com.evanreidland.e.client.ent.Ship;
+import com.evanreidland.e.config.ServerConfig;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.graphics.Model;
@@ -177,7 +178,8 @@ public class GravityClient extends GameClient {
 		ents.Register("enemy", TestEnemy.class);
 	}
 	
-	public void createEntities() {
+	public void createEntities() { 
+		
 		ship = (Ship)ents.Create("ship");
 		
 		ship.model = shipModel;
@@ -228,6 +230,7 @@ public class GravityClient extends GameClient {
 		loadSound();
 		buildGUI();
 		createEntities();
+		ServerConfig.setupConfigs();
 		
 		graphics.camera.farDist = 1000000000d;
 	}
