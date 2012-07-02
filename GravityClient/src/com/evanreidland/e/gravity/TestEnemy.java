@@ -11,6 +11,7 @@ import com.evanreidland.e.graphics.Model;
 import com.evanreidland.e.graphics.ModelSceneObject;
 import com.evanreidland.e.graphics.generate;
 import com.evanreidland.e.graphics.graphics;
+import com.evanreidland.e.phys.phys;
 
 public class TestEnemy extends Entity {
 	long nextShot = 0;
@@ -19,22 +20,35 @@ public class TestEnemy extends Entity {
 		angle.setAs(vel.getAngle());
 		SearchData data = ents.findNearest(pos, 10000000, new Flags("player targetable"));
 		if ( data.isPositive ) {
-			Vector3 targetVel = data.ent.pos.minus(pos).Normalize().multipliedBy(2);
+			Vector3 targetVel = data.ent.pos.minus(pos).Normalize().multipliedBy(1);
 			vel.add(targetVel.minus(vel).Normalize().multipliedBy(Game.getDelta()*2));
 			
 			if ( Game.getTime() > nextShot && data.length < 50 ) {
-				nextShot = Game.getTime() + 1000;
+				nextShot = Game.getTime() + 100;
+				
+				double shotSpeed = 2;
+				Vector3 targetPoint = phys.getTargetPoint(pos, vel, data.ent.pos, data.ent.vel, shotSpeed);
 				
 				Entity ent = ents.Create("missile",
 						new Object[] {
 							pos.plus(angle.getForward().multipliedBy(0.01)),
-							vel.plus(angle.getForward().multipliedBy(2)),
+							vel.plus(targetPoint.minus(pos).Normalize().multipliedBy(shotSpeed)),
 							true,
-							data.ent.pos,
+							null,
 							20d,
 							10d,
 						});
 				ent.Spawn();
+			}
+		}
+		
+		flags.setState("self", true);
+		data = ents.findNearest(pos, 1, new Flags("enemy targetable !self"));
+		flags.setState("self", false);
+		if ( data.isPositive ) {
+			if ( data.length < radius ) {
+				System.out.println("!@#!@#!@#");
+				pos.setAs(data.ent.pos.plus(pos.minus(data.ent.pos).Normalize().multipliedBy(radius)));
 			}
 		}
 	}
@@ -50,6 +64,9 @@ public class TestEnemy extends Entity {
 		
 		bStatic = false;
 		mass = 0.00001;
+		radius = 0.5;
+		
+		flags.add("enemy targetable");
 	}
 
 }

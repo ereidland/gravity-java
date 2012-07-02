@@ -1,5 +1,4 @@
 package com.evanreidland.e.gravity;
-
 import com.evanreidland.e.Game;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
@@ -7,9 +6,9 @@ import com.evanreidland.e.client.control.input;
 import com.evanreidland.e.client.control.key;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
-import com.evanreidland.e.graphics.Model;
-import com.evanreidland.e.graphics.ModelSceneObject;
-import com.evanreidland.e.graphics.generate;
+import com.evanreidland.e.graphics.BillboardSceneObject;
+import com.evanreidland.e.graphics.SceneObject.AnchorType;
+import com.evanreidland.e.graphics.Sprite;
 import com.evanreidland.e.graphics.graphics;
 
 public class TestInterceptor extends Entity {
@@ -17,7 +16,6 @@ public class TestInterceptor extends Entity {
 	
 	public Vector3 target;
 	public double force, thrust;
-	public Model model;
 	public void onThink() {
 		super.onThink();
 		lifeRemaining -= Game.getDelta()*relativity;
@@ -59,23 +57,20 @@ public class TestInterceptor extends Entity {
 		force = (Double)getArg(args, 5, 10d);
 	}
 	public void onSpawn() {
-		model = generate.Cube(Vector3.Zero(), new Vector3(0.005, 0.005, 0.01), Vector3.Zero());
-		model.tex = engine.loadTexture("shiptest1.png");
-		graphics.scene.addObject(new ModelSceneObject(model), this);
-		
-//		if ( flags.getState("enemy") == State.True ) {
-//			Sprite sprite = new Sprite(2, 2, engine.loadTexture("target1.png"));
-//			sprite.cr = 1;
-//			sprite.cg = 0.25;
-//			sprite.cb = 0;
-//			sprite.ca = 0.25;
-//			graphics.scene.addObject(
-//					new BillboardSceneObject(
-//							sprite,
-//							true),
-//					this,
-//					AnchorType.POS);
-//		}
+//		Model model = generate.Cube(Vector3.Zero(), new Vector3(0.005, 0.005, 0.01), Vector3.Zero());
+//		model.tex = engine.loadTexture("shiptest1.png");
+//		graphics.scene.addObject(new ModelSceneObject(model), this);
+		Sprite sprite = new Sprite(0.05, 0.05, engine.loadTexture("laser1.png"));
+		sprite.cr = 0.5;
+		sprite.cg = 1;
+		sprite.cb = 0.5;
+		sprite.ca = 1.0;
+		graphics.scene.addObject(
+				new BillboardSceneObject(
+						sprite,
+						true),
+				this,
+				AnchorType.POS);
 	}
 	public TestInterceptor(long id) {
 		super("missile", id);
@@ -86,6 +81,6 @@ public class TestInterceptor extends Entity {
 		
 		force = 10;
 		thrust = 1; // Not relative to mass.
-		radius = 0.5;
+		radius = 0.1;
 	}
 }
