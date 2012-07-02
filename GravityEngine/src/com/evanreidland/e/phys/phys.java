@@ -8,8 +8,8 @@ public class phys {
 		double dist = launcherPos.getDistance(targetPos);
 		
 		if ( dist != 0 && shotVel != 0 ) {
-			double lengthDelta = shotVel - (launcherPos.getDistance(targetPos.plus(targetVel)) - dist);
-			return targetPos.plus(targetVel.multipliedBy(dist/lengthDelta));
+			double lengthDelta = shotVel - (launcherPos.plus(launcherVel).getDistance(targetPos.plus(targetVel)) - dist);
+			return targetPos.plus(targetVel.minus(launcherVel).multipliedBy(dist/lengthDelta));
 		}
 		return targetPos.cloned();
 	}
