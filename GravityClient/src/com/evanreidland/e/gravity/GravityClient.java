@@ -180,6 +180,18 @@ public class GravityClient extends GameClient {
 	
 	public void createEntities() { 
 		
+		Ship otherShip = new Ship("dreadnought");
+		
+		ents.Create(otherShip);
+		
+		otherShip.pos = new Vector3(2, 0, 0);
+		ship.flags.setState("player", true);
+		ship.flags.setState("targetable", true);
+		ship.model = shipModel;
+		ship.mass = 0.0001;
+		ship.bStatic = false;
+		
+		
 		ship = (Ship)ents.Create("ship");
 		
 		ship.model = shipModel;

@@ -17,6 +17,11 @@ public class Ship extends Entity {
 	private float mMaxEnergyUsage;
 	private float mCurrentEnergyUsage;
 	private int mShipType;
+	private int mMaxLoadedMissles;
+	
+	private java.util.Vector<Weapon> mShipWeapons;
+	private java.util.Vector<Weapon> mLoadedWeapons;
+ 	private java.util.Vector<Laser> mShipLasers;
 	
 	public Model model;
 	public void onThink() {
@@ -39,8 +44,8 @@ public class Ship extends Entity {
 		flags.setState("ship", true);
 	}
 	
-	public Ship(long id, String shipType) {
-		super("ship", id);
+	public Ship(String shipType) {
+		super("ship");
 		
 		//grab the different ship settings and set defaults
 		mMaxHullDurability = ServerConfig.getConfigFloat(shipType + "HullDurability");
@@ -52,6 +57,25 @@ public class Ship extends Entity {
 		mMaxEnergyUsage = ServerConfig.getConfigFloat(shipType + "MaxEnergyUsage");
 		mCurrentEnergyUsage = 0;
 		mShipType = ServerConfig.getConfigInt(shipType);
+		mMaxLoadedMissles = ServerConfig.getConfigInt(shipType + "MaxLoadedMissles");
+		
+		mLoadedWeapons = new java.util.Vector<Weapon>();
+		mShipWeapons = new java.util.Vector<Weapon>();
+		
+		//DEBUG CODE
+		switch(mShipType) {
+		
+			case 0:
+				mShipWeapons.add(new Missle("homing", this));
+				mShipWeapons.add(new Missle("nuke", this));
+				mShipWeapons.add(new Missle("homing", this));
+				mShipWeapons.add(new Missle("homing", this));
+				break;
+			case 1:
+				break;
+			case 2:
+				break;
+		}
 		
 		model = null;
 		
