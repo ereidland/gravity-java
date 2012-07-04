@@ -48,6 +48,8 @@ public class GravityGame extends GameClient {
 	long nextBackspace, nextFlash;
 	boolean showConsole, flashing;
 	
+	int currentMenu = 0;
+	
 	public void updateConsole() {
 		if ( input.getTyped().length() > 0 ) {
 			consoleText += input.getTyped();
@@ -129,7 +131,7 @@ public class GravityGame extends GameClient {
 		}
 		if ( showConsole ) {
 			updateConsole();
-		} else {
+		} else if ( currentMenu == 0 ) {
 			double speed = getDelta();
 			if ( input.getKeyState(key.KEY_1) && Game.getTime() >= nextShot ) {
 				Entity ent = ents.Create("missile",
@@ -239,7 +241,6 @@ public class GravityGame extends GameClient {
 		graphics.unbindTexture();
 		
 		graphics.scene.Render();
-		ents.list.onRender();
 	}
 
 	public void onRenderHUD() {
@@ -313,6 +314,7 @@ public class GravityGame extends GameClient {
 	}
 	
 	public void onInit() {
+		engine.maxLogs = 40;
 		super.onInit();
 		ServerConfig.setupConfigs();
 		

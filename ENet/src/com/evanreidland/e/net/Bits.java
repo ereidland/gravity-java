@@ -171,6 +171,10 @@ public class Bits {
 		return Float.intBitsToFloat(readInt());
 	}
 	
+	public double readDouble() {
+		return Double.longBitsToDouble(readLong());
+	}
+	
 	public Bits writeBit(boolean state) {
 		if ( end >= data.length ) {
 			if ( data.length > 0 ) {
@@ -241,6 +245,10 @@ public class Bits {
 	
 	public Bits writeFloat(float toWrite) {
 		return writeBytes(ByteBuffer.allocate(4).putFloat(toWrite).array());
+	}
+	
+	public Bits writeDouble(double toWrite) {
+		return writeBytes(ByteBuffer.allocate(8).putDouble(toWrite).array());
 	}
 	
 	public Bits writeLong(long toWrite) {

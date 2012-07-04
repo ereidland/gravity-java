@@ -70,6 +70,10 @@ public class EntityList {
 	public Entity get(int index) {
 		return index >= 0 && index < entities.size() ? entities.get(index) : null;
 	}
+
+	public Entity getByID(long id){
+		return entMap.get(id);
+	}
 	
 	public EntityList getWithFlags(Flags flags, boolean strict) {
 		EntityList list = new EntityList();
@@ -89,8 +93,8 @@ public class EntityList {
 		while ( i < entities.size() ) {
 			Entity ent = entities.get(i);
 			if ( ent.matchesFlags(flags, strict) ) {
-				entities.remove(i);
 				ent.onDie();
+				remove(ent);
 			} else {
 				i++;
 			}

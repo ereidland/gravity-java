@@ -4,6 +4,7 @@ import com.evanreidland.e.Flags.State;
 import com.evanreidland.e.event.Event;
 import com.evanreidland.e.event.ent.EntitySpawnedEvent;
 import com.evanreidland.e.graphics.graphics;
+import com.evanreidland.e.net.Bits;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
 
@@ -26,6 +27,39 @@ public class Entity extends EObject {
 	}
 	public boolean isDead() {
 		return flags.getState("dead") == State.True;
+	}
+	
+	public void Receive(Bits data) {
+		while ( data.getRemainingBytes() > 0 ) {
+			byte b = data.readByte();
+			EntityMessageCode code = b >= 0 && b < EntityMessageCode.values().length ? EntityMessageCode.values()[b] : null;
+			switch ( code ) {
+				case POSITION:
+					pos.setAs(data.readDouble(), data.readDouble(), data.readDouble());
+					break;
+				case VELOCITY:
+					vel.setAs(data.readDouble(), data.readDouble(), data.readDouble());
+					break;
+				case MASS:
+					mass = data.readDouble();
+					break;
+				case RADIUS:
+					radius = data.readDouble();
+					break;
+				case STATIC:
+					bStatic = data.readBit();
+					break;
+				case CUSTOM:
+					onReceive(data);
+					break;
+				default:
+					return;
+			}
+		}
+	}
+	
+	public void onReceive(Bits data) {
+		
 	}
 	
 	public void onThink() {

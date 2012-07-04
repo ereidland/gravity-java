@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.evanreidland.e.Flags;
 import com.evanreidland.e.Vector3;
+import com.evanreidland.e.engine;
 
 public class ents {
 	public static EntityList list = new EntityList();
@@ -49,7 +50,7 @@ public class ents {
 	private static HashMap<String, ClassFactory> factories = new HashMap<String, ClassFactory>();
 	
 	public static void Register(String className, Class<? extends Entity> entClass) {
-		System.out.println("Regsitered " + entClass.toString() + " to \"" + className + "\".");
+		engine.Log("Regsitered " + entClass.toString() + " to \"" + className + "\".");
 		factories.put(className, new ClassFactory(entClass));
 	}
 	
@@ -91,6 +92,10 @@ public class ents {
 			ent.Setup(args);
 		}
 		return ent;
+	}
+	
+	public static Entity get(long id) {
+		return list.getByID(id);
 	}
 	
 	

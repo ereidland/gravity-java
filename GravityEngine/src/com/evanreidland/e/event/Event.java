@@ -44,6 +44,7 @@ public class Event {
 	}
 	
 	public static void setManager(String eventName, Class<? extends Event> eventClass) {
+		System.out.println(eventClass.toString());
 		setManager(eventName, new EventManager(eventClass));
 	}
 	
@@ -74,7 +75,6 @@ public class Event {
 					EventManager manager = managers.get(matchingEvent);
 					if ( manager != null ) {
 						manager.addCaller(new EventCaller(methods[i], listener));
-						System.out.println("Added caller for method " + methods[i].getName());
 						oneSuccess = true;
 					}
 				}

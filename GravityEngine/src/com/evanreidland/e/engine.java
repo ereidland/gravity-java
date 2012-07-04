@@ -142,7 +142,7 @@ public class engine {
 		dataPath.replace('\\', '/');
 		new File(dataPath).mkdir();
 		
-		System.out.println(dataPath);
+		Log("Path: " + dataPath);
 		
 		try {
 			PrintStream pstr = new PrintStream("folder.txt");
