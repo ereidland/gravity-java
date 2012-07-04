@@ -28,7 +28,7 @@ public class Button extends GUIObject {
 		font.r = font.g = 1;
 		font.b = 0;
 		font.a = 1;
-		font.Render2d(fnt, text, rect.getCenter(), (rect.getWidth()*0.75/font.getWidth(fnt, text, fontSize))*fontSize, true);
+		font.Render2d(fnt, text, rect.getCenter(), (rect.getWidth()*0.75/font.getWidth(fnt, text, fontSize))*fontSize, true);;
 	}
 	public boolean onClick(double x, double y) {
 		bClicked = true;

@@ -9,6 +9,9 @@ import java.io.PrintStream;
 import java.util.Vector;
 
 import com.evanreidland.e.audio.sound;
+import com.evanreidland.e.event.Event;
+import com.evanreidland.e.event.ent.EntitySpawnedEvent;
+import com.evanreidland.e.event.ent.EntityDestroyedEvent;
 import com.evanreidland.e.graphics.FontResourceManager;
 import com.evanreidland.e.graphics.graphics;
 import com.evanreidland.e.script.Value;
@@ -156,6 +159,9 @@ public class engine {
 		}
 		
 		addResourceManager(ResourceType.Font, new FontResourceManager()); // Only default resource manager.
+		
+		Event.setManager("onSpawn", EntitySpawnedEvent.class);
+		Event.setManager("onDestroy", EntityDestroyedEvent.class);
 		
 		lastTime = System.currentTimeMillis();
 		game.onInit();

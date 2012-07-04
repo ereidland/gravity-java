@@ -55,6 +55,7 @@ public class TestInterceptor extends Entity {
 		target = (Vector3)getArg(args, 3, null);
 		thrust = (Double)getArg(args, 4, 10d);
 		force = (Double)getArg(args, 5, 10d);
+		lifeRemaining = (Double)getArg(args, 6, 10d);
 	}
 	public void onSpawn() {
 //		Model model = generate.Cube(Vector3.Zero(), new Vector3(0.005, 0.005, 0.01), Vector3.Zero());

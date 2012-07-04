@@ -16,6 +16,7 @@ import com.evanreidland.e.config.ServerConfig;
 import com.evanreidland.e.console.serverfunctions;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
+import com.evanreidland.e.event.Event;
 import com.evanreidland.e.graphics.Model;
 import com.evanreidland.e.graphics.ModelSceneObject;
 import com.evanreidland.e.graphics.Quad;
@@ -314,6 +315,8 @@ public class GravityGame extends GameClient {
 	public void onInit() {
 		super.onInit();
 		ServerConfig.setupConfigs();
+		
+		Event.addListener(new EntityListener());
 		
 		script = new Script();
 		consoleText = "";

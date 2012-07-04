@@ -1,6 +1,8 @@
 package com.evanreidland.e.ent;
 
 import com.evanreidland.e.Flags.State;
+import com.evanreidland.e.event.Event;
+import com.evanreidland.e.event.ent.EntitySpawnedEvent;
 import com.evanreidland.e.graphics.graphics;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
@@ -12,8 +14,6 @@ public class Entity extends EObject {
 	public double radius, mass;
 	
 	public boolean bStatic, bSpawned;
-	
-	public EventList events;
 	
 	public double relativity; // Possibly going to change visibility and make this a properly used variable.
 	
@@ -89,6 +89,7 @@ public class Entity extends EObject {
 	}
 	public void Spawn() {
 		bSpawned = true;
+		Event.Call("onSpawn", new EntitySpawnedEvent(this));
 		onSpawn();
 	}
 	

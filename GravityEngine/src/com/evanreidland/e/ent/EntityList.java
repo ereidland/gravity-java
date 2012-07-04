@@ -5,6 +5,8 @@ import java.util.Vector;
 
 import com.evanreidland.e.Flags;
 import com.evanreidland.e.Vector3;
+import com.evanreidland.e.event.Event;
+import com.evanreidland.e.event.ent.EntityDestroyedEvent;
 import com.evanreidland.e.phys.Line;
 
 public class EntityList {
@@ -58,6 +60,7 @@ public class EntityList {
 	}
 	
 	public Entity remove(Entity ent) {
+		Event.Call("onDestroy", new EntityDestroyedEvent(ent));
 		ID.removeID(ent.getID());
 		entities.remove(ent);
 		entMap.remove(ent.getID());

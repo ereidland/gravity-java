@@ -4,6 +4,7 @@ import com.evanreidland.e.Flags;
 import com.evanreidland.e.Game;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
+import com.evanreidland.e.roll;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.SearchData;
 import com.evanreidland.e.ent.ents;
@@ -12,6 +13,7 @@ import com.evanreidland.e.graphics.ModelSceneObject;
 import com.evanreidland.e.graphics.generate;
 import com.evanreidland.e.graphics.graphics;
 import com.evanreidland.e.phys.phys;
+import com.evanreidland.e.phys.phys.Target;
 
 public class TestEnemy extends Entity {
 	long nextShot = 0;
@@ -26,18 +28,19 @@ public class TestEnemy extends Entity {
 			if ( Game.getTime() > nextShot && data.length < 50 ) {
 				nextShot = Game.getTime() + 1000;
 				
-				double shotSpeed = 5;
+				double shotSpeed = roll.randomDouble(5, 10);
 				Vector3 launchPos = pos.plus(angle.getForward().multipliedBy(0.01));
-				Vector3 targetPoint = phys.getTargetPoint(pos, vel, data.ent.pos, data.ent.vel, shotSpeed);
+				Target target = phys.getTarget(pos, vel, data.ent.pos, data.ent.vel, shotSpeed);
 				
 				Entity ent = ents.Create("missile",
 						new Object[] {
 							launchPos,
-							vel.plus(targetPoint.minus(pos).Normalize().multipliedBy(shotSpeed)),
+							vel.plus(target.pos.minus(pos).Normalize().multiply(shotSpeed)),
 							true,
 							null,
 							20d,
 							10d,
+							target.time,
 						});
 				ent.Spawn();
 			}
