@@ -1,4 +1,4 @@
-package com.evanreidland.e.gravity;
+package com.evanreidland.e.client;
 import com.evanreidland.e.Game;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;

@@ -1,4 +1,4 @@
-package com.evanreidland.e.enums;
+package com.evanreidland.e.shared.enums;
 
 public enum DamageType {
 	None,

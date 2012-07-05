@@ -1,10 +1,10 @@
-package com.evanreidland.e.client.ent;
+package com.evanreidland.e.shared.ent;
 
 import java.util.HashMap;
 
-import com.evanreidland.e.config.ServerConfig;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.graphics.Model;
+import com.evanreidland.e.shared.config.ServerConfig;
 
 public class Ship extends Entity {
 	

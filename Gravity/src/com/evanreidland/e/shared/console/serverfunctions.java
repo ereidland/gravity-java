@@ -1,4 +1,4 @@
-package com.evanreidland.e.console;
+package com.evanreidland.e.shared.console;
 
 import com.evanreidland.e.script.Function;
 import com.evanreidland.e.script.Stack;

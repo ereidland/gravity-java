@@ -3,12 +3,13 @@ package com.evanreidland.e.server;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
 import com.evanreidland.e.ent.EntityMessageCode;
-import com.evanreidland.e.enums.MessageCode;
 import com.evanreidland.e.event.ent.EntityDestroyedEvent;
 import com.evanreidland.e.event.ent.EntitySpawnedEvent;
 import com.evanreidland.e.net.Bits;
 import com.evanreidland.e.net.TCPServer;
+import com.evanreidland.e.shared.enums.MessageCode;
 
+//TODO: Move to GravityServer project and set it up.
 public class GravityServer extends TCPServer {
 	public static GravityServer global;
 	public void onDisconnect(long id) {

@@ -11,7 +11,6 @@ import com.evanreidland.e.client.audio.ALAudioResourceManager;
 import com.evanreidland.e.client.audio.alsound;
 import com.evanreidland.e.client.control.input;
 import com.evanreidland.e.client.control.key;
-import com.evanreidland.e.client.ent.register;
 import com.evanreidland.e.client.graphics.GLGraphicsManager;
 import com.evanreidland.e.client.graphics.GLLight;
 import com.evanreidland.e.client.graphics.GLRenderList;
@@ -19,8 +18,9 @@ import com.evanreidland.e.client.graphics.TextureResourceManager;
 import com.evanreidland.e.client.graphics.VBOGraphicsData;
 import com.evanreidland.e.graphics.graphics;
 import com.evanreidland.e.gui.hud;
+import com.evanreidland.e.shared.ent.register;
 
-public abstract class GameClient extends Game {
+public abstract class GameClientBase extends Game {
 	private double lCamWidth, lCamHeight;
 	public void onUpdate() {
 		if ( graphics.camera.width != lCamWidth || graphics.camera.height != lCamHeight ){

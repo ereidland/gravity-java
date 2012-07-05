@@ -1,4 +1,4 @@
-package com.evanreidland.e.gravity;
+package com.evanreidland.e.client;
 
 import java.util.Vector;
 
@@ -8,12 +8,10 @@ import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
 import com.evanreidland.e.client.EApplet;
 import com.evanreidland.e.client.EApplication;
-import com.evanreidland.e.client.GameClient;
+import com.evanreidland.e.client.GameClientBase;
 import com.evanreidland.e.client.control.input;
 import com.evanreidland.e.client.control.key;
-import com.evanreidland.e.client.ent.Ship;
-import com.evanreidland.e.config.ServerConfig;
-import com.evanreidland.e.console.serverfunctions;
+import com.evanreidland.e.client.gui.Button;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.event.Event;
@@ -24,13 +22,15 @@ import com.evanreidland.e.graphics.font;
 import com.evanreidland.e.graphics.generate;
 import com.evanreidland.e.graphics.graphics;
 import com.evanreidland.e.graphics.Model.ModelType;
-import com.evanreidland.e.gravity.gui.Button;
 import com.evanreidland.e.gui.hud;
 import com.evanreidland.e.script.basefunctions;
 import com.evanreidland.e.script.text.Script;
 import com.evanreidland.e.server.GravityServer;
+import com.evanreidland.e.shared.config.ServerConfig;
+import com.evanreidland.e.shared.console.serverfunctions;
+import com.evanreidland.e.shared.ent.Ship;
 
-public class GravityGame extends GameClient {
+public class GravityGame extends GameClientBase {
 	Resource font1;
 	
 	Model shipModel;

@@ -1,7 +1,7 @@
-package com.evanreidland.e.client.ent;
+package com.evanreidland.e.shared.ent;
 
-import com.evanreidland.e.config.ServerConfig;
-import com.evanreidland.e.enums.DamageType;
+import com.evanreidland.e.shared.config.ServerConfig;
+import com.evanreidland.e.shared.enums.DamageType;
 
 public class Weapon {
 

@@ -1,4 +1,4 @@
-package com.evanreidland.e.gravity;
+package com.evanreidland.e.client;
 
 import com.evanreidland.e.Flags;
 import com.evanreidland.e.Game;

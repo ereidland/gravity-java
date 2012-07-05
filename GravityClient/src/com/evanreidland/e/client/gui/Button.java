@@ -1,4 +1,4 @@
-package com.evanreidland.e.gravity.gui;
+package com.evanreidland.e.client.gui;
 
 import com.evanreidland.e.Resource;
 import com.evanreidland.e.engine;

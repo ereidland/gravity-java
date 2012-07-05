@@ -1,4 +1,4 @@
-package com.evanreidland.e.config;
+package com.evanreidland.e.shared.config;
 
 import java.util.HashMap;
 

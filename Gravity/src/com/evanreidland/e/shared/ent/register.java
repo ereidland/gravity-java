@@ -1,4 +1,4 @@
-package com.evanreidland.e.client.ent;
+package com.evanreidland.e.shared.ent;
 
 import com.evanreidland.e.ent.ents;
 
