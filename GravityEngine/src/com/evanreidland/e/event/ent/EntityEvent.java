@@ -20,6 +20,7 @@ public class EntityEvent extends Event {
 	}
 	
 	public EntityEvent(Entity entity) {
+		super(entity);
 		this.entity = entity;
 	}
 }

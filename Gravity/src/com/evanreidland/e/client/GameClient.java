@@ -21,8 +21,14 @@ import com.evanreidland.e.graphics.graphics;
 import com.evanreidland.e.gui.hud;
 
 public abstract class GameClient extends Game {
-	
+	private double lCamWidth, lCamHeight;
 	public void onUpdate() {
+		if ( graphics.camera.width != lCamWidth || graphics.camera.height != lCamHeight ){
+			lCamWidth = graphics.camera.width;
+			lCamHeight = graphics.camera.height;
+			hud.gui.Layout();
+			
+		}
 		hud.gui.Update();
 		if ( input.isKeyDown(key.MOUSE_LBUTTON) ) {
 			if ( hud.gui != null ) {

@@ -14,9 +14,13 @@ public class EventManager {
 	//Returns true if the event was cancelled.
 	public boolean Call(Event event) {
 		for ( int i = 0; i < callers.size(); i++ ) {
-			callers.get(i).Call(event);
-			if ( event.isCanceled() ) {
-				return true;
+			EventCaller caller = callers.get(i);
+			Object required = caller.getInfo().requiredObject;
+			if ( required == null || required == event.getObject() ) {
+				caller.Call(event);
+				if ( event.isCanceled() ) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -24,6 +28,15 @@ public class EventManager {
 	
 	public void addCaller(EventCaller caller) {
 		callers.add(caller);
+	}
+	
+	public void removeListener(Object listenerObject) {
+		for ( int i = 0; i < callers.size(); i++ ) {
+			EventListenerInfo info = callers.get(i).getInfo();
+			if ( info.getListener() == listenerObject ) {
+				callers.remove(i);
+			}
+		}
 	}
 	
 	public EventManager(Class<? extends Event> eventClass) {

@@ -39,6 +39,8 @@ public class GUIObject {
 			parent = null;
 			prevParent.removeObject(this);
 		}
+		
+		
 		return removed;
 	}
 	

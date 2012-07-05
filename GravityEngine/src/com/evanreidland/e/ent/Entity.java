@@ -18,6 +18,10 @@ public class Entity extends EObject {
 	
 	public double relativity; // Possibly going to change visibility and make this a properly used variable.
 	
+	public String toString() {
+		return getClassName() + "/" + getID();
+	}
+	
 	public void Kill() {
 		flags.setState("dead", State.True);
 	}

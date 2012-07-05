@@ -43,6 +43,7 @@ public class GravityGame extends GameClient {
 	
 	double viewHeight = 0.01, deltaScaling = 1;
 	
+	
 	Script script;
 	String consoleText;
 	long nextBackspace, nextFlash;
@@ -277,6 +278,7 @@ public class GravityGame extends GameClient {
 		ship.bStatic = false;
 		ship.pos = new Vector3(2, 0, 0);
 		ship.flags.add("player targetable");
+		ship.Spawn();
 		
 		graphics.scene.addObject(new ModelSceneObject(shipModel), ship);
 		
@@ -318,7 +320,7 @@ public class GravityGame extends GameClient {
 		super.onInit();
 		ServerConfig.setupConfigs();
 		
-		Event.addListener(new EntityListener());
+		Event.addListener(new GravityEntityListener());
 		
 		script = new Script();
 		consoleText = "";
@@ -347,6 +349,6 @@ public class GravityGame extends GameClient {
 	public static void main(String[] args) {
 		EApplication app = new EApplication(new EApplet());
 		engine.game = new GravityGame();
-		app.runApplet("Gravity Alpha v0.1", true);
+		app.runApplet("Gravity Alpha v0.1", false);
 	}
 }
