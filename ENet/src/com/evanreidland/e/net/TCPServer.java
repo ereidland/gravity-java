@@ -55,7 +55,8 @@ public abstract class TCPServer {
 					}
 				} else if ( data.getRemainingBytes() > 0) {
 					remainingBytes -= data.getRemainingBytes();
-					formingPacket.writeBytes(data.readRemaining());
+					int remainingBits = data.getRemainingBits();
+					formingPacket.writeBits(data.readRemaining(), remainingBits);
 				}
 			}
 		}
@@ -142,14 +143,14 @@ public abstract class TCPServer {
 		public void run() {
 			try {
 				Bits finalData = new Bits();
-				finalData.writeBit(data.length <= 255);
-				if ( data.length <= 255 ) {
+				finalData.writeBit(data.length <= Byte.MAX_VALUE);
+				if ( data.length <= Byte.MAX_VALUE ) {
 					finalData.writeByte((byte)data.length);
 				} else {
 					finalData.writeShort((short)data.length);
 				}
 				finalData.writeBytes(data);
-				client.socket.getOutputStream().write(finalData.trim().getBytes());
+				client.socket.getOutputStream().write(finalData.readRemaining());
 			} catch ( Exception e ) {
 				client.onException(e, TCPEvent.SEND);
 			}

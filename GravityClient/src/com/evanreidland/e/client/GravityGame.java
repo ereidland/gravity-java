@@ -11,7 +11,6 @@ import com.evanreidland.e.client.EApplication;
 import com.evanreidland.e.client.GameClientBase;
 import com.evanreidland.e.client.control.input;
 import com.evanreidland.e.client.control.key;
-import com.evanreidland.e.client.gui.Button;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.event.Event;
@@ -22,12 +21,9 @@ import com.evanreidland.e.graphics.font;
 import com.evanreidland.e.graphics.generate;
 import com.evanreidland.e.graphics.graphics;
 import com.evanreidland.e.graphics.Model.ModelType;
-import com.evanreidland.e.gui.hud;
 import com.evanreidland.e.script.basefunctions;
 import com.evanreidland.e.script.text.Script;
-import com.evanreidland.e.server.GravityServer;
 import com.evanreidland.e.shared.config.ServerConfig;
-import com.evanreidland.e.shared.console.serverfunctions;
 import com.evanreidland.e.shared.ent.Ship;
 
 public class GravityGame extends GameClientBase {
@@ -109,7 +105,8 @@ public class GravityGame extends GameClientBase {
 		double fontSize = 16;
 		
 		Vector<String> log = engine.getLog();
-		
+		font.r = font.g = font.a = 1;
+		font.b = 0;
 		for ( int i = 0; i < log.size(); i++ ) {
 			font.Render2d(font1, log.get(i), graphics.camera.bottomLeft().plus(new Vector3(0, 64 + (log.size() - i)*(fontSize + 4), 0)), fontSize, false);
 		}
@@ -309,10 +306,10 @@ public class GravityGame extends GameClientBase {
 	}
 	
 	public void buildGUI() {
-		 Button button = new Button(128, 64, "button");
-		 button.tex = engine.loadTexture("button1.png");
-		 button.Position(graphics.camera.topLeft().minus(0, button.rect.getHeight(), 0));
-		 hud.addObject(button);
+//		 Button button = new Button(128, 64, "button");
+//		 button.tex = engine.loadTexture("button1.png");
+//		 button.Position(graphics.camera.topLeft().minus(0, button.rect.getHeight(), 0));
+//		 hud.addObject(button);
 	}
 	
 	public void onInit() {
@@ -330,11 +327,9 @@ public class GravityGame extends GameClientBase {
 		flashing = false;
 		
 		basefunctions.registerAll(script.env);
-		serverfunctions.registerAll(script.env);
 		clientfunctions.registerAll(script.env);
 		
 		//Note: these both create a static self-reference on construction.
-		new GravityServer();
 		new GravityNetClient();
 		
 		registerEntities();

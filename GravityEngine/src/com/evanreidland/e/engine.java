@@ -7,6 +7,10 @@ import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Vector;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import com.evanreidland.e.audio.sound;
 import com.evanreidland.e.event.Event;
@@ -18,6 +22,29 @@ import com.evanreidland.e.script.Value;
 import com.evanreidland.e.script.Variable;
 
 public class engine {
+	public static Logger logger = Logger.getLogger("com.evanreidland.e.engine");
+	private static class EngineLogHandler extends Handler {
+		public void close() throws SecurityException {
+		}
+
+		public void flush() {
+		}
+
+		public void publish(LogRecord record) {
+			String str = "[" + record.getLevel().toString() + "]: " + record.getMessage();
+			
+			log.add(str);
+			if ( log.size() > maxLogs ) {
+				log = new Vector<String>(log.subList(log.size() - maxLogs, log.size()));
+			}
+		}
+		
+	}
+	
+	public static void Log(String str) {
+		logger.log(Level.INFO, str);
+	}
+	
 	private static ResourceManager[] managers;
 	
 	private static long curID = 0;
@@ -108,14 +135,6 @@ public class engine {
 		}
 	}
 	
-	public static void Log(String str) {
-		log.add(str);
-		if ( log.size() > maxLogs ) {
-			log = new Vector<String>(log.subList(log.size() - maxLogs, log.size()));
-		}
-		if ( printErrors ) System.out.println(getLastLog());
-	}
-	
 	public static void Error(String err) {
 		Log("Error: " + err);
 	}
@@ -133,6 +152,7 @@ public class engine {
 	}
 	
 	public static void Initialize() {
+		logger.addHandler(new EngineLogHandler());
 		managers = new ResourceManager[ResourceType.values().length];
 		for ( int i = 0; i < ResourceType.values().length; i++ ) {
 			managers[i] = new ResourceManager(ResourceType.None);

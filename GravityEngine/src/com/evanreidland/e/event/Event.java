@@ -3,6 +3,8 @@ package com.evanreidland.e.event;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import com.evanreidland.e.engine;
+
 public class Event {
 	//Normal object.
 	private boolean bCanceled;
@@ -50,7 +52,7 @@ public class Event {
 	}
 	
 	public static void setManager(String eventName, Class<? extends Event> eventClass) {
-		System.out.println(eventClass.toString());
+		engine.Log("Registered \"" + eventName + "\" to " + eventClass.toString());
 		setManager(eventName, new EventManager(eventClass));
 	}
 	

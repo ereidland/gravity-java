@@ -64,14 +64,14 @@ public abstract class TCPClient {
 		public void run() {
 			try {
 				Bits finalData = new Bits();
-				finalData.writeBit(data.length <= 255);
-				if ( data.length <= 255 ) {
+				finalData.writeBit(data.length <= Byte.MAX_VALUE);
+				if ( data.length <= Byte.MAX_VALUE ) {
 					finalData.writeByte((byte)data.length);
 				} else {
 					finalData.writeShort((short)data.length);
 				}
 				finalData.writeBytes(data);
-				socket.getOutputStream().write(finalData.trim().getBytes());
+				socket.getOutputStream().write(finalData.readRemaining());
 			} catch ( Exception e ) {
 				onException(e, TCPEvent.SEND);
 			}

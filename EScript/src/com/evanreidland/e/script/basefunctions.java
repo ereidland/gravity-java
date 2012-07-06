@@ -318,6 +318,6 @@ public class basefunctions {
 		env.addFunction(new Help());
 		
 		env.add(new Variable.Constant("pi", new Value((double)Math.PI)));
-		env.add(new Variable("", 0f)); // Referenced by "@".
+		env.add(new Variable("", 0d)); // Referenced by "@".
 	}
 }

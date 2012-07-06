@@ -1,9 +1,9 @@
-package com.evanreidland.e.shared.console;
+package com.evanreidland.e.server;
 
 import com.evanreidland.e.script.Function;
 import com.evanreidland.e.script.Stack;
 import com.evanreidland.e.script.Value;
-import com.evanreidland.e.server.GravityServer;
+import com.evanreidland.e.script.basefunctions;
 
 public class serverfunctions {
 	public static class Listen extends Function {
@@ -13,7 +13,6 @@ public class serverfunctions {
 				port = args.at(0).toInt(port);
 			}
 			
-			
 			GravityServer.global.Listen(port);
 			return new Value("Listening on port " + port + "...");
 		}
@@ -21,7 +20,22 @@ public class serverfunctions {
 			super("listen");
 		}
 	}
+	
+	public static class Print extends Function {
+		public Value Call(Stack args) {
+			String str = "";
+			for ( int i = 0; i < args.size(); i++ ) {
+				str += args.at(i).toString() + " ";
+			}
+			return new Value(str);
+		}
+		
+		public Print() {
+			super("print");
+		}
+	}
 	public static void registerAll(Stack env) {
+		basefunctions.printFunction = new Print();
 		env.addFunction(new Listen());
 	}
 }

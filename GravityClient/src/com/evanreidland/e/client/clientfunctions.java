@@ -1,8 +1,11 @@
 package com.evanreidland.e.client;
 
+import com.evanreidland.e.net.Bits;
 import com.evanreidland.e.script.Function;
 import com.evanreidland.e.script.Stack;
 import com.evanreidland.e.script.Value;
+import com.evanreidland.e.shared.enums.MessageCode;
+import com.evanreidland.e.shared.net.message;
 
 public class clientfunctions {
 	public static class Connect extends Function {
@@ -29,7 +32,8 @@ public class clientfunctions {
 				for ( int i = 0; i < args.size(); i++ ) {
 					str += args.at(i).toString() + " ";
 				}
-				GravityNetClient.global.Send(str.getBytes());
+				
+				GravityNetClient.global.Send(new Bits().writeByte(message.toByte(MessageCode.MESSAGE)).writeBytes(str.getBytes()).readRemaining());
 				return new Value();
 			}
 			return new Value("Not enough arguments. Format: send <data>");

@@ -175,6 +175,20 @@ public class Bits {
 		return Double.longBitsToDouble(readLong());
 	}
 	
+	public String readString() {
+		int length = 0;
+		String str = "";
+		if ( readBit() ) {
+			length = readByte();
+		} else if ( readBit() ) {
+			length = readShort();
+		} else { // There should never be strings this long in normal use.
+			length = readInt();
+		}
+		str = new String(readBytes(length));
+		return str;
+	}
+	
 	public Bits writeBit(boolean state) {
 		if ( end >= data.length ) {
 			if ( data.length > 0 ) {
@@ -253,6 +267,27 @@ public class Bits {
 	
 	public Bits writeLong(long toWrite) {
 		return writeBytes(ByteBuffer.allocate(8).putLong(toWrite).array());
+	}
+	
+	public Bits writeString(String str) {
+		byte[] strBytes = str.getBytes();
+		int len = strBytes.length;
+		if ( len <= Byte.MAX_VALUE) {
+			writeBit(true);
+			writeByte((byte)len);
+		} else {
+			writeBit(false);
+			if ( len <= Short.MAX_VALUE ) {
+				writeBit(true);
+				writeShort((short)len);
+			} else {
+				writeBit(false);
+				writeInt(len);
+			}
+		}
+		writeBytes(strBytes);
+		
+		return this;
 	}
 	
 	public byte[] getBytes() {
