@@ -134,6 +134,7 @@ public class GravityServerGUI extends JPanel implements Runnable, ActionListener
 	}
 
 	public static void main(String[] args) {
+		System.out.println(Integer.toBinaryString(1000));
 		GravityServerGUI app = new GravityServerGUI();
 		app.startup();
 		

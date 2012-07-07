@@ -146,6 +146,7 @@ public class Vector3 {
 		}
 		return this;
 	}
+	
 	public Vector3 multipliedBy(double scalar) {
 		return cloned().multiply(scalar);
 	}

@@ -28,6 +28,7 @@ public class GravityNetClient extends TCPClient {
 
 	public void onException(Exception e, TCPEvent event) {
 		engine.Log("Exception: " + e.getMessage() + " on event " + event.toString());
+		e.printStackTrace();
 	}
 
 	public GravityNetClient() {
