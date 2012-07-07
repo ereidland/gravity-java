@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 
+import com.evanreidland.e.engine;
 import com.evanreidland.e.script.basefunctions;
 import com.evanreidland.e.script.text.Script;
 
@@ -42,16 +43,17 @@ public class GravityServerGUI extends JPanel implements Runnable, ActionListener
 	}
 	
 	private static final long serialVersionUID = -727062100602335292L;
-	private JFrame frame;
-	private JTextArea logArea;
-	private JScrollPane logScroll;
-	private JTextField consoleLine;
 	
 	public static boolean running = true;
 	
 	public static void Log(String str) {
 		logger.log(Level.INFO, str);
 	}
+	
+	private JFrame frame;
+	private JTextArea logArea;
+	private JScrollPane logScroll;
+	private JTextField consoleLine;
 	
 	public void run() {
 		//Something. Should start a new thread to not interfere with GUI.

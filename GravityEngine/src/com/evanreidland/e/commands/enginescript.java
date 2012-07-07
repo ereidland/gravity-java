@@ -1,5 +1,6 @@
 package com.evanreidland.e.commands;
 
+import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
@@ -30,17 +31,13 @@ public class enginescript {
 	public static class Spawn extends Function {
 		public Value Call(Stack args) {
 			Entity ent = ents.Create(args.at(0).toString());
-			int count = args.at(1).toInt();
+			
+			Vector3 pos = new Vector3(args.at(2).toDouble(), args.at(3).toDouble(), args.at(4).toDouble());
 			if ( ent == null ) {
 				return new Value("Entity class, '" + args.at(0).toString() + "' does not exist.");
 			} else {
-				ent.pos.setAs(graphics.camera.pos.multipliedBy(1, 1, 0));
+				ent.pos.setAs(pos);
 				ent.Spawn();
-				for ( int i = 0; i < count - 1; i++ ) {
-					ent = ents.Create(args.at(0).toString());
-					ent.pos.setAs(graphics.camera.pos.multipliedBy(1, 1, 0));
-					ent.Spawn();
-				}
 			}
 			return new Value();
 		}
