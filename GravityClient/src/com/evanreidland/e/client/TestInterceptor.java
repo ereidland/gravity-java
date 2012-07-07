@@ -6,7 +6,7 @@ import com.evanreidland.e.client.control.input;
 import com.evanreidland.e.client.control.key;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
-import com.evanreidland.e.graphics.BillboardSceneObject;
+import com.evanreidland.e.graphics.LongBillboardSceneObject;
 import com.evanreidland.e.graphics.SceneObject.AnchorType;
 import com.evanreidland.e.graphics.Sprite;
 import com.evanreidland.e.graphics.graphics;
@@ -16,9 +16,12 @@ public class TestInterceptor extends Entity {
 	
 	public Vector3 target;
 	public double force, thrust;
+	
+	public LongBillboardSceneObject billboard;
+	
 	public void onThink() {
 		super.onThink();
-		lifeRemaining -= Game.getDelta()*relativity;
+		lifeRemaining -= Game.getDelta();
 		if ( lifeRemaining <= 0 ) {
 			Kill();
 		}
@@ -28,15 +31,13 @@ public class TestInterceptor extends Entity {
 		}
 		
 		if ( target != null ) {
-			if ( target.minus(pos).getLength() < radius ) {
-				Kill();
-			} else {
-				Vector3 targetVel = target.minus(pos).Normalize().multipliedBy(thrust);
-				vel.add(targetVel.minus(vel).Normalize().multipliedBy(Game.getDelta()*10));
-			}
+			Vector3 targetVel = target.minus(pos).Normalize().multipliedBy(thrust);
+			vel.add(targetVel.minus(vel).Normalize().multipliedBy(Game.getDelta()*10));
 		}
 		
 		angle = vel.getAngle();
+		billboard.v1.setAs(pos.plus(vel.getNormal().multipliedBy(0.1)));
+		billboard.v2.setAs(pos);
 	}
 	public void onDie() {
 		Entity ent = ents.Create("explosion", new Double[] { 0d, 0.5d, 0.5d, 1d, 0d });
@@ -66,10 +67,9 @@ public class TestInterceptor extends Entity {
 		sprite.cg = 1;
 		sprite.cb = 0.5;
 		sprite.ca = 1.0;
+		billboard = new LongBillboardSceneObject(sprite, pos.cloned(), pos.plus(vel), 0.1, 0.4, 0.5, true);
 		graphics.scene.addObject(
-				new BillboardSceneObject(
-						sprite,
-						true),
+				billboard,
 				this,
 				AnchorType.POS);
 	}

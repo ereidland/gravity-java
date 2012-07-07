@@ -29,9 +29,9 @@ public class TestEnemy extends Entity {
 			if ( Game.getTime() > nextShot && data.length < 50 ) {
 				nextShot = Game.getTime() + 1000;
 				
-				double shotSpeed = roll.randomDouble(5, 10);
+				double shotSpeed = roll.randomDouble(0.5, 1);
 				Vector3 launchPos = pos.plus(angle.getForward().multipliedBy(0.01));
-				Target target = phys.getTarget(pos, vel, data.ent.pos, data.ent.vel, shotSpeed);
+				Target target = phys.getTarget(launchPos, vel, data.ent.pos, data.ent.vel, shotSpeed);
 				
 				Entity ent = ents.Create("missile",
 						new Object[] {

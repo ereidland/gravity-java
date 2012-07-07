@@ -193,6 +193,8 @@ public class Vector3 {
 		return getDistance(other.x, other.y, other.z);
 	}
 	
+	
+	
 	public Vector3 Reduce(double howMuch) {
 		Vector3 sub = multipliedBy(-howMuch);
 		double len = getLength();
@@ -205,6 +207,22 @@ public class Vector3 {
 	
 	public Vector3 reducedBy(double howMuch) {
 		return cloned().Reduce(howMuch);
+	}
+	
+	public Vector3 average(Vector3 other) {
+		return add(other.minus(this).multiply(0.5));
+	}
+	
+	public Vector3 averaged(Vector3 other) {
+		return cloned().average(other);
+	}
+	
+	public Vector3 combine(Vector3 otherNormal) {
+		return add(otherNormal).Normalize();
+	}
+	
+	public Vector3 combined(Vector3 otherNormal) {
+		return cloned().combine(otherNormal);
 	}
 	
 	public Vector3 clipAngle() {

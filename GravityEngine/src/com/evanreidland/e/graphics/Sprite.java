@@ -44,7 +44,7 @@ public class Sprite {
 		Vector3 angle = v2.minus(v1).getAngle();
 		Vector3 viewAngle = type ? graphics.camera.pos.minus(pos).getAngle() : graphics.forward.getAngle();
 		
-		Vector3 up = viewAngle.getUp().multipliedBy(angle.getUp()).multipliedBy(width*0.5), right = viewAngle.getRight().multipliedBy(angle.getRight()).multipliedBy(width*0.5);
+		Vector3 up = viewAngle.getUp().combined(angle.getUp()).multipliedBy(height*0.5);//.combined(angle.getRight()).multipliedBy(width*0.5);
 		
 		Vertex a = new Vertex(), b = new Vertex(), c = new Vertex(), d = new Vertex();
 		
@@ -54,10 +54,10 @@ public class Sprite {
 		d.tx = tx1; d.ty = 1;
 		
 		
-		a.pos.setAs(v1.plus(Vector3.Projected(right, up, angle.y + engine.Pi_2 + engine.Pi_4)));
-		b.pos.setAs(v2.plus(Vector3.Projected(right, up, angle.y + engine.Pi_4)));
-		c.pos.setAs(v2.plus(Vector3.Projected(right, up, angle.y - engine.Pi_4)));
-		d.pos.setAs(v1.plus(Vector3.Projected(right, up, angle.y - engine.Pi_2 - engine.Pi_4)));
+		a.pos.setAs(v1.plus(up.multipliedBy(0.5)));
+		b.pos.setAs(v2.plus(up.multipliedBy(0.5)));
+		c.pos.setAs(v2.plus(up.multipliedBy(-0.5)));
+		d.pos.setAs(v1.plus(up.multipliedBy(-0.5)));
 		
 		a.r = cr; a.g = cg; a.b = cb; a.a = ca;
 		b.r = cr; b.g = cg; b.b = cb; b.a = ca;

@@ -164,9 +164,9 @@ public class GravityGame extends GameClientBase {
 			if ( deltaScaling < 0.1 ) deltaScaling = 0.1f;
 			if ( deltaScaling > 100 ) deltaScaling = 100;
 			
-			for ( int i = 0; i < ents.list.getSize(); i++ ) {
-				ents.list.get(i).relativity = deltaScaling; // For now while I test this.
-			}
+//			for ( int i = 0; i < ents.list.getSize(); i++ ) {
+//				ents.list.get(i).relativity = deltaScaling; // For now while I test this.
+//			}
 			
 			if ( input.getKeyState(key.KEY_SHIFT) ) {
 				speed *= 2;
@@ -224,7 +224,7 @@ public class GravityGame extends GameClientBase {
 			}
 		}
 		
-		ents.list.simulateGravity(getDelta());
+		//ents.list.simulateGravity(getDelta());
 		ents.list.onThink();
 		
 		graphics.camera.angle.setAs(ship.angle);//planet.pos.minus(ship.pos).getAngle());

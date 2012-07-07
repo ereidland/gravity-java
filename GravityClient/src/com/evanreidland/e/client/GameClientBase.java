@@ -1,7 +1,5 @@
 package com.evanreidland.e.client;
 
-import org.lwjgl.opengl.GL11;
-
 import com.evanreidland.e.Game;
 import com.evanreidland.e.ResourceType;
 import com.evanreidland.e.engine;
@@ -66,7 +64,5 @@ public abstract class GameClientBase extends Game {
 		EApplet.active.clearB = 0.2f;
 		
 		register.All();
-		
-		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 }
