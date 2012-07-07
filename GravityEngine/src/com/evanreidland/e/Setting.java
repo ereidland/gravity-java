@@ -1,64 +1,88 @@
 package com.evanreidland.e;
 
-public class Setting {
+public class Setting
+{
 	public String value;
 	private String name;
-	public String getName() {
+
+	public String getName()
+	{
 		return name;
 	}
-	public boolean isDefined() {
+
+	public boolean isDefined()
+	{
 		return !name.equals("!null");
 	}
-	public double asDouble(double def) {
-		try {
+
+	public double asDouble(double def)
+	{
+		try
+		{
 			return Double.valueOf(value);
-		} catch ( Exception e ) {
+		}
+		catch (Exception e)
+		{
 			return def;
 		}
 	}
-	public int asInt(int def) {
-		try {
+
+	public int asInt(int def)
+	{
+		try
+		{
 			return Integer.valueOf(value);
-		} catch ( Exception e ) {
+		}
+		catch (Exception e)
+		{
 			return def;
 		}
 	}
-	
-	public boolean asBool(boolean def) {
-		if ( isDefined() && value.length() > 0 ) {
+
+	public boolean asBool(boolean def)
+	{
+		if (isDefined() && value.length() > 0)
+		{
 			return (value.toLowerCase().equals("true") || value.equals("1")) ? true
-				: (value.toLowerCase().equals("false") || value.equals("0")) ? false
-				: def;
-					
+					: (value.toLowerCase().equals("false") || value.equals("0")) ? false
+							: def;
+
 		}
 		return def;
 	}
-	
-	public double asDouble() {
+
+	public double asDouble()
+	{
 		return asDouble(0);
 	}
-	
-	public int asInt() {
+
+	public int asInt()
+	{
 		return asInt(0);
 	}
-	
-	public boolean asBool() {
+
+	public boolean asBool()
+	{
 		return asBool(false);
 	}
-	
-	public void setInt(int num) {
+
+	public void setInt(int num)
+	{
 		value = Integer.toString(num);
 	}
-	
-	public void setDouble(double num) {
+
+	public void setDouble(double num)
+	{
 		value = Double.toString(num);
 	}
-	
-	public void setBool(boolean state) {
+
+	public void setBool(boolean state)
+	{
 		value = Boolean.toString(state);
 	}
-	
-	public Setting(String name, String value) {
+
+	public Setting(String name, String value)
+	{
 		this.name = name;
 		this.value = value;
 	}

@@ -5,83 +5,110 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
 
-public abstract class TCPServer {
+public abstract class TCPServer
+{
 	private ServerSocket socket;
 	private int port;
-	
+
 	private long lastID = 0;
 	private Vector<Client> clients;
-	
+
 	private Thread listenThread;
-	
-	public int getPort() {
+
+	public int getPort()
+	{
 		return port;
 	}
-	
-	private class Client {
+
+	private class Client
+	{
 		public long id;
 		public Socket socket;
 		public Thread receiveThread;
-		
+
 		public Bits formingPacket;
 		public int remainingBits;
-		
-		public void onException(Exception e, TCPEvent event) {
+
+		public void onException(Exception e, TCPEvent event)
+		{
 			e.printStackTrace();
 			onDisconnect(id);
 			clients.remove(this);
 		}
-		
-		public void processData(Bits data) {
-			if ( remainingBits == 0 ) {
-				int rbits = data.getRemainingBits(); 
-				if ( rbits >= 8 ) {
-					if ( data.readBit() ) {
+
+		public void processData(Bits data)
+		{
+			if (remainingBits == 0)
+			{
+				int rbits = data.getRemainingBits();
+				if (rbits >= 8)
+				{
+					if (data.readBit())
+					{
 						remainingBits = data.readByte();
-					} else if ( rbits >= 16 && data.readBit() ) {
+					}
+					else if (rbits >= 16 && data.readBit())
+					{
 						remainingBits = data.readShort();
-					} else if ( rbits >= 32 ) {
+					}
+					else if (rbits >= 32)
+					{
 						remainingBits = data.readInt();
 					}
 					processData(data);
 				}
-			} else {
-				if ( data.getRemainingBits() >= remainingBits ) {
-					formingPacket.writeBits(data.readBits(remainingBits), remainingBits);
+			}
+			else
+			{
+				if (data.getRemainingBits() >= remainingBits)
+				{
+					formingPacket.writeBits(data.readBits(remainingBits),
+							remainingBits);
 					onReceiveData(id, formingPacket.trim());
-					
+
 					formingPacket = new Bits();
 					remainingBits = 0;
-					
-					if ( data.getRemainingBits() > 0 ) {
+
+					if (data.getRemainingBits() > 0)
+					{
 						processData(data);
 					}
-				} else if ( data.getRemainingBytes() > 0) {
+				}
+				else if (data.getRemainingBytes() > 0)
+				{
 					int fremainingBits = data.getRemainingBits();
 					remainingBits -= fremainingBits;
-					formingPacket.writeBits(data.readRemaining(), fremainingBits);
+					formingPacket.writeBits(data.readRemaining(),
+							fremainingBits);
 				}
 			}
 		}
-		
-		public void Send(Bits data) {
+
+		public void Send(Bits data)
+		{
 			new Thread(new SendThread(this, data)).start();
 		}
-		
-		public void close() {
-			try {
+
+		public void close()
+		{
+			try
+			{
 				socket.close();
-			} catch (IOException e) {
+			}
+			catch (IOException e)
+			{
 				e.printStackTrace();
 			}
 		}
-		
-		public void listenForData() {
+
+		public void listenForData()
+		{
 			receiveThread = new Thread(new ReceiveThread(this));
 			receiveThread.start();
 		}
-		
-		public Client(Socket socket) {
+
+		public Client(Socket socket)
+		{
 			id = ++lastID;
 			receiveThread = null;
 			formingPacket = new Bits();
@@ -89,165 +116,222 @@ public abstract class TCPServer {
 			this.socket = socket;
 		}
 	}
-	
-	
-	public String getAddress(long id) {
+
+	public String getAddress(long id)
+	{
 		Client client = getClient(id);
 		return client != null ? client.socket.getInetAddress().toString() : "";
 	}
-	
-	public int getPort(long id) {
+
+	public int getPort(long id)
+	{
 		Client client = getClient(id);
 		return client != null ? client.socket.getPort() : 0;
 	}
-	
-	public String getFullAddress(long id) {
+
+	public String getFullAddress(long id)
+	{
 		return getAddress(id) + ":" + getPort(id);
 	}
-	
+
 	public abstract void onDisconnect(long id);
+
 	public abstract void onNewConnection(long id);
+
 	public abstract void onReceiveData(long id, Bits data);
+
 	public abstract void onListenException(Exception e);
-	
-	public void broadcastData(long allBut, Bits data) {
-		for ( int i = 0; i < clients.size(); i++ ) {
+
+	public void broadcastData(long allBut, Bits data)
+	{
+		for (int i = 0; i < clients.size(); i++)
+		{
 			Client client = clients.get(i);
-			if ( client.id != allBut ) {
+			if (client.id != allBut)
+			{
 				client.Send(data);
 			}
 		}
 	}
-	
-	public void broadcastData(Bits data) {
+
+	public void broadcastData(Bits data)
+	{
 		broadcastData(-1, data);
 	}
-	
-	private Client getClient(long id) {
-		for ( int i = 0; i < clients.size(); i++ ) {
+
+	private Client getClient(long id)
+	{
+		for (int i = 0; i < clients.size(); i++)
+		{
 			Client client = clients.get(i);
-			if ( client.id == id ) {
+			if (client.id == id)
+			{
 				return client;
 			}
 		}
 		return null;
 	}
-	
-	public void sendData(long id, Bits data) {
+
+	public void sendData(long id, Bits data)
+	{
 		Client client = getClient(id);
-		if ( client != null ) {
+		if (client != null)
+		{
 			client.Send(data);
 		}
 	}
-	
-	private class SendThread implements Runnable {
+
+	private class SendThread implements Runnable
+	{
 		public Client client;
 		public Bits data;
-		public void run() {
-			try {
+
+		public void run()
+		{
+			try
+			{
 				Bits finalData = new Bits();
 				int len = data.getRemainingBits();
 				finalData.writeBit(data.getRemainingBits() <= Byte.MAX_VALUE);
-				if ( len <= Byte.MAX_VALUE ) {
-					finalData.writeByte((byte)len);
-				} else if ( len <= Short.MAX_VALUE) {
+				if (len <= Byte.MAX_VALUE)
+				{
+					finalData.writeByte((byte) len);
+				}
+				else if (len <= Short.MAX_VALUE)
+				{
 					finalData.writeBit(true);
-					finalData.writeShort((short)len);
-				} else {
+					finalData.writeShort((short) len);
+				}
+				else
+				{
 					finalData.writeBit(false);
 					finalData.writeInt(len);
 				}
 				finalData.writeBits(data.readRemaining(), len);
-				client.socket.getOutputStream().write(finalData.readRemaining());
-			} catch ( Exception e ) {
+				client.socket.getOutputStream()
+						.write(finalData.readRemaining());
+			}
+			catch (Exception e)
+			{
 				client.onException(e, TCPEvent.SEND);
 			}
 		}
-		
-		public SendThread(Client client, Bits data) {
+
+		public SendThread(Client client, Bits data)
+		{
 			this.client = client;
 			this.data = data;
 		}
 	}
-	private class ReceiveThread implements Runnable {
+
+	private class ReceiveThread implements Runnable
+	{
 		public Client client;
-		public void run() {
-			while ( client.socket != null ) {
-				try {
-					if ( !client.socket.isConnected() ) {
+
+		public void run()
+		{
+			while (client.socket != null)
+			{
+				try
+				{
+					if (!client.socket.isConnected())
+					{
 						onDisconnect(client.id);
 						clients.remove(client);
-					} else {
+					}
+					else
+					{
 						int size = client.socket.getInputStream().available();
-						if ( size > 0 ) {
+						if (size > 0)
+						{
 							byte[] bytes = new byte[size];
 							client.socket.getInputStream().read(bytes);
 							client.processData(new Bits().writeBytes(bytes));
 						}
 					}
-				} catch ( Exception e ) {
+				}
+				catch (Exception e)
+				{
 					client.onException(e, TCPEvent.RECEIVE);
 					break;
 				}
 			}
-			
+
 			onDisconnect(client.id);
 			clients.remove(client);
 		}
-		
-		public ReceiveThread(Client client) {
+
+		public ReceiveThread(Client client)
+		{
 			this.client = client;
 		}
 	}
-	
-	public boolean isListening() {
+
+	public boolean isListening()
+	{
 		return socket != null;
 	}
-	
-	private class ListenThread implements Runnable {
-		public void run() {
-			try {
-				while ( socket != null ) {
+
+	private class ListenThread implements Runnable
+	{
+		public void run()
+		{
+			try
+			{
+				while (socket != null)
+				{
 					Socket clientSocket = socket.accept();
 					Client client = new Client(clientSocket);
 					clients.add(client);
 					onNewConnection(client.id);
 					client.listenForData();
 				}
-			} catch ( Exception e ) {
+			}
+			catch (Exception e)
+			{
 				e.printStackTrace();
 				onListenException(e);
 			}
 		}
 	}
-	
-	public void Listen(int port) {
+
+	public void Listen(int port)
+	{
 		this.port = port;
-		
-		if ( listenThread == null ) {
-			try {
+
+		if (listenThread == null)
+		{
+			try
+			{
 				socket = new ServerSocket(port);
-			} catch ( Exception e ) {
+			}
+			catch (Exception e)
+			{
 				onListenException(e);
 			}
 			listenThread = new Thread(new ListenThread());
 			listenThread.start();
-		} else {
+		}
+		else
+		{
 			onListenException(new Exception("Already listening"));
 		}
 	}
-	
-	public void close() {
+
+	public void close()
+	{
 		socket = null;
 		listenThread = null;
-		for ( int i = 0; i < clients.size(); i++ ) {
+		for (int i = 0; i < clients.size(); i++)
+		{
 			clients.get(i).close();
 		}
 		clients.clear();
 		lastID = 1;
 	}
-	
-	public TCPServer() {
+
+	public TCPServer()
+	{
 		clients = new Vector<Client>();
 		port = 27015;
 		socket = null;

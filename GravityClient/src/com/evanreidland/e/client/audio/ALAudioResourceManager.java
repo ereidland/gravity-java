@@ -5,16 +5,21 @@ import com.evanreidland.e.ResourceManager;
 import com.evanreidland.e.ResourceType;
 import com.evanreidland.e.engine;
 
-public class ALAudioResourceManager extends ResourceManager {
-	public Resource load(String address) {
+public class ALAudioResourceManager extends ResourceManager
+{
+	public Resource load(String address)
+	{
 		Long id = resID.get(address);
-		if ( id != null ) {
+		if (id != null)
+		{
 			Resource r = get(id);
-			if ( r.isValid() ) {
+			if (r.isValid())
+			{
 				return r;
 			}
 		}
-		if ( alsound.loadSound(engine.getPath() + address, address) ) {
+		if (alsound.loadSound(engine.getPath() + address, address))
+		{
 			Resource r = new Resource(ResourceType.Sound, address, true);
 			res.put(r.getID(), r);
 			resID.put(address, r.getID());
@@ -22,7 +27,9 @@ public class ALAudioResourceManager extends ResourceManager {
 		}
 		return Resource.newInvalid();
 	}
-	public ALAudioResourceManager() {
+
+	public ALAudioResourceManager()
+	{
 		super(ResourceType.Sound);
 	}
 

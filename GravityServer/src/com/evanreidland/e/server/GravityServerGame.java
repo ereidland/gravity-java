@@ -2,17 +2,23 @@ package com.evanreidland.e.server;
 
 import com.evanreidland.e.Game;
 
-public class GravityServerGame extends Game {
-	public void onUpdate() {
-	}
-	
-	public void onInit() {	
+public class GravityServerGame extends Game
+{
+	public void onUpdate()
+	{
 	}
 
-	//Unused.
-	public void onRender() {
+	public void onInit()
+	{
 	}
-	public void onRenderHUD() {
+
+	// Unused.
+	public void onRender()
+	{
+	}
+
+	public void onRenderHUD()
+	{
 	}
 
 }

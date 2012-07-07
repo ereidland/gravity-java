@@ -2,14 +2,15 @@ package com.evanreidland.e.shared.config;
 
 import java.util.HashMap;
 
-public class ServerConfig {
-	private static HashMap<String, Object> configConstants; 
-	
+public class ServerConfig
+{
+	private static HashMap<String, Object> configConstants;
+
 	public static void setupConfigs()
 	{
 		configConstants = new HashMap<String, Object>();
-		
-		//SHIP VARIABLES
+
+		// SHIP VARIABLES
 		configConstants.put("dreadnoughtHullDurability", 10000.0f);
 		configConstants.put("dreadnoughtShieldPower", 5000.0f);
 		configConstants.put("dreadnoughtMaxEnergy", 5000.0f);
@@ -28,8 +29,8 @@ public class ServerConfig {
 		configConstants.put("interceptorMaxEnergyUsage", 200.0f);
 		configConstants.put("interceptorMaxLoadedMissles", 2);
 		configConstants.put("interceptor", 2);
-		
-		//WEAPON VARIABLES
+
+		// WEAPON VARIABLES
 		configConstants.put("homingBaseDamage", 400);
 		configConstants.put("homingDamageType", "None");
 		configConstants.put("nukeBaseDamage", 600);
@@ -39,20 +40,24 @@ public class ServerConfig {
 		configConstants.put("laserBaseDamage", 50);
 		configConstants.put("laserDamageType", "None");
 	}
-	
-	public static Integer getConfigInt(String name) {
-		return (Integer)configConstants.get(name);
+
+	public static Integer getConfigInt(String name)
+	{
+		return (Integer) configConstants.get(name);
 	}
-	
-	public static Double getConfigDouble(String name) {
-		return (Double)configConstants.get(name);
+
+	public static Double getConfigDouble(String name)
+	{
+		return (Double) configConstants.get(name);
 	}
-	
-	public static Float getConfigFloat(String name) {
-		return (Float)configConstants.get(name);
+
+	public static Float getConfigFloat(String name)
+	{
+		return (Float) configConstants.get(name);
 	}
-	
-	public static String getConfigString(String name) {
-		return (String)configConstants.get(name);
+
+	public static String getConfigString(String name)
+	{
+		return (String) configConstants.get(name);
 	}
 }
