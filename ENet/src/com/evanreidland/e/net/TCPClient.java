@@ -11,7 +11,7 @@ public abstract class TCPClient {
 	private String addr;
 	private int port;
 	
-	private int remainingBytes;
+	private int remainingBits;
 	private Bits formingPacket;
 	
 	private boolean isConnecting;
@@ -30,54 +30,62 @@ public abstract class TCPClient {
 	public boolean isConnected() {
 		return socket != null && socket.isConnected();
 	}
-
-	private void processData(Bits data) {
-		if ( remainingBytes == 0 ) {
-			if ( data.getRemainingBytes() > 0 ) {
+	public void processData(Bits data) {
+		if ( remainingBits == 0 ) {
+			int rbits = data.getRemainingBits(); 
+			if ( rbits >= 8 ) {
 				if ( data.readBit() ) {
-					remainingBytes = data.readByte();
-				} else {
-					remainingBytes = data.readShort();
+					remainingBits = data.readByte();
+				} else if ( rbits >= 16 && data.readBit() ) {
+					remainingBits = data.readShort();
+				} else if ( rbits >= 32 ) {
+					remainingBits = data.readInt();
 				}
 				processData(data);
 			}
 		} else {
-			if ( data.getRemainingBytes() >= remainingBytes ) {
-				formingPacket.writeBytes(data.readBytes(remainingBytes));
+			if ( data.getRemainingBits() >= remainingBits ) {
+				formingPacket.writeBits(data.readBits(remainingBits), remainingBits);
 				onReceive(formingPacket.trim());
 				
 				formingPacket = new Bits();
-				remainingBytes = 0;
+				remainingBits = 0;
 				
-				if ( data.getRemainingBytes() > 0 ) {
+				if ( data.getRemainingBits() > 0 ) {
 					processData(data);
 				}
 			} else if ( data.getRemainingBytes() > 0) {
-				remainingBytes -= data.getRemainingBytes();
-				formingPacket.writeBytes(data.readRemaining());
+				int fremainingBits = data.getRemainingBits();
+				remainingBits -= fremainingBits;	
+				formingPacket.writeBits(data.readRemaining(), fremainingBits);
 			}
 		}
 	}
 	
 	private class SendThread implements Runnable {
-		public byte[] data;
+		public Bits data;
 		public void run() {
 			try {
 				Bits finalData = new Bits();
-				finalData.writeBit(data.length <= Byte.MAX_VALUE);
-				if ( data.length <= Byte.MAX_VALUE ) {
-					finalData.writeByte((byte)data.length);
+				int len = data.getRemainingBits();
+				finalData.writeBit(data.getRemainingBits() <= Byte.MAX_VALUE);
+				if ( len <= Byte.MAX_VALUE ) {
+					finalData.writeByte((byte)len);
+				} else if ( len <= Short.MAX_VALUE) {
+					finalData.writeBit(true);
+					finalData.writeShort((short)len);
 				} else {
-					finalData.writeShort((short)data.length);
+					finalData.writeBit(false);
+					finalData.writeInt(len);
 				}
-				finalData.writeBytes(data);
+				finalData.writeBits(data.readRemaining(), len);
 				socket.getOutputStream().write(finalData.readRemaining());
 			} catch ( Exception e ) {
 				onException(e, TCPEvent.SEND);
 			}
 		}
 		
-		public SendThread(byte[] data) {
+		public SendThread(Bits data) {
 			this.data = data;
 		}
 	}
@@ -135,7 +143,7 @@ public abstract class TCPClient {
 		onConnect();
 	}
 	
-	public void Send(byte[] data) {
+	public void Send(Bits data) {
 		new Thread(new SendThread(data)).start();
 	}
 	
@@ -158,7 +166,7 @@ public abstract class TCPClient {
 		socket = null;
 		receiveThread = null;
 		
-		remainingBytes = 0;
+		remainingBits = 0;
 		formingPacket = new Bits();
 	}
 }

@@ -17,7 +17,7 @@ public class TCPServerTest {
 		public void onReceiveData(long id, Bits data) {
 			String str = "From " + getFullAddress(id) + ": " + new String(data.readRemaining());
 			System.out.println(str);
-			broadcastData(str.getBytes());
+			broadcastData(new Bits().writeBytes(str.getBytes()));
 		}
 
 		public void onListenException(Exception e) {

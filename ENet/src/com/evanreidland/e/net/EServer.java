@@ -17,7 +17,7 @@ public class EServer {
 			toSend.writeByte((byte)NetCode.CONNECT_UDP.ordinal());
 			toSend.writeLong(id);
 			toSend.writeShort((short)udpServer.getPort());
-			sendData(id, toSend.readRemaining());
+			sendData(id, toSend);
 		}
 
 		public void onReceiveData(long id, Bits data) {

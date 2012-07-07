@@ -39,7 +39,6 @@ public class GravityGame extends GameClientBase {
 	
 	double viewHeight = 0.01, deltaScaling = 1;
 	
-	
 	Script script;
 	String consoleText;
 	long nextBackspace, nextFlash;

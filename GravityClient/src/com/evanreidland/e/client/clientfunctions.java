@@ -33,7 +33,7 @@ public class clientfunctions {
 					str += args.at(i).toString() + " ";
 				}
 				
-				GravityNetClient.global.Send(new Bits().writeByte(message.toByte(MessageCode.MESSAGE)).writeBytes(str.getBytes()).readRemaining());
+				GravityNetClient.global.Send(new Bits().writeByte(message.toByte(MessageCode.MESSAGE)).writeString(str));
 				return new Value();
 			}
 			return new Value("Not enough arguments. Format: send <data>");

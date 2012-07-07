@@ -110,7 +110,7 @@ public class Bits {
 		}
 		int newEnd = readIndex + howMany;
 		if ( newEnd <= end ) {
-			byte[] bytes = new byte[(int)Math.ceil(howMany/8f)];
+			byte[] bytes = new byte[howMany/8 + ((howMany % 8) != 0 ? 1 : 0)];
 			int byteIndex = 0, bitIndex = 0;
 			for ( int i = 0; i < howMany; i++ ) {
 				byteIndex = i/8;
@@ -130,7 +130,7 @@ public class Bits {
 	}
 	
 	public byte[] readRemaining() {
-		return readBits(end - readIndex);
+		return readBits(getRemainingBits());
 	}
 	
 	public int getRemainingBits() {
@@ -222,7 +222,7 @@ public class Bits {
 				}
 				makeRoom(newSize);
 			} else {
-				makeRoom(newEnd/8);
+				makeRoom(newEnd);
 			}
 		}
 		
@@ -288,6 +288,13 @@ public class Bits {
 		writeBytes(strBytes);
 		
 		return this;
+	}
+	
+	public Bits write(Bits bits, int len) {
+		return writeBits(bits.readRemaining(), len);
+	}
+	public Bits write(Bits bits) {
+		return write(bits, bits.getRemainingBits());
 	}
 	
 	public byte[] getBytes() {

@@ -22,8 +22,9 @@ public class TestEnemy extends Entity {
 		angle.setAs(vel.getAngle());
 		SearchData data = ents.findNearest(pos, 10000000, new Flags("player targetable"));
 		if ( data.isPositive ) {
-			Vector3 targetVel = data.ent.pos.minus(pos).Normalize().multipliedBy(1);
-			vel.add(targetVel.minus(vel).Normalize().multipliedBy(Game.getDelta()*2));
+//			Vector3 targetVel = data.ent.pos.minus(pos).Normalize().multipliedBy(1);
+//			vel.add(targetVel.minus(vel).Normalize().multipliedBy(Game.getDelta()*2));
+			vel.setAs(0, 0, 0);
 			
 			if ( Game.getTime() > nextShot && data.length < 50 ) {
 				nextShot = Game.getTime() + 1000;

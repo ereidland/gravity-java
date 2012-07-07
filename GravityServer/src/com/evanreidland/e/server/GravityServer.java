@@ -26,8 +26,7 @@ public class GravityServer extends TCPServer {
 	public void broadcastMessage(long ignoreID, String str) {
 		broadcastData(ignoreID, 
 				new Bits().writeByte(message.toByte(MessageCode.MESSAGE))
-						  .writeBytes(str.getBytes())
-						  .readRemaining());
+						  .writeBytes(str.getBytes()));
 	}
 
 	public void onReceiveData(long id, Bits data) {
@@ -85,7 +84,7 @@ public class GravityServer extends TCPServer {
 		bits.writeByte((byte)EntityMessageCode.RADIUS.ordinal());
 		bits.writeDouble(event.getEntity().radius);
 		
-		broadcastData(bits.trim().getBytes());
+		broadcastData(bits);
 	}
 	
 	public void onEntityDestroyed(EntityDestroyedEvent event) {

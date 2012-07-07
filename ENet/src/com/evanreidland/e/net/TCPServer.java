@@ -24,7 +24,7 @@ public abstract class TCPServer {
 		public Thread receiveThread;
 		
 		public Bits formingPacket;
-		public int remainingBytes;
+		public int remainingBits;
 		
 		public void onException(Exception e, TCPEvent event) {
 			e.printStackTrace();
@@ -33,35 +33,38 @@ public abstract class TCPServer {
 		}
 		
 		public void processData(Bits data) {
-			if ( remainingBytes == 0 ) {
-				if ( data.getRemainingBytes() > 0 ) {
+			if ( remainingBits == 0 ) {
+				int rbits = data.getRemainingBits(); 
+				if ( rbits >= 8 ) {
 					if ( data.readBit() ) {
-						remainingBytes = data.readByte();
-					} else {
-						remainingBytes = data.readShort();
+						remainingBits = data.readByte();
+					} else if ( rbits >= 16 && data.readBit() ) {
+						remainingBits = data.readShort();
+					} else if ( rbits >= 32 ) {
+						remainingBits = data.readInt();
 					}
 					processData(data);
 				}
 			} else {
-				if ( data.getRemainingBytes() >= remainingBytes ) {
-					formingPacket.writeBytes(data.readBytes(remainingBytes));
+				if ( data.getRemainingBits() >= remainingBits ) {
+					formingPacket.writeBits(data.readBits(remainingBits), remainingBits);
 					onReceiveData(id, formingPacket.trim());
 					
 					formingPacket = new Bits();
-					remainingBytes = 0;
+					remainingBits = 0;
 					
-					if ( data.getRemainingBytes() > 0 ) {
+					if ( data.getRemainingBits() > 0 ) {
 						processData(data);
 					}
 				} else if ( data.getRemainingBytes() > 0) {
-					remainingBytes -= data.getRemainingBytes();
-					int remainingBits = data.getRemainingBits();
-					formingPacket.writeBits(data.readRemaining(), remainingBits);
+					int fremainingBits = data.getRemainingBits();
+					remainingBits -= fremainingBits;
+					formingPacket.writeBits(data.readRemaining(), fremainingBits);
 				}
 			}
 		}
 		
-		public void Send(byte[] data) {
+		public void Send(Bits data) {
 			new Thread(new SendThread(this, data)).start();
 		}
 		
@@ -82,7 +85,7 @@ public abstract class TCPServer {
 			id = ++lastID;
 			receiveThread = null;
 			formingPacket = new Bits();
-			remainingBytes = 0;
+			remainingBits = 0;
 			this.socket = socket;
 		}
 	}
@@ -107,7 +110,7 @@ public abstract class TCPServer {
 	public abstract void onReceiveData(long id, Bits data);
 	public abstract void onListenException(Exception e);
 	
-	public void broadcastData(long allBut, byte[] data) {
+	public void broadcastData(long allBut, Bits data) {
 		for ( int i = 0; i < clients.size(); i++ ) {
 			Client client = clients.get(i);
 			if ( client.id != allBut ) {
@@ -116,7 +119,7 @@ public abstract class TCPServer {
 		}
 	}
 	
-	public void broadcastData(byte[] data) {
+	public void broadcastData(Bits data) {
 		broadcastData(-1, data);
 	}
 	
@@ -130,7 +133,7 @@ public abstract class TCPServer {
 		return null;
 	}
 	
-	public void sendData(long id, byte[] data) {
+	public void sendData(long id, Bits data) {
 		Client client = getClient(id);
 		if ( client != null ) {
 			client.Send(data);
@@ -139,24 +142,29 @@ public abstract class TCPServer {
 	
 	private class SendThread implements Runnable {
 		public Client client;
-		public byte[] data;
+		public Bits data;
 		public void run() {
 			try {
 				Bits finalData = new Bits();
-				finalData.writeBit(data.length <= Byte.MAX_VALUE);
-				if ( data.length <= Byte.MAX_VALUE ) {
-					finalData.writeByte((byte)data.length);
+				int len = data.getRemainingBits();
+				finalData.writeBit(data.getRemainingBits() <= Byte.MAX_VALUE);
+				if ( len <= Byte.MAX_VALUE ) {
+					finalData.writeByte((byte)len);
+				} else if ( len <= Short.MAX_VALUE) {
+					finalData.writeBit(true);
+					finalData.writeShort((short)len);
 				} else {
-					finalData.writeShort((short)data.length);
+					finalData.writeBit(false);
+					finalData.writeInt(len);
 				}
-				finalData.writeBytes(data);
+				finalData.writeBits(data.readRemaining(), len);
 				client.socket.getOutputStream().write(finalData.readRemaining());
 			} catch ( Exception e ) {
 				client.onException(e, TCPEvent.SEND);
 			}
 		}
 		
-		public SendThread(Client client, byte[] data) {
+		public SendThread(Client client, Bits data) {
 			this.client = client;
 			this.data = data;
 		}

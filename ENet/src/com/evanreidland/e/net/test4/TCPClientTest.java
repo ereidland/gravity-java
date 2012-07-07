@@ -50,7 +50,7 @@ public class TCPClientTest {
 		while ( client.isConnected() || client.isConnecting() ) {
 			if ( !client.isConnecting() ) {
 				String str = in.readLine();
-				client.Send(str.getBytes());
+				client.Send(new Bits().writeBytes(str.getBytes()));
 			}
 		}
 		

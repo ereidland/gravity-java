@@ -40,6 +40,34 @@ public class Sprite {
 		graphics.passQuad(a, b, c, d);
 	}
 	
+	public void renderLongBillboard(Vector3 v1, Vector3 v2, double height, double tx1, double tx2, boolean type) {
+		Vector3 angle = v2.minus(v1).getAngle();
+		Vector3 viewAngle = type ? graphics.camera.pos.minus(pos).getAngle() : graphics.forward.getAngle();
+		
+		Vector3 up = viewAngle.getUp().multipliedBy(angle.getUp()).multipliedBy(width*0.5), right = viewAngle.getRight().multipliedBy(angle.getRight()).multipliedBy(width*0.5);
+		
+		Vertex a = new Vertex(), b = new Vertex(), c = new Vertex(), d = new Vertex();
+		
+		a.tx = tx1; a.ty = 0;
+		b.tx = tx2; b.ty = 0;
+		c.tx = tx2; c.ty = 1;
+		d.tx = tx1; d.ty = 1;
+		
+		
+		a.pos.setAs(v1.plus(Vector3.Projected(right, up, angle.y + engine.Pi_2 + engine.Pi_4)));
+		b.pos.setAs(v2.plus(Vector3.Projected(right, up, angle.y + engine.Pi_4)));
+		c.pos.setAs(v2.plus(Vector3.Projected(right, up, angle.y - engine.Pi_4)));
+		d.pos.setAs(v1.plus(Vector3.Projected(right, up, angle.y - engine.Pi_2 - engine.Pi_4)));
+		
+		a.r = cr; a.g = cg; a.b = cb; a.a = ca;
+		b.r = cr; b.g = cg; b.b = cb; b.a = ca;
+		c.r = cr; c.g = cg; c.b = cb; c.a = ca;
+		d.r = cr; d.g = cg; d.b = cb; d.a = ca;
+		
+		graphics.setTexture(tex);
+		graphics.passQuad(a, b, c, d);
+	}
+	
 	public void render2D() {
 		double w2 = width*0.5f;
 		double h2 = height*0.5f;
