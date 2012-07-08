@@ -4,6 +4,7 @@ import com.evanreidland.e.script.Function;
 import com.evanreidland.e.script.Stack;
 import com.evanreidland.e.script.Value;
 import com.evanreidland.e.script.basefunctions;
+import com.evanreidland.e.script.basefunctions.CallOther;
 
 public class serverfunctions {
 	public static class Listen extends Function {
@@ -34,8 +35,23 @@ public class serverfunctions {
 			super("print");
 		}
 	}
+	
+	public static class StartGame extends Function {
+		public Value Call(Stack args) {
+			Value returnValue = args.context.getFunction("listen").Call(new Stack());
+			GravityServer.global.setupGame();
+			return new Value(returnValue.toString() + "and Starting game!");
+		}
+		
+		public StartGame() {
+			super("start");
+		}
+	}
+	
 	public static void registerAll(Stack env) {
 		basefunctions.printFunction = new Print();
 		env.addFunction(new Listen());
+		env.addFunction(new StartGame());
+		env.addFunction(new CallOther("listen", new Listen()));
 	}
 }

@@ -1,17 +1,25 @@
 package com.evanreidland.e.server;
 
+import java.util.Vector;
+
 import com.evanreidland.e.Vector3;
+import com.evanreidland.e.engine;
 import com.evanreidland.e.ent.EntityMessageCode;
 import com.evanreidland.e.event.ent.EntityDestroyedEvent;
 import com.evanreidland.e.event.ent.EntitySpawnedEvent;
 import com.evanreidland.e.net.Bits;
 import com.evanreidland.e.net.TCPServer;
+import com.evanreidland.e.shared.Player;
 import com.evanreidland.e.shared.enums.MessageCode;
 import com.evanreidland.e.shared.net.message;
 
 //TODO: Move to GravityServer project and set it up.
 public class GravityServer extends TCPServer {
 	public static GravityServer global;
+	
+	private Vector<Player> mPlayersToAddOnInit;
+	private GravityServerGame gravityGame;
+	
 	public static void Log(String str) {
 		GravityServerGUI.Log(str);
 	}
@@ -21,6 +29,11 @@ public class GravityServer extends TCPServer {
 	
 	public void onNewConnection(long id) {
 		Log("Server.onNewConnection: " + id + getFullAddress(id));
+		if(gravityGame != null) {
+			gravityGame.addNewPlayer(new Player(id));
+		} else {
+			mPlayersToAddOnInit.add(new Player(id));
+		}
 	}
 	
 	public void broadcastMessage(long ignoreID, String str) {
@@ -91,7 +104,25 @@ public class GravityServer extends TCPServer {
 		
 	}
 
+	public void setupGame() {
+		gravityGame = new GravityServerGame();
+		gravityGame.onInit();
+		for (Player player : mPlayersToAddOnInit) {
+			gravityGame.addNewPlayer(player);
+		}
+		
+		engine.game = gravityGame;
+		engine.Initialize();
+	}
+	
+	public void updateGame() {
+		if(gravityGame != null) {
+			engine.Update();
+		}
+	}
+	
 	public GravityServer() {
+		mPlayersToAddOnInit = new Vector<Player>();
 		global = this;
 	}
 }

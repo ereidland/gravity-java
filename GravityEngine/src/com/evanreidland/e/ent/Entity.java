@@ -143,7 +143,7 @@ public class Entity extends EObject {
 	}
 	
 	public Entity(String className) {
-		super(className);
+		this(className, 0);
 	}
 	
 	public Entity(String className, long id) {

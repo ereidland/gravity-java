@@ -55,8 +55,19 @@ public class GravityServerGUI extends JPanel implements Runnable, ActionListener
 	private JScrollPane logScroll;
 	private JTextField consoleLine;
 	
+	public void loop() {
+		while ( running ) {
+			GravityServer.global.updateGame();
+		}
+	}
+	
 	public void run() {
 		//Something. Should start a new thread to not interfere with GUI.
+		new Thread() {
+			public void run() {
+				loop();
+			}
+		}.start();
 	}
 	
 	public void actionPerformed(ActionEvent evt) {
