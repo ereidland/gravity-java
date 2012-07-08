@@ -2,6 +2,7 @@ package com.evanreidland.e.client;
 
 import java.util.Vector;
 
+import com.evanreidland.e.Flags;
 import com.evanreidland.e.Game;
 import com.evanreidland.e.Resource;
 import com.evanreidland.e.Vector3;
@@ -9,6 +10,7 @@ import com.evanreidland.e.engine;
 import com.evanreidland.e.client.control.input;
 import com.evanreidland.e.client.control.key;
 import com.evanreidland.e.ent.Entity;
+import com.evanreidland.e.ent.EntityList;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.event.Event;
 import com.evanreidland.e.graphics.Model;
@@ -26,24 +28,24 @@ import com.evanreidland.e.shared.ent.Ship;
 public class GravityGame extends GameClientBase
 {
 	Resource font1;
-
+	
 	Model shipModel;
-
+	
 	Resource skybox;
-
+	
 	Ship ship;
-
+	
 	long nextShot;
-
+	
 	double viewHeight = 0.01, deltaScaling = 1;
-
+	
 	Script script;
 	String consoleText;
 	long nextBackspace, nextFlash;
 	boolean showConsole, flashing;
-
+	
 	int currentMenu = 0;
-
+	
 	public void updateConsole()
 	{
 		if (input.getTyped().length() > 0)
@@ -52,18 +54,18 @@ public class GravityGame extends GameClientBase
 			nextFlash = 0;
 			flashing = false;
 		}
-
+		
 		if (System.currentTimeMillis() >= nextFlash)
 		{
 			flashing = !flashing;
 			nextFlash = System.currentTimeMillis() + 500;
 		}
-
+		
 		if (input.isKeyDown(key.KEY_BACKSPACE))
 		{
 			nextBackspace = 0;
 		}
-
+		
 		if (input.getKeyState(key.KEY_BACKSPACE)
 				&& System.currentTimeMillis() > nextBackspace)
 		{
@@ -94,7 +96,7 @@ public class GravityGame extends GameClientBase
 				consoleText = "";
 			}
 		}
-
+		
 		if (input.isKeyDown(key.KEY_ENTER) && consoleText.length() > 0)
 		{
 			engine.Log(">" + consoleText);
@@ -106,7 +108,7 @@ public class GravityGame extends GameClientBase
 			consoleText = "";
 		}
 	}
-
+	
 	public void renderConsole()
 	{
 		Quad q = new Quad();
@@ -117,9 +119,9 @@ public class GravityGame extends GameClientBase
 		q.vert[3].pos.setAs(graphics.camera.bottomLeft());
 		q.setColor(0.25, 0.25, 0.25, 0.25);
 		q.pass();
-
+		
 		double fontSize = 16;
-
+		
 		Vector<String> log = engine.getLog();
 		font.r = font.g = font.a = 1;
 		font.b = 0;
@@ -136,7 +138,7 @@ public class GravityGame extends GameClientBase
 				graphics.camera.bottomLeft().plus(new Vector3(0, 64, 0)),
 				fontSize, false);
 	}
-
+	
 	public void drawRing(Vector3 origin, double rad, int numPoints)
 	{
 		Vector3 lp = origin.plus(Vector3.fromAngle2d(0).multipliedBy(rad));
@@ -148,7 +150,7 @@ public class GravityGame extends GameClientBase
 			lp.setAs(np);
 		}
 	}
-
+	
 	public void onUpdate()
 	{
 		super.onUpdate();
@@ -191,7 +193,7 @@ public class GravityGame extends GameClientBase
 				viewHeight = 0.01;
 			if (viewHeight > 1)
 				viewHeight = 1;
-
+			
 			if (input.getKeyState(key.KEY_3))
 			{
 				deltaScaling += getDelta() * 20;
@@ -208,12 +210,12 @@ public class GravityGame extends GameClientBase
 				deltaScaling = 0.1f;
 			if (deltaScaling > 100)
 				deltaScaling = 100;
-
+			
 			// for ( int i = 0; i < ents.list.getSize(); i++ ) {
 			// ents.list.get(i).relativity = deltaScaling; // For now while I
 			// test this.
 			// }
-
+			
 			if (input.getKeyState(key.KEY_SHIFT))
 			{
 				speed *= 2;
@@ -255,7 +257,7 @@ public class GravityGame extends GameClientBase
 					{
 						ship.vel.add(ship.angle.getRight().multipliedBy(speed));
 					}
-
+					
 					if (input.isKeyDown(key.KEY_C))
 					{
 						ship.vel.setAs(0, 0, 0);
@@ -277,7 +279,7 @@ public class GravityGame extends GameClientBase
 					{
 						ship.angleVel.z += speed;// Math.cos(ship.angle.y)*speed;
 					}
-
+					
 					if (input.getKeyState(key.KEY_UP))
 					{
 						ship.angleVel.x += Math.abs(speed);
@@ -289,26 +291,26 @@ public class GravityGame extends GameClientBase
 				}
 			}
 		}
-
+		
 		// ents.list.simulateGravity(getDelta());
 		ents.list.onThink();
-
+		
 		graphics.camera.angle.setAs(ship.angle);// planet.pos.minus(ship.pos).getAngle());
 		graphics.camera.pos.setAs(ship.pos.plus(
 				graphics.camera.getForward().multipliedBy(-viewHeight * 2.5))
 				.plus(graphics.camera.getUp().multipliedBy(viewHeight)));
 	}
-
+	
 	public void onRender()
 	{
 		super.onRender();
 		graphics.drawSkybox(skybox, graphics.camera.farDist - 1);
-
+		
 		graphics.unbindTexture();
-
+		
 		graphics.scene.Render();
 	}
-
+	
 	public void onRenderHUD()
 	{
 		super.onRenderHUD();
@@ -320,10 +322,16 @@ public class GravityGame extends GameClientBase
 		font.Render2d(font1,
 				"Delta: " + String.format("%03.03f", Game.getDelta()),
 				graphics.camera.bottomLeft().plus(0, 48, 0), 16, false);
-
+		
 		double s = 10;
 		graphics.unbindTexture();
-
+		
+		EntityList list = ents.list.getWithFlags(new Flags("missile enemy"),
+				true);
+		for (int i = 0; i < list.size(); i++)
+		{
+			// TODO something.
+		}
 		Vector3 p = Game.mousePos;
 		graphics.drawLine(p.plus(new Vector3(-s, 0, 0)),
 				p.plus(new Vector3(0, -s, 0)), 2, 1, 1, 1, 0.5f);
@@ -333,35 +341,35 @@ public class GravityGame extends GameClientBase
 				p.plus(new Vector3(0, s, 0)), 2, 1, 1, 1, 0.5f);
 		graphics.drawLine(p.plus(new Vector3(0, s, 0)),
 				p.plus(new Vector3(-s, 0, 0)), 2, 1, 1, 1, 0.5f);
-
+		
 		if (showConsole)
 		{
 			renderConsole();
 		}
 	}
-
+	
 	public void registerEntities()
 	{
 		ents.Register("missile", TestInterceptor.class);
 		ents.Register("explosion", Explosion.class);
 		ents.Register("enemy", TestEnemy.class);
 	}
-
+	
 	public void createEntities()
 	{
 		ship = (Ship) ents.Create("ship");
-
+		
 		ship.model = shipModel;
 		ship.mass = 0.0001;
 		ship.bStatic = false;
 		ship.pos = new Vector3(2, 0, 0);
 		ship.flags.add("player targetable");
 		ship.Spawn();
-
+		
 		graphics.scene.addObject(new ModelSceneObject(shipModel), ship);
-
+		
 		nextShot = 0;
-
+		
 		int num = 20;
 		for (int i = 0; i < num; i++)
 		{
@@ -372,25 +380,25 @@ public class GravityGame extends GameClientBase
 			ent.Spawn();
 		}
 	}
-
+	
 	public void loadGraphics()
 	{
 		generate.setModelType(ModelType.RenderList);
 		shipModel = generate.Cube(new Vector3(0, 0, 0), new Vector3(0.01f,
 				0.01f, 0.01f), new Vector3());
 		shipModel.tex = engine.loadTexture("shiptest1.png");
-
+		
 		font.buildFont("Courier New", 32, true, false);
 		font1 = engine.loadFont("Courier Newx32");
-
+		
 		skybox = engine.loadTexture("skybox1.png");
 	}
-
+	
 	public void loadSound()
 	{
 		// I'm going to have something here eventually.
 	}
-
+	
 	public void buildGUI()
 	{
 		// Button button = new Button(128, 64, "button");
@@ -399,37 +407,37 @@ public class GravityGame extends GameClientBase
 		// button.rect.getHeight(), 0));
 		// hud.addObject(button);
 	}
-
+	
 	public void onInit()
 	{
 		engine.maxLogs = 40;
 		super.onInit();
 		ServerConfig.setupConfigs();
-
+		
 		Event.addListener(new GravityEntityListener());
-
+		
 		script = new Script();
 		consoleText = "";
 		nextBackspace = 0;
 		nextFlash = 0;
 		showConsole = false;
 		flashing = false;
-
+		
 		basefunctions.registerAll(script.env);
 		clientfunctions.registerAll(script.env);
-
+		
 		// Note: these both create a static self-reference on construction.
 		new GravityNetClient();
-
+		
 		registerEntities();
 		loadGraphics();
 		loadSound();
 		buildGUI();
 		createEntities();
-
+		
 		graphics.camera.farDist = 1000000000d;
 	}
-
+	
 	public static void main(String[] args)
 	{
 		EApplication app = new EApplication(new EApplet());

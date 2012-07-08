@@ -8,63 +8,73 @@ public class Camera
 			orthoScale;
 	public boolean is3D, ortho; // Use Orthographic projection? Default false.
 	public Vector3 pos, angle;
-
+	
 	public Vector3 topLeft()
 	{
 		return new Vector3(-width * 0.5f, height * 0.5f, 0);
 	}
-
+	
 	public Vector3 topRight()
 	{
 		return new Vector3(width * 0.5f, height * 0.5f, 0);
 	}
-
+	
 	public Vector3 bottomLeft()
 	{
 		return new Vector3(-width * 0.5f, -height * 0.5f, 0);
 	}
-
+	
 	public Vector3 bottomRight()
 	{
 		return new Vector3(width * 0.5f, -height * 0.5f, 0);
 	}
-
+	
 	public Vector3 toScreen(Vector3 v)
 	{
-		return v.multipliedBy(getForward());
+		Vector3 point = v.minus(pos);
+		point.Rotate(angle.multipliedBy(-1));
+		Vector3 angle = point.minus(pos).getAngle();
+		
+		double ratio = width / height, radfov = Math.toRadians(fov);
+		
+		point.z = 0;
+		point.x = (angle.z / (radfov * 0.5)) * width * 0.5;
+		point.y = (angle.x / (radfov * 0.5)) * height * 0.5;
+		
+		return point;
 	}
-
+	
 	public Vector3 getForward()
 	{
 		return angle.getForward();
 	}
-
+	
 	public Vector3 getForwardXY()
 	{
 		return angle.getForwardXY();
 	}
-
+	
 	public Vector3 getRight()
 	{
 		return angle.getRight();
 	}
-
+	
 	public Vector3 getUp()
 	{
 		return angle.getUp();
 	}
-
+	
 	public void onRender()
 	{
-
+		
 	}
-
+	
 	public void applyMouse(double changeX, double changeY, double scalar,
 			boolean restrict)
 	{
 		angle.z -= changeX * scalar;
 		angle.x += changeY * scalar;
-
+		
 		while (angle.z > Math.PI * 2)
 		{
 			angle.z -= Math.PI * 2;
@@ -73,7 +83,7 @@ public class Camera
 		{
 			angle.z += Math.PI * 2;
 		}
-
+		
 		if (restrict)
 		{
 			if (angle.x > 0)
@@ -93,12 +103,12 @@ public class Camera
 			}
 		}
 	}
-
+	
 	public void applyMouse(double changeX, double changeY, double scalar)
 	{
 		applyMouse(changeX, changeY, scalar, true);
 	}
-
+	
 	public Camera()
 	{
 		nearDist = 1;

@@ -164,7 +164,7 @@ public class EntityList
 		}
 	}
 
-	public int getSize()
+	public int size()
 	{
 		return entities.size();
 	}

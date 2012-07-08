@@ -15,12 +15,12 @@ import com.evanreidland.e.graphics.graphics;
 public class TestInterceptor extends Entity
 {
 	public double lifeRemaining;
-
+	
 	public Vector3 target;
 	public double force, thrust;
-
+	
 	public LongBillboardSceneObject billboard;
-
+	
 	public void onThink()
 	{
 		super.onThink();
@@ -29,12 +29,12 @@ public class TestInterceptor extends Entity
 		{
 			Kill();
 		}
-
+		
 		if (input.getKeyState(key.KEY_0))
 		{
 			Kill();
 		}
-
+		
 		if (target != null)
 		{
 			Vector3 targetVel = target.minus(pos).Normalize()
@@ -42,12 +42,12 @@ public class TestInterceptor extends Entity
 			vel.add(targetVel.minus(vel).Normalize()
 					.multipliedBy(Game.getDelta() * 10));
 		}
-
+		
 		angle = vel.getAngle();
 		billboard.v1.setAs(pos.plus(vel.getNormal().multipliedBy(0.1)));
 		billboard.v2.setAs(pos);
 	}
-
+	
 	public void onDie()
 	{
 		Entity ent = ents.Create("explosion", new Double[]
@@ -63,7 +63,7 @@ public class TestInterceptor extends Entity
 			ent.Spawn();
 		}
 	}
-
+	
 	public void Setup(Object[] args)
 	{
 		pos.setAs((Vector3) getArg(args, 0, Vector3.Zero()));
@@ -74,7 +74,7 @@ public class TestInterceptor extends Entity
 		force = (Double) getArg(args, 5, 10d);
 		lifeRemaining = (Double) getArg(args, 6, 10d);
 	}
-
+	
 	public void onSpawn()
 	{
 		// Model model = generate.Cube(Vector3.Zero(), new Vector3(0.005, 0.005,
@@ -90,17 +90,19 @@ public class TestInterceptor extends Entity
 				pos.plus(vel), 0.1, 0.4, 0.5, true);
 		graphics.scene.addObject(billboard, this, AnchorType.POS);
 	}
-
+	
 	public TestInterceptor(long id)
 	{
 		super("missile", id);
-
+		
 		lifeRemaining = 10;
 		mass = 0.000001;
 		target = null;
-
+		
 		force = 10;
 		thrust = 1; // Not relative to mass.
 		radius = 0.1;
+		
+		flags.add("missile");
 	}
 }
