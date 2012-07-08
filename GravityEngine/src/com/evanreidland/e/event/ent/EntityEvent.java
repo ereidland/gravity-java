@@ -4,22 +4,27 @@ import com.evanreidland.e.Flags;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.event.Event;
 
-public class EntityEvent extends Event {
+public class EntityEvent extends Event
+{
 	private Entity entity;
-	
-	public Entity getEntity() {
+
+	public Entity getEntity()
+	{
 		return entity;
 	}
-	
-	public String getEntityClass() {
+
+	public String getEntityClass()
+	{
 		return entity.getClassName();
 	}
-	
-	public Flags getEntityFlags() {
+
+	public Flags getEntityFlags()
+	{
 		return entity.flags;
 	}
-	
-	public EntityEvent(Entity entity) {
+
+	public EntityEvent(Entity entity)
+	{
 		super(entity);
 		this.entity = entity;
 	}

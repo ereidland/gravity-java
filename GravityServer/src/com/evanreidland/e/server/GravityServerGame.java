@@ -21,14 +21,16 @@ public class GravityServerGame extends Game {
 	
 	public void onInit() {	
 		mConnectedPlayers = new Vector<Player>();
-		ServerConfig.setupConfigs();
+		ServerConfig.setupConfigs(); 
 	}
 
-	//Unused.
-	public void onRender() {
+	// Unused.
+	public void onRender()
+	{
 	}
 	
 	public void onRenderHUD() {
+
 	}
 	
 	public void addNewPlayer(Player player) {
