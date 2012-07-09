@@ -10,17 +10,18 @@ import com.evanreidland.e.script.Variable;
 public class Script
 {
 	public Stack env;
-
+	
 	public static String[] Split(String str)
 	{
 		Vector<String> split = new Vector<String>();
-
+		
 		StringBuilder cur = new StringBuilder();
 		char inQuote = 0;
 		for (int i = 0; i < str.length(); i++)
 		{
 			char c = str.charAt(i);
-			if (c == '\n' || (c == ' ' && inQuote == 0))
+			
+			if (c == '\n' || ((c == ' ' || c == '\t') && inQuote == 0))
 			{
 				if (cur.length() > 0)
 				{
@@ -60,12 +61,12 @@ public class Script
 				cur.append(c);
 			}
 		}
-
+		
 		if (cur.length() > 0)
 		{
 			split.add(cur.toString());
 		}
-
+		
 		String[] ret = new String[split.size()];
 		for (int i = 0; i < split.size(); i++)
 		{
@@ -73,7 +74,7 @@ public class Script
 		}
 		return ret;
 	}
-
+	
 	public Variable getArg(String base)
 	{
 		char c = base.charAt(0);
@@ -109,7 +110,7 @@ public class Script
 			return new Variable("_l", base);
 		}
 	}
-
+	
 	public Stack fromArgs(String[] split)
 	{
 		Stack stack = new Stack();
@@ -131,14 +132,14 @@ public class Script
 		stack.context = env;
 		return stack;
 	}
-
+	
 	public Stack newStack()
 	{
 		Stack s = new Stack();
 		s.context = env;
 		return s;
 	}
-
+	
 	public Value Execute(String line)
 	{
 		String[] split = Split(line);
@@ -146,7 +147,7 @@ public class Script
 		{
 			Stack s = fromArgs(split);
 			Function f = env.getFunction(split[0].toLowerCase());
-
+			
 			if (f.getName() != "_null")
 			{
 				return f.Call(s);
@@ -159,7 +160,7 @@ public class Script
 		}
 		return new Value();
 	}
-
+	
 	public Script()
 	{
 		env = new Stack();

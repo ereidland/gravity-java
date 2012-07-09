@@ -3,53 +3,49 @@ package com.evanreidland.e.event;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
-import com.evanreidland.e.engine;
-
 public class Event
 {
 	// Normal object.
 	private boolean bCanceled;
 	private long time;
 	private Object object;
-
+	
 	public Object getObject()
 	{
 		return object;
 	}
-
+	
 	public long getTime()
 	{
 		return time;
 	}
-
+	
 	public void setCanceled(boolean state)
 	{
 		bCanceled = state;
 	}
-
+	
 	public boolean isCanceled()
 	{
 		return bCanceled;
 	}
-
+	
 	public void cancel()
 	{
 		bCanceled = true;
 	}
-
+	
 	public Event(Object object)
 	{
 		bCanceled = false;
 		time = System.currentTimeMillis();
 		this.object = object;
 	}
-
-	// Static use.
-
+	
 	private static HashMap<String, EventManager> managers = new HashMap<String, EventManager>();
 	private static HashMap<Object, EventListenerInfo> listenerMap = new HashMap<Object, EventListenerInfo>();
 	private static HashMap<String, String> classRegistry = new HashMap<String, String>();
-
+	
 	public static void setManager(String eventName, EventManager manager)
 	{
 		EventManager oldManager = managers.get(eventName);
@@ -60,15 +56,13 @@ public class Event
 		managers.put(eventName, manager);
 		classRegistry.put(manager.getEventClass().toString(), eventName);
 	}
-
+	
 	public static void setManager(String eventName,
 			Class<? extends Event> eventClass)
 	{
-		engine.Log("Registered \"" + eventName + "\" to "
-				+ eventClass.toString());
 		setManager(eventName, new EventManager(eventClass));
 	}
-
+	
 	// Returns true if the event was cancelled.
 	public static boolean Call(String eventName, Event event)
 	{
@@ -79,12 +73,12 @@ public class Event
 		}
 		return false;
 	}
-
+	
 	public static EventListenerInfo getListenerInfo(Object listener)
 	{
 		return listenerMap.get(listener);
 	}
-
+	
 	public static EventListenerInfo getListenerInfo(Object listener,
 			boolean make)
 	{
@@ -95,7 +89,7 @@ public class Event
 		}
 		return info;
 	}
-
+	
 	public static void removeListener(Object listener)
 	{
 		EventListenerInfo info = getListenerInfo(listener);
@@ -113,7 +107,7 @@ public class Event
 			listenerMap.remove(listener);
 		}
 	}
-
+	
 	public static void removeListener(Object listener, String eventName)
 	{
 		EventListenerInfo info = getListenerInfo(listener);
@@ -122,13 +116,13 @@ public class Event
 			EventManager manager = managers.get(eventName);
 			if (manager != null)
 			{
-
+				
 				manager.removeListener(listener);
 			}
 			info.linkedEvents.remove(eventName);
 		}
 	}
-
+	
 	// Note: this must be done after all listener types are added. Also, debug
 	// text is going to be removed after testing.
 	public static boolean addListener(Object listener)
@@ -137,11 +131,11 @@ public class Event
 		{
 			return false;
 		}
-
+		
 		Method[] methods = listener.getClass().getMethods();
-
+		
 		boolean oneSuccess = false;
-
+		
 		for (int i = 0; i < methods.length; i++)
 		{
 			Class<?>[] types = methods[i].getParameterTypes();
@@ -158,16 +152,16 @@ public class Event
 						manager.addCaller(new EventCaller(methods[i], listener,
 								info));
 						listenerMap.put(listener, info);
-
+						
 						oneSuccess = true;
 					}
 				}
 			}
 		}
-
+		
 		return oneSuccess;
 	}
-
+	
 	public static boolean addPersonalListener(Object listener,
 			Object toListenFor)
 	{
@@ -178,7 +172,7 @@ public class Event
 		}
 		return false;
 	}
-
+	
 	public static boolean addPersonalListener(Object listener)
 	{
 		return addPersonalListener(listener, listener);
