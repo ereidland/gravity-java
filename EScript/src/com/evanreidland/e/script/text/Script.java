@@ -161,6 +161,11 @@ public class Script
 		return new Value();
 	}
 	
+	public Script(Stack env)
+	{
+		env = new Stack();
+	}
+	
 	public Script()
 	{
 		env = new Stack();
