@@ -20,7 +20,8 @@ public class Script
 		for (int i = 0; i < str.length(); i++)
 		{
 			char c = str.charAt(i);
-			if (c == '\n' || (c == ' ' && inQuote == 0))
+			
+			if (c == '\n' || ((c == ' ' || c == '\t') && inQuote == 0))
 			{
 				if (cur.length() > 0)
 				{
@@ -162,11 +163,11 @@ public class Script
 	
 	public Script(Stack env)
 	{
-		this.env = env;
+		env = new Stack();
 	}
 	
 	public Script()
 	{
-		this(new Stack());
+		env = new Stack();
 	}
 }
