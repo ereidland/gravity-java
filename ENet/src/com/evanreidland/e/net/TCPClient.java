@@ -4,38 +4,38 @@ import java.net.Socket;
 
 public abstract class TCPClient
 {
-
+	
 	private Socket socket;
-
+	
 	private Thread receiveThread;
 	private String addr;
 	private int port;
-
+	
 	private int remainingBits;
 	private Bits formingPacket;
-
+	
 	private boolean isConnecting;
-
+	
 	public boolean isConnecting()
 	{
 		return isConnecting;
 	}
-
+	
 	public String getAddress()
 	{
 		return addr;
 	}
-
+	
 	public int getPort()
 	{
 		return port;
 	}
-
+	
 	public boolean isConnected()
 	{
 		return socket != null && socket.isConnected();
 	}
-
+	
 	public void processData(Bits data)
 	{
 		if (remainingBits == 0)
@@ -65,10 +65,10 @@ public abstract class TCPClient
 				formingPacket.writeBits(data.readBits(remainingBits),
 						remainingBits);
 				onReceive(formingPacket.trim());
-
+				
 				formingPacket = new Bits();
 				remainingBits = 0;
-
+				
 				if (data.getRemainingBits() > 0)
 				{
 					processData(data);
@@ -82,17 +82,17 @@ public abstract class TCPClient
 			}
 		}
 	}
-
+	
 	private class SendThread implements Runnable
 	{
 		public Bits data;
-
+		
 		public void run()
 		{
 			try
 			{
 				Bits finalData = new Bits();
-				int len = data.getRemainingBits();
+				int len = (int) Math.ceil(data.getRemainingBits() / 8f) * 8;
 				finalData.writeBit(data.getRemainingBits() <= Byte.MAX_VALUE);
 				if (len <= Byte.MAX_VALUE)
 				{
@@ -116,13 +116,13 @@ public abstract class TCPClient
 				onException(e, TCPEvent.SEND);
 			}
 		}
-
+		
 		public SendThread(Bits data)
 		{
 			this.data = data;
 		}
 	}
-
+	
 	private class ReceiveThread implements Runnable
 	{
 		public void run()
@@ -146,12 +146,12 @@ public abstract class TCPClient
 			}
 		}
 	}
-
+	
 	private class ConnectThread implements Runnable
 	{
 		public String addr;
 		public int port;
-
+		
 		public void run()
 		{
 			try
@@ -162,7 +162,7 @@ public abstract class TCPClient
 			{
 				onException(e, TCPEvent.CONNECT);
 			}
-
+			
 			if (socket != null && socket.isConnected())
 			{
 				TCPClient.this.addr = addr;
@@ -176,39 +176,39 @@ public abstract class TCPClient
 			}
 			isConnecting = false;
 		}
-
+		
 		public ConnectThread(String addr, int port)
 		{
 			this.addr = addr;
 			this.port = port;
 		}
 	}
-
+	
 	public void Connect(String addr, int port)
 	{
 		isConnecting = true;
 		new Thread(new ConnectThread(addr, port)).start();
 	}
-
+	
 	private void onSocketConnect()
 	{
 		receiveThread = new Thread(new ReceiveThread());
 		receiveThread.start();
-
+		
 		onConnect();
 	}
-
+	
 	public void Send(Bits data)
 	{
 		new Thread(new SendThread(data)).start();
 	}
-
+	
 	public abstract void onReceive(Bits data);
-
+	
 	public abstract void onConnect();
-
+	
 	public abstract void onException(Exception e, TCPEvent event);
-
+	
 	public void close()
 	{
 		try
@@ -223,12 +223,12 @@ public abstract class TCPClient
 		addr = "localhost";
 		port = 27015;
 	}
-
+	
 	public TCPClient()
 	{
 		socket = null;
 		receiveThread = null;
-
+		
 		remainingBits = 0;
 		formingPacket = new Bits();
 	}

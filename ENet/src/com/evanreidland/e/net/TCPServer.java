@@ -9,33 +9,33 @@ public abstract class TCPServer
 {
 	private ServerSocket socket;
 	private int port;
-
+	
 	private long lastID = 0;
 	private Vector<Client> clients;
-
+	
 	private Thread listenThread;
-
+	
 	public int getPort()
 	{
 		return port;
 	}
-
+	
 	private class Client
 	{
 		public long id;
 		public Socket socket;
 		public Thread receiveThread;
-
+		
 		public Bits formingPacket;
 		public int remainingBits;
-
+		
 		public void onException(Exception e, TCPEvent event)
 		{
 			e.printStackTrace();
 			onDisconnect(id);
 			clients.remove(this);
 		}
-
+		
 		public void processData(Bits data)
 		{
 			if (remainingBits == 0)
@@ -65,10 +65,10 @@ public abstract class TCPServer
 					formingPacket.writeBits(data.readBits(remainingBits),
 							remainingBits);
 					onReceiveData(id, formingPacket.trim());
-
+					
 					formingPacket = new Bits();
 					remainingBits = 0;
-
+					
 					if (data.getRemainingBits() > 0)
 					{
 						processData(data);
@@ -83,12 +83,12 @@ public abstract class TCPServer
 				}
 			}
 		}
-
+		
 		public void Send(Bits data)
 		{
 			new Thread(new SendThread(this, data)).start();
 		}
-
+		
 		public void close()
 		{
 			try
@@ -100,13 +100,13 @@ public abstract class TCPServer
 				e.printStackTrace();
 			}
 		}
-
+		
 		public void listenForData()
 		{
 			receiveThread = new Thread(new ReceiveThread(this));
 			receiveThread.start();
 		}
-
+		
 		public Client(Socket socket)
 		{
 			id = ++lastID;
@@ -116,32 +116,32 @@ public abstract class TCPServer
 			this.socket = socket;
 		}
 	}
-
+	
 	public String getAddress(long id)
 	{
 		Client client = getClient(id);
 		return client != null ? client.socket.getInetAddress().toString() : "";
 	}
-
+	
 	public int getPort(long id)
 	{
 		Client client = getClient(id);
 		return client != null ? client.socket.getPort() : 0;
 	}
-
+	
 	public String getFullAddress(long id)
 	{
 		return getAddress(id) + ":" + getPort(id);
 	}
-
+	
 	public abstract void onDisconnect(long id);
-
+	
 	public abstract void onNewConnection(long id);
-
+	
 	public abstract void onReceiveData(long id, Bits data);
-
+	
 	public abstract void onListenException(Exception e);
-
+	
 	public void broadcastData(long allBut, Bits data)
 	{
 		for (int i = 0; i < clients.size(); i++)
@@ -153,12 +153,12 @@ public abstract class TCPServer
 			}
 		}
 	}
-
+	
 	public void broadcastData(Bits data)
 	{
 		broadcastData(-1, data);
 	}
-
+	
 	private Client getClient(long id)
 	{
 		for (int i = 0; i < clients.size(); i++)
@@ -171,7 +171,7 @@ public abstract class TCPServer
 		}
 		return null;
 	}
-
+	
 	public void sendData(long id, Bits data)
 	{
 		Client client = getClient(id);
@@ -180,18 +180,18 @@ public abstract class TCPServer
 			client.Send(data);
 		}
 	}
-
+	
 	private class SendThread implements Runnable
 	{
 		public Client client;
 		public Bits data;
-
+		
 		public void run()
 		{
 			try
 			{
 				Bits finalData = new Bits();
-				int len = data.getRemainingBits();
+				int len = (int) Math.ceil(data.getRemainingBits() / 8f) * 8;
 				finalData.writeBit(data.getRemainingBits() <= Byte.MAX_VALUE);
 				if (len <= Byte.MAX_VALUE)
 				{
@@ -216,18 +216,18 @@ public abstract class TCPServer
 				client.onException(e, TCPEvent.SEND);
 			}
 		}
-
+		
 		public SendThread(Client client, Bits data)
 		{
 			this.client = client;
 			this.data = data;
 		}
 	}
-
+	
 	private class ReceiveThread implements Runnable
 	{
 		public Client client;
-
+		
 		public void run()
 		{
 			while (client.socket != null)
@@ -256,22 +256,22 @@ public abstract class TCPServer
 					break;
 				}
 			}
-
+			
 			onDisconnect(client.id);
 			clients.remove(client);
 		}
-
+		
 		public ReceiveThread(Client client)
 		{
 			this.client = client;
 		}
 	}
-
+	
 	public boolean isListening()
 	{
 		return socket != null;
 	}
-
+	
 	private class ListenThread implements Runnable
 	{
 		public void run()
@@ -294,11 +294,11 @@ public abstract class TCPServer
 			}
 		}
 	}
-
+	
 	public void Listen(int port)
 	{
 		this.port = port;
-
+		
 		if (listenThread == null)
 		{
 			try
@@ -317,7 +317,7 @@ public abstract class TCPServer
 			onListenException(new Exception("Already listening"));
 		}
 	}
-
+	
 	public void close()
 	{
 		socket = null;
@@ -329,7 +329,7 @@ public abstract class TCPServer
 		clients.clear();
 		lastID = 1;
 	}
-
+	
 	public TCPServer()
 	{
 		clients = new Vector<Client>();

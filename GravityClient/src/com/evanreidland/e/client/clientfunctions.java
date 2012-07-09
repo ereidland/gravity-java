@@ -11,7 +11,7 @@ public class clientfunctions
 {
 	public static class Connect extends Function
 	{
-
+		
 		public Value Call(Stack args)
 		{
 			if (args.size() > 1)
@@ -24,13 +24,13 @@ public class clientfunctions
 			return new Value(
 					"Not enough arguments. Format: connect <address> <port>");
 		}
-
+		
 		public Connect()
 		{
 			super("connect");
 		}
 	}
-
+	
 	public static class Send extends Function
 	{
 		public Value Call(Stack args)
@@ -42,20 +42,20 @@ public class clientfunctions
 				{
 					str += args.at(i).toString() + " ";
 				}
-
+				
 				GravityNetClient.global.Send(new Bits().writeByte(
 						message.toByte(MessageCode.MESSAGE)).writeString(str));
 				return new Value();
 			}
 			return new Value("Not enough arguments. Format: send <data>");
 		}
-
+		
 		public Send()
 		{
 			super("send");
 		}
 	}
-
+	
 	public static void registerAll(Stack env)
 	{
 		env.addFunction(new Connect());

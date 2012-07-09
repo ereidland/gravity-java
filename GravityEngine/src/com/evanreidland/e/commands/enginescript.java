@@ -27,19 +27,19 @@ public class enginescript
 			}
 			return new Value();
 		}
-
+		
 		public Print()
 		{
 			super("print");
 		}
 	}
-
+	
 	public static class Spawn extends Function
 	{
 		public Value Call(Stack args)
 		{
 			Entity ent = ents.Create(args.at(0).toString());
-
+			
 			Vector3 pos = new Vector3(args.at(2).toDouble(), args.at(3)
 					.toDouble(), args.at(4).toDouble());
 			if (ent == null)
@@ -51,16 +51,18 @@ public class enginescript
 			{
 				ent.pos.setAs(pos);
 				ent.Spawn();
+				// TODO If server, send off this event. The event system could
+				// be useful here, but I want your input first.
 			}
 			return new Value();
 		}
-
+		
 		public Spawn()
 		{
 			super("spawn");
 		}
 	}
-
+	
 	public static class BuildFont extends Function
 	{
 		public Value Call(Stack args)
@@ -96,21 +98,21 @@ public class enginescript
 			}
 			return new Value("Could not build font: no name specified.");
 		}
-
+		
 		public BuildFont()
 		{
 			super("build.font");
 		}
 	}
-
+	
 	public static void registerAll(Stack env)
 	{
-		env.addFunction(new Print());
+		basefunctions.printFunction = new Print();
 		env.addFunction(new Spawn());
 		env.addFunction(new basefunctions.CallOther("ent_create", new Spawn()));
-
+		
 		env.addFunction(new BuildFont());
-
+		
 		// TODO add more functions!
 	}
 }

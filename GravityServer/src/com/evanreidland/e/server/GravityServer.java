@@ -2,9 +2,9 @@ package com.evanreidland.e.server;
 
 import java.util.Vector;
 
-import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
-import com.evanreidland.e.ent.EntityMessageCode;
+import com.evanreidland.e.ent.Entity;
+import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.event.ent.EntityDestroyedEvent;
 import com.evanreidland.e.event.ent.EntitySpawnedEvent;
 import com.evanreidland.e.net.Bits;
@@ -21,33 +21,63 @@ public class GravityServer extends TCPServer
 	private Vector<Player> mPlayersToAddOnInit;
 	private GravityServerGame gravityGame;
 	
-	public static void Log(String str) {
+	public static void Log(String str)
+	{
 		GravityServerGUI.Log(str);
-
+		
 	}
-
+	
 	public void onDisconnect(long id)
 	{
 		Log("Server.onDisconnect: " + id + getFullAddress(id));
 	}
-
+	
 	public void onNewConnection(long id)
 	{
 		Log("Server.onNewConnection: " + id + getFullAddress(id));
-		if(gravityGame != null) {
+		if (gravityGame != null)
+		{
 			gravityGame.addNewPlayer(new Player(id));
-		} else {
+		}
+		else
+		{
 			mPlayersToAddOnInit.add(new Player(id));
 		}
+		sendAllEntities(id);
 	}
-
+	
+	public void sendEntitySpawn(long to, Entity ent)
+	{
+		Bits bits = new Bits();
+		bits.writeByte(message.toByte(MessageCode.ENT_NEW));
+		bits.writeLong(ent.getID());
+		bits.writeString(ent.getClassName());
+		bits.write(ent.toBits());
+		sendData(to, bits);
+	}
+	
+	public void sendAllEntities(long id)
+	{
+		Bits bits = new Bits();
+		for (int i = 0; i < ents.list.getSize(); i++)
+		{
+			sendEntitySpawn(id, ents.list.get(i));
+		}
+		
+		Log("Num ents: " + ents.list.getSize());
+		if (bits.getEnd() > 0)
+		{
+			sendData(id, bits);
+		}
+	}
+	
 	public void broadcastMessage(long ignoreID, String str)
 	{
 		broadcastData(ignoreID,
 				new Bits().writeByte(message.toByte(MessageCode.MESSAGE))
 						.writeString(str));
 	}
-
+	
 	public void onReceiveData(long id, Bits data)
 	{
 		try
@@ -59,14 +89,14 @@ public class GravityServer extends TCPServer
 				MessageCode code = message.getCode(b);
 				switch (code)
 				{
-				case MESSAGE:
-					String message = getFullAddress(id) + ": "
-							+ data.readString();
-					Log(message);
-					broadcastMessage(id, message);
-					continue;
-				default:
-					break;
+					case MESSAGE:
+						String message = getFullAddress(id) + ": "
+								+ data.readString();
+						Log(message);
+						broadcastMessage(id, message);
+						continue;
+					default:
+						break;
 				}
 			}
 		}
@@ -80,50 +110,32 @@ public class GravityServer extends TCPServer
 			}
 		}
 	}
-
+	
+	public void processCustom()
+	{
+		
+	}
+	
 	public void onListenException(Exception e)
 	{
 		Log("Exception: " + e.getMessage());
 	}
-
+	
 	public void onEntitySpawned(EntitySpawnedEvent event)
 	{
-		Bits bits = new Bits();
-		bits.writeByte((byte) MessageCode.ENT_NEW.ordinal());
-		byte[] className = event.getEntityClass().getBytes();
-		bits.writeByte((byte) className.length);
-		bits.writeBytes(className);
-
-		Vector3 pos = event.getEntity().pos, vel = event.getEntity().vel;
-
-		bits.writeByte((byte) EntityMessageCode.POSITION.ordinal());
-		bits.writeDouble(pos.x);
-		bits.writeDouble(pos.y);
-		bits.writeDouble(pos.z);
-
-		bits.writeByte((byte) EntityMessageCode.VELOCITY.ordinal());
-		bits.writeDouble(vel.x);
-		bits.writeDouble(vel.y);
-		bits.writeDouble(vel.z);
-
-		bits.writeByte((byte) EntityMessageCode.MASS.ordinal());
-		bits.writeDouble(event.getEntity().mass);
-
-		bits.writeByte((byte) EntityMessageCode.RADIUS.ordinal());
-		bits.writeDouble(event.getEntity().radius);
-
-		broadcastData(bits);
 	}
-
+	
 	public void onEntityDestroyed(EntityDestroyedEvent event)
 	{
-
+		
 	}
-
-	public void setupGame() {
+	
+	public void setupGame()
+	{
 		gravityGame = new GravityServerGame();
-		gravityGame.onInit();
-		for (Player player : mPlayersToAddOnInit) {
+		
+		for (Player player : mPlayersToAddOnInit)
+		{
 			gravityGame.addNewPlayer(player);
 		}
 		
@@ -131,13 +143,13 @@ public class GravityServer extends TCPServer
 		engine.Initialize();
 	}
 	
-	public void updateGame() {
-		if(gravityGame != null) {
-			engine.Update();
-		}
+	public void updateGame()
+	{
+		engine.Update();
 	}
 	
-	public GravityServer() {
+	public GravityServer()
+	{
 		mPlayersToAddOnInit = new Vector<Player>();
 		global = this;
 	}
