@@ -10,10 +10,15 @@ public class Test2
 {
 	public static class TestObject
 	{
-		public int V1 = 1, v2;
-		public double v3;
+		public int a = 1, b = 3;
+		public double z;
 		public Object notToUse;
-		public String v4;
+		public String str;
+		public byte lebyte;
+		public short leshort;
+		public long lelong;
+		public float lefloat;
+		public boolean lebool = true;
 	}
 	
 	public static void main(String[] args)
