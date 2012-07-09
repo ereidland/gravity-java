@@ -18,7 +18,7 @@ import com.evanreidland.e.phys.phys.Target;
 public class TestEnemy extends Entity
 {
 	long nextShot = 0;
-
+	
 	public void onThink()
 	{
 		super.onThink();
@@ -31,17 +31,17 @@ public class TestEnemy extends Entity
 			// data.ent.pos.minus(pos).Normalize().multipliedBy(1);
 			// vel.add(targetVel.minus(vel).Normalize().multipliedBy(Game.getDelta()*2));
 			vel.setAs(0, 0, 0);
-
+			
 			if (Game.getTime() > nextShot && data.length < 50)
 			{
 				nextShot = Game.getTime() + 1000;
-
+				
 				double shotSpeed = roll.randomDouble(0.5, 1);
 				Vector3 launchPos = pos.plus(angle.getForward().multipliedBy(
 						0.01));
 				Target target = phys.getTarget(launchPos, vel, data.ent.pos,
 						data.ent.vel, shotSpeed);
-
+				
 				Entity ent = ents.Create(
 						"missile",
 						new Object[]
@@ -54,7 +54,7 @@ public class TestEnemy extends Entity
 				ent.Spawn();
 			}
 		}
-
+		
 		flags.setState("self", true);
 		data = ents.findNearest(pos, 1, new Flags("enemy targetable !self"));
 		flags.setState("self", false);
@@ -67,7 +67,7 @@ public class TestEnemy extends Entity
 			}
 		}
 	}
-
+	
 	public void onSpawn()
 	{
 		Model model = generate.Sphere(Vector3.Zero(), new Vector3(0.01, 0.01,
@@ -75,16 +75,16 @@ public class TestEnemy extends Entity
 		model.tex = engine.loadTexture("shiptest1.png");
 		graphics.scene.addObject(new ModelSceneObject(model), this);
 	}
-
+	
 	public TestEnemy(long id)
 	{
 		super("enemy", id);
-
-		bStatic = false;
+		
+		bStatic = true;
 		mass = 0.00001;
 		radius = 0.5;
-
+		
 		flags.add("enemy targetable");
 	}
-
+	
 }

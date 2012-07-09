@@ -42,7 +42,7 @@ public class GravityServerGame extends Game
 	public void addNewPlayer(Player player)
 	{
 		mConnectedPlayers.add(player);
-		SpawnShipForPlayer(player);
+		// SpawnShipForPlayer(player);
 	}
 	
 	private void SpawnShipForPlayer(Player player)

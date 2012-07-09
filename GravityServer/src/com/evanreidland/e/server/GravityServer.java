@@ -58,17 +58,12 @@ public class GravityServer extends TCPServer
 	
 	public void sendAllEntities(long id)
 	{
-		Bits bits = new Bits();
 		for (int i = 0; i < ents.list.getSize(); i++)
 		{
 			sendEntitySpawn(id, ents.list.get(i));
 		}
 		
 		Log("Num ents: " + ents.list.getSize());
-		if (bits.getEnd() > 0)
-		{
-			sendData(id, bits);
-		}
 	}
 	
 	public void broadcastMessage(long ignoreID, String str)

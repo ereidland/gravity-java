@@ -73,6 +73,10 @@ public class EntityList
 		if (!entities.contains(ent))
 		{
 			entities.add(ent);
+			if (ent.getID() == 0)
+			{
+				ID.registerID(ID.newID(), ent);
+			}
 			entMap.put(ent.getID(), ent);
 			Event.addPersonalListener(ent);
 		}

@@ -17,6 +17,7 @@ public class GravityNetClient extends TCPClient
 	{
 		while (data.getRemainingBits() >= 8)
 		{
+			engine.Log("Remaining bits: " + data.getRemainingBits());
 			MessageCode code = message.getCode(data.readByte());
 			switch (code)
 			{
@@ -25,7 +26,10 @@ public class GravityNetClient extends TCPClient
 					continue;
 				case ENT_NEW:
 					long id = data.readLong();
+					
 					String className = data.readString();
+					engine.Log("Attempting to spawn " + className + "/" + id
+							+ " ...");
 					Entity ent = ents.createWithID(className, id);
 					if (ent != null)
 					{

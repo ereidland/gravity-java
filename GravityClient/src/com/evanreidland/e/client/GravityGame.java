@@ -349,7 +349,7 @@ public class GravityGame extends GameClientBase
 	
 	public void createEntities()
 	{
-		ship = (Ship) ents.Create("ship");
+		ship = (Ship) ents.createWithID("ship", 100000);
 		
 		ship.model = shipModel;
 		ship.mass = 0.0001;

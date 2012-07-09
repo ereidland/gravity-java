@@ -16,6 +16,9 @@ public abstract class TCPClient
 	
 	private boolean isConnecting;
 	
+	private SendBuffer queue;
+	private SendThread activeSender;
+	
 	public boolean isConnecting()
 	{
 		return isConnecting;
@@ -85,41 +88,47 @@ public abstract class TCPClient
 	
 	private class SendThread implements Runnable
 	{
-		public Bits data;
+		public SendBuffer buffer;
 		
 		public void run()
 		{
 			try
 			{
-				Bits finalData = new Bits();
-				int len = (int) Math.ceil(data.getRemainingBits() / 8f) * 8;
-				finalData.writeBit(data.getRemainingBits() <= Byte.MAX_VALUE);
-				if (len <= Byte.MAX_VALUE)
+				while (buffer.canPull())
 				{
-					finalData.writeByte((byte) len);
+					Bits data = buffer.pull();
+					Bits finalData = new Bits();
+					int len = (int) Math.ceil(data.getRemainingBits() / 8f) * 8;
+					finalData
+							.writeBit(data.getRemainingBits() <= Byte.MAX_VALUE);
+					if (len <= Byte.MAX_VALUE)
+					{
+						finalData.writeByte((byte) len);
+					}
+					else if (len <= Short.MAX_VALUE)
+					{
+						finalData.writeBit(true);
+						finalData.writeShort((short) len);
+					}
+					else
+					{
+						finalData.writeBit(false);
+						finalData.writeInt(len);
+					}
+					finalData.writeBits(data.readRemaining(), len);
+					socket.getOutputStream().write(finalData.readRemaining());
 				}
-				else if (len <= Short.MAX_VALUE)
-				{
-					finalData.writeBit(true);
-					finalData.writeShort((short) len);
-				}
-				else
-				{
-					finalData.writeBit(false);
-					finalData.writeInt(len);
-				}
-				finalData.writeBits(data.readRemaining(), len);
-				socket.getOutputStream().write(finalData.readRemaining());
 			}
 			catch (Exception e)
 			{
 				onException(e, TCPEvent.SEND);
 			}
+			activeSender = null;
 		}
 		
-		public SendThread(Bits data)
+		public SendThread(SendBuffer buffer)
 		{
-			this.data = data;
+			this.buffer = buffer;
 		}
 	}
 	
@@ -200,7 +209,11 @@ public abstract class TCPClient
 	
 	public void Send(Bits data)
 	{
-		new Thread(new SendThread(data)).start();
+		queue.push(data);
+		if (activeSender == null)
+		{
+			new Thread(new SendThread(queue)).start();
+		}
 	}
 	
 	public abstract void onReceive(Bits data);
@@ -231,5 +244,8 @@ public abstract class TCPClient
 		
 		remainingBits = 0;
 		formingPacket = new Bits();
+		
+		queue = new SendBuffer();
+		activeSender = null;
 	}
 }

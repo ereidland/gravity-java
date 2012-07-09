@@ -29,6 +29,9 @@ public abstract class TCPServer
 		public Bits formingPacket;
 		public int remainingBits;
 		
+		public SendBuffer queue;
+		public SendThread activeSender;
+		
 		public void onException(Exception e, TCPEvent event)
 		{
 			e.printStackTrace();
@@ -86,7 +89,11 @@ public abstract class TCPServer
 		
 		public void Send(Bits data)
 		{
-			new Thread(new SendThread(this, data)).start();
+			queue.push(data);
+			if (activeSender == null)
+			{
+				new Thread(new SendThread(this, queue)).start();
+			}
 		}
 		
 		public void close()
@@ -113,6 +120,7 @@ public abstract class TCPServer
 			receiveThread = null;
 			formingPacket = new Bits();
 			remainingBits = 0;
+			queue = new SendBuffer();
 			this.socket = socket;
 		}
 	}
@@ -184,43 +192,49 @@ public abstract class TCPServer
 	private class SendThread implements Runnable
 	{
 		public Client client;
-		public Bits data;
+		public SendBuffer buffer;
 		
 		public void run()
 		{
 			try
 			{
-				Bits finalData = new Bits();
-				int len = (int) Math.ceil(data.getRemainingBits() / 8f) * 8;
-				finalData.writeBit(data.getRemainingBits() <= Byte.MAX_VALUE);
-				if (len <= Byte.MAX_VALUE)
+				while (buffer.canPull())
 				{
-					finalData.writeByte((byte) len);
+					Bits data = buffer.pull();
+					Bits finalData = new Bits();
+					int len = (int) Math.ceil(data.getRemainingBits() / 8f) * 8;
+					finalData
+							.writeBit(data.getRemainingBits() <= Byte.MAX_VALUE);
+					if (len <= Byte.MAX_VALUE)
+					{
+						finalData.writeByte((byte) len);
+					}
+					else if (len <= Short.MAX_VALUE)
+					{
+						finalData.writeBit(true);
+						finalData.writeShort((short) len);
+					}
+					else
+					{
+						finalData.writeBit(false);
+						finalData.writeInt(len);
+					}
+					finalData.writeBits(data.readRemaining(), len);
+					client.socket.getOutputStream().write(
+							finalData.readRemaining());
 				}
-				else if (len <= Short.MAX_VALUE)
-				{
-					finalData.writeBit(true);
-					finalData.writeShort((short) len);
-				}
-				else
-				{
-					finalData.writeBit(false);
-					finalData.writeInt(len);
-				}
-				finalData.writeBits(data.readRemaining(), len);
-				client.socket.getOutputStream()
-						.write(finalData.readRemaining());
 			}
 			catch (Exception e)
 			{
 				client.onException(e, TCPEvent.SEND);
 			}
+			client.activeSender = null;
 		}
 		
-		public SendThread(Client client, Bits data)
+		public SendThread(Client client, SendBuffer buffer)
 		{
 			this.client = client;
-			this.data = data;
+			this.buffer = buffer;
 		}
 	}
 	

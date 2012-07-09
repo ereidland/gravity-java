@@ -40,8 +40,8 @@ public class enginescript
 		{
 			Entity ent = ents.Create(args.at(0).toString());
 			
-			Vector3 pos = new Vector3(args.at(2).toDouble(), args.at(3)
-					.toDouble(), args.at(4).toDouble());
+			Vector3 pos = new Vector3(args.at(1).toDouble(), args.at(2)
+					.toDouble(), args.at(3).toDouble());
 			if (ent == null)
 			{
 				return new Value("Entity class, '" + args.at(0).toString()
@@ -49,12 +49,14 @@ public class enginescript
 			}
 			else
 			{
-				ent.pos.setAs(pos);
-				ent.Spawn();
 				// TODO If server, send off this event. The event system could
 				// be useful here, but I want your input first.
+				ent.pos.setAs(pos);
+				ent.Spawn();
+				return new Value("Spawned " + ent.getClassName() + "/"
+						+ ent.getID() + " @ " + ent.pos.toRoundedString());
 			}
-			return new Value();
+			
 		}
 		
 		public Spawn()

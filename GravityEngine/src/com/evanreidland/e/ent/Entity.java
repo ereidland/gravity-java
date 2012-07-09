@@ -161,6 +161,10 @@ public class Entity extends EObject
 	
 	public void Spawn()
 	{
+		if (getID() == 0)
+		{
+			ents.list.add(this);
+		}
 		bSpawned = true;
 		onSpawn();
 		flags.setState("spawned", true);
