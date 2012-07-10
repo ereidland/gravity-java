@@ -1,7 +1,6 @@
 package com.evanreidland.e.net.test4;
 
 import com.evanreidland.e.net.Bits;
-import com.evanreidland.e.net.NetLog;
 import com.evanreidland.e.net.TCPServer;
 
 public class TCPServerTest
@@ -12,37 +11,34 @@ public class TCPServerTest
 		{
 			System.out.println("Client disconnected: " + getFullAddress(id));
 		}
-
+		
 		public void onNewConnection(long id)
 		{
 			System.out.println("New connection: " + getFullAddress(id));
 		}
-
+		
 		public void onReceiveData(long id, Bits data)
 		{
 			String str = "From " + getFullAddress(id) + ": "
-					+ new String(data.readRemaining());
+					+ data.readString();
 			System.out.println(str);
-			broadcastData(new Bits().writeBytes(str.getBytes()));
+			broadcastData(new Bits().writeString(str));
 		}
-
+		
 		public void onListenException(Exception e)
 		{
 			System.out.println("On listen exception.");
 			e.printStackTrace();
 		}
 	}
-
+	
 	public static void main(String args[]) throws Exception
 	{
-		NetLog.addLogger(new NetLog.SystemOutLog());
-
 		Server server = new Server();
 		server.Listen(27016);
-
-		while (server.isListening())
-			;
-
+		
+		while (server.isListening());
+		
 		System.out.println("Done!");
 	}
 }

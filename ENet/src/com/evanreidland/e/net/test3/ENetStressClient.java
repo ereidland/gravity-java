@@ -9,11 +9,11 @@ import com.evanreidland.e.net.UDPHandler;
 public class ENetStressClient
 {
 	public static final long TEST_TIME = 5;
-
+	
 	private static class Client extends UDPHandler
 	{
 		public long lastTime = 0, sent = 0, received = 0, firstTime = 0;
-
+		
 		public void onReceive(Packet p)
 		{
 			p.logInfo();
@@ -24,9 +24,9 @@ public class ENetStressClient
 			}
 			lastTime = time;
 			received++;
-
+			
 			float timePassed = (System.currentTimeMillis() - firstTime) / 1000f;
-
+			
 			if (timePassed > TEST_TIME)
 			{
 				NetLog.Log("Sent: " + sent + " Received: " + received
@@ -39,24 +39,22 @@ public class ENetStressClient
 				Close();
 			}
 		}
-
+		
 	}
-
+	
 	public static void main(String args[]) throws Exception
 	{
-		NetLog.addLogger(new NetLog.SystemOutLog());
-
 		Client client = new Client();
 		client.Connect("127.0.0.1", 27015);
-
+		
 		client.firstTime = System.currentTimeMillis();
-
+		
 		while (client.getState() == ConnectionState.CONNECTED)
 		{
 			client.Send(new Bits().writeLong(System.currentTimeMillis())
 					.getBytes());
 			client.sent++;
-
+			
 			try
 			{
 				Thread.sleep(10);

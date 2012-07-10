@@ -29,7 +29,7 @@ public abstract class TCPServer
 		public Bits formingPacket;
 		public int remainingBits;
 		
-		public SendBuffer queue;
+		public PacketBuffer queue;
 		public SendThread activeSender;
 		
 		public void onException(Exception e, TCPEvent event)
@@ -120,9 +120,19 @@ public abstract class TCPServer
 			receiveThread = null;
 			formingPacket = new Bits();
 			remainingBits = 0;
-			queue = new SendBuffer();
+			queue = new PacketBuffer();
 			this.socket = socket;
 		}
+	}
+	
+	public Vector<Long> getClients()
+	{
+		Vector<Long> list = new Vector<Long>();
+		for (int i = 0; i < clients.size(); i++)
+		{
+			list.add(clients.get(i).id);
+		}
+		return list;
 	}
 	
 	public String getAddress(long id)
@@ -192,7 +202,7 @@ public abstract class TCPServer
 	private class SendThread implements Runnable
 	{
 		public Client client;
-		public SendBuffer buffer;
+		public PacketBuffer buffer;
 		
 		public void run()
 		{
@@ -231,7 +241,7 @@ public abstract class TCPServer
 			client.activeSender = null;
 		}
 		
-		public SendThread(Client client, SendBuffer buffer)
+		public SendThread(Client client, PacketBuffer buffer)
 		{
 			this.client = client;
 			this.buffer = buffer;

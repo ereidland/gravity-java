@@ -2,13 +2,12 @@ package com.evanreidland.e.net;
 
 import java.util.Vector;
 
-public class SendBuffer
+public class PacketBuffer
 {
 	private Vector<Bits> toSend;
 	
 	public void push(Bits bits)
 	{
-		System.out.println("Pushed.");
 		toSend.add(bits);
 	}
 	
@@ -19,11 +18,10 @@ public class SendBuffer
 	
 	public Bits pull()
 	{
-		System.out.println("Pulled.");
 		return toSend.remove(0);
 	}
 	
-	public SendBuffer()
+	public PacketBuffer()
 	{
 		toSend = new Vector<Bits>();
 	}

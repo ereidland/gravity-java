@@ -1,19 +1,32 @@
-package com.evanreidland.e.net.test4;
+package com.evanreidland.e.net.test5;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import com.evanreidland.e.net.Bits;
+import com.evanreidland.e.net.NetLog;
+import com.evanreidland.e.net.StringTable;
 import com.evanreidland.e.net.TCPClient;
 import com.evanreidland.e.net.TCPEvent;
 
-public class TCPClientTest
+public class StringTableClientTest
 {
+	
 	private static class Client extends TCPClient
 	{
+		StringTable table = null;
+		
 		public void onReceive(Bits data)
 		{
-			System.out.println("Received: " + data.readString());
+			if (table == null)
+			{
+				table = new StringTable(false);
+				table.setupFromBits(data);
+			}
+			else
+			{
+				NetLog.Log("Received string: " + table.getString(data));
+			}
 		}
 		
 		public void onConnect()
@@ -30,7 +43,7 @@ public class TCPClientTest
 		
 	}
 	
-	public static void main(String args[]) throws Exception
+	public static void main(String[] args) throws Exception
 	{
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		System.out.print("Please enter address: ");
@@ -60,7 +73,7 @@ public class TCPClientTest
 			if (!client.isConnecting())
 			{
 				String str = in.readLine();
-				client.Send(new Bits().writeString(str));
+				client.Send(new Bits().writeBytes(str.getBytes()));
 			}
 		}
 		

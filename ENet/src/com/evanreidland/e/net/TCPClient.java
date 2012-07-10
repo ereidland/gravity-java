@@ -16,7 +16,7 @@ public abstract class TCPClient
 	
 	private boolean isConnecting;
 	
-	private SendBuffer queue;
+	private PacketBuffer queue;
 	private SendThread activeSender;
 	
 	public boolean isConnecting()
@@ -88,7 +88,7 @@ public abstract class TCPClient
 	
 	private class SendThread implements Runnable
 	{
-		public SendBuffer buffer;
+		public PacketBuffer buffer;
 		
 		public void run()
 		{
@@ -126,7 +126,7 @@ public abstract class TCPClient
 			activeSender = null;
 		}
 		
-		public SendThread(SendBuffer buffer)
+		public SendThread(PacketBuffer buffer)
 		{
 			this.buffer = buffer;
 		}
@@ -245,7 +245,7 @@ public abstract class TCPClient
 		remainingBits = 0;
 		formingPacket = new Bits();
 		
-		queue = new SendBuffer();
+		queue = new PacketBuffer();
 		activeSender = null;
 	}
 }
