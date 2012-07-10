@@ -47,15 +47,20 @@ public class StringTable
 		return (Short[]) mappedID.keySet().toArray(new Short[] {});
 	}
 	
-	public MappedString getMappedString(String str)
+	public MappedString getMappedString(String str, boolean create)
 	{
 		MappedString mappedStr = mapped.get(str);
-		if (mappedStr == null && isOrigin)
+		if (mappedStr == null && isOrigin && create)
 		{
 			mappedStr = new MappedString(str);
 			addMappedString(mappedStr);
 		}
 		return mappedStr;
+	}
+	
+	public MappedString getMappedString(String str)
+	{
+		return getMappedString(str, true);
 	}
 	
 	public MappedString getMappedString(short id)
@@ -69,7 +74,7 @@ public class StringTable
 		return mappedStr != null ? mappedStr.getString() : "";
 	}
 	
-	public Bits getBits(String str)
+	public Bits getBits(String str, boolean create)
 	{
 		MappedString mappedStr = getMappedString(str);
 		Bits bits = new Bits();
@@ -92,6 +97,11 @@ public class StringTable
 			bits.writeBit(false).writeBit(false).writeString(str);
 		}
 		return bits;
+	}
+	
+	public Bits getBits(String str)
+	{
+		return getBits(str, true);
 	}
 	
 	private void addMappedString(MappedString str)
