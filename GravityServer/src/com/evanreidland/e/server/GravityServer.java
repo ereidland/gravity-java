@@ -1,87 +1,207 @@
 package com.evanreidland.e.server;
 
 import java.util.Vector;
+import java.util.logging.Level;
 
+import com.evanreidland.e.Game;
+import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
+import com.evanreidland.e.roll;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.event.ent.EntityDestroyedEvent;
 import com.evanreidland.e.event.ent.EntitySpawnedEvent;
 import com.evanreidland.e.net.Bits;
 import com.evanreidland.e.net.TCPServer;
+import com.evanreidland.e.server.ent.ServerShip;
 import com.evanreidland.e.shared.Player;
 import com.evanreidland.e.shared.enums.MessageCode;
-import com.evanreidland.e.shared.net.message;
 
-//TODO: Move to GravityServer project and set it up.
 public class GravityServer extends TCPServer
 {
 	public static GravityServer global;
 	
-	private Vector<Player> mPlayersToAddOnInit;
+	private Vector<Player> players;
 	private GravityServerGame gravityGame;
+	
+	public Player getPlayer(long id)
+	{
+		for (int i = 0; i < players.size(); i++)
+		{
+			Player player = players.get(i);
+			if (player.getID() == id)
+			{
+				return player;
+			}
+		}
+		return null;
+	}
+	
+	public Player getPlayerOnShip(long shipID)
+	{
+		for (int i = 0; i < players.size(); i++)
+		{
+			Player player = players.get(i);
+			if (player.getShipID() == shipID)
+			{
+				return player;
+			}
+		}
+		return null;
+	}
 	
 	public static void Log(String str)
 	{
 		GravityServerGUI.Log(str);
-		
 	}
 	
 	public void onDisconnect(long id)
 	{
+		engine.aquire();
 		Log("Server.onDisconnect: " + id + getFullAddress(id));
+		
+		Player player = getPlayer(id);
+		if (player != null)
+		{
+			Entity ent = ents.get(player.getShipID());
+			if (ent != null)
+			{
+				ent.bDead = true;
+			}
+			players.remove(player);
+		}
+		engine.release();
 	}
 	
 	public void onNewConnection(long id)
 	{
+		engine.aquire();
 		Log("Server.onNewConnection: " + id + getFullAddress(id));
-		if (gravityGame != null)
+		
+		players.add(new Player(id));
+		
+		Entity ent = ents.Create("ship");
+		if (ent != null)
 		{
-			gravityGame.addNewPlayer(new Player(id));
+			ent.pos.setAs(Vector3.RandomNormal().multipliedBy(
+					roll.randomDouble(1, 2)));
+			ent.flags.add("player targetable");
+			
+			Bits bits = new Bits();
+			bits.write(getEntitySpawnBits(ent));
+			bits.write(getShipForPlayerBits(id, ent));
+			
+			sendData(id, bits);
 		}
 		else
 		{
-			mPlayersToAddOnInit.add(new Player(id));
+			engine.logger.log(Level.SEVERE,
+					"Entity type, \"ship\" does not exist!");
 		}
-		sendAllEntities(id);
+		engine.release();
+		
+	}
+	
+	public Bits getEntitySpawnBits(Entity ent)
+	{
+		ent.bSent = true;
+		Bits bits = new Bits();
+		bits.writeByte(MessageCode.ENT_NEW.toByte());
+		bits.writeLong(System.currentTimeMillis());
+		bits.writeLong(ent.getID());
+		bits.writeString(ent.getClassName());
+		bits.write(ent.toBits());
+		return bits;
 	}
 	
 	public void sendEntitySpawn(long to, Entity ent)
 	{
-		Bits bits = new Bits();
-		bits.writeByte(message.toByte(MessageCode.ENT_NEW));
-		bits.writeLong(ent.getID());
-		bits.writeString(ent.getClassName());
-		bits.write(ent.toBits());
-		sendData(to, bits);
+		sendData(to, getEntitySpawnBits(ent));
+	}
+	
+	public void sendEntitySpawn(Entity ent)
+	{
+		broadcastData(getEntitySpawnBits(ent));
 	}
 	
 	public void sendAllEntities(long id)
 	{
-		for (int i = 0; i < ents.list.getSize(); i++)
+		for (int i = 0; i < ents.list.size(); i++)
 		{
+			Log("In sendAllEntities");
 			sendEntitySpawn(id, ents.list.get(i));
 		}
+	}
+	
+	public void sendEntityDeath(Entity ent)
+	{
+		Bits bits = new Bits();
+		bits.writeByte(MessageCode.ENT_REM.toByte());
+		bits.writeLong(ent.getID());
 		
-		Log("Num ents: " + ents.list.getSize());
+		broadcastData(bits);
+	}
+	
+	public void sendEntityPos(Entity ent)
+	{
+		Bits bits = new Bits();
+		bits.writeByte(MessageCode.ENT_UPDATE.toByte());
+		bits.writeLong(Game.getTime());
+		bits.writeLong(ent.getID());
+		bits.write(ent.pos.toBits());
+		bits.write(ent.vel.toBits());
+		bits.write(ent.angle.toBits());
+		bits.write(ent.angleVel.toBits());
+		broadcastData(bits);
+	}
+	
+	public Bits getShipForPlayerBits(long playerID, Entity ent)
+	{
+		Bits bits = new Bits();
+		Player player = getPlayer(playerID);
+		if (player != null && ent != null)
+		{
+			player.setPlayerShip(ent.getID());
+			bits.writeByte(MessageCode.SELECT_SHIP.toByte());
+			bits.writeLong(ent.getID());
+		}
+		else
+		{
+			if (player == null)
+			{
+				engine.logger.log(Level.SEVERE, "Player with ID " + playerID
+						+ " does not exist!");
+			}
+			else
+			{
+				engine.logger.log(Level.SEVERE, "Entity does not exist!");
+			}
+		}
+		return bits;
 	}
 	
 	public void broadcastMessage(long ignoreID, String str)
 	{
-		broadcastData(ignoreID,
-				new Bits().writeByte(message.toByte(MessageCode.MESSAGE))
-						.writeString(str));
+		broadcastData(
+				ignoreID,
+				new Bits().writeByte(MessageCode.MESSAGE.toByte()).writeString(
+						str));
 	}
 	
 	public void onReceiveData(long id, Bits data)
 	{
+		engine.aquire();
 		try
 		{
 			while (data.getRemainingBits() >= 8)
 			{
 				byte b = data.readByte();
-				Log("Byte: " + b);
-				MessageCode code = message.getCode(b);
+				MessageCode code = MessageCode.from(b);
+				if (code == null)
+					break;
+				Player player;
+				Entity ent;
+				ServerShip ship;
 				switch (code)
 				{
 					case MESSAGE:
@@ -89,7 +209,39 @@ public class GravityServer extends TCPServer
 								+ data.readString();
 						Log(message);
 						broadcastMessage(id, message);
-						continue;
+						break;
+					case ENT_UPDATETHRUST:
+						player = getPlayer(id);
+						if (player != null)
+						{
+							ent = ents.get(player.getShipID());
+							if (ent != null)
+							{
+								Vector3 velThrust = Vector3.fromBits(data), angleThrust = Vector3
+										.fromBits(data);
+								ship = (ServerShip) ent;
+								ship.velThrust.setAs(velThrust);
+								ship.angleThrust.setAs(angleThrust);
+							}
+							else
+							{
+								Vector3.fromBits(data);
+								Vector3.fromBits(data);
+								engine.logger
+										.log(Level.WARNING,
+												"Player "
+														+ id
+														+ " tried to update thrust when they do not own a ship.");
+							}
+						}
+						else
+						{
+							Vector3.fromBits(data);
+							Vector3.fromBits(data);
+							engine.logger.log(Level.SEVERE, "Player with ID "
+									+ id + " does not exist!");
+						}
+						break;
 					default:
 						break;
 				}
@@ -104,6 +256,7 @@ public class GravityServer extends TCPServer
 				Log(el[i].toString());
 			}
 		}
+		engine.release();
 	}
 	
 	public void processCustom()
@@ -129,11 +282,6 @@ public class GravityServer extends TCPServer
 	{
 		gravityGame = new GravityServerGame();
 		
-		for (Player player : mPlayersToAddOnInit)
-		{
-			gravityGame.addNewPlayer(player);
-		}
-		
 		engine.game = gravityGame;
 		engine.Initialize();
 	}
@@ -145,7 +293,7 @@ public class GravityServer extends TCPServer
 	
 	public GravityServer()
 	{
-		mPlayersToAddOnInit = new Vector<Player>();
+		players = new Vector<Player>();
 		global = this;
 	}
 }

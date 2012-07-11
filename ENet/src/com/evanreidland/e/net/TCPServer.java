@@ -245,6 +245,7 @@ public abstract class TCPServer
 		{
 			this.client = client;
 			this.buffer = buffer;
+			client.activeSender = this;
 		}
 	}
 	

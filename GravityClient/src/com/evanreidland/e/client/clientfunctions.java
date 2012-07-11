@@ -5,7 +5,6 @@ import com.evanreidland.e.script.Function;
 import com.evanreidland.e.script.Stack;
 import com.evanreidland.e.script.Value;
 import com.evanreidland.e.shared.enums.MessageCode;
-import com.evanreidland.e.shared.net.message;
 
 public class clientfunctions
 {
@@ -18,7 +17,7 @@ public class clientfunctions
 			{
 				String addr = args.at(0).toString();
 				int port = args.at(1).toInt(27016);
-				GravityNetClient.global.Connect(addr, port);
+				GravityClient.global.Connect(addr, port);
 				return new Value("Connecting to " + addr + ":" + port + "...");
 			}
 			return new Value(
@@ -43,8 +42,8 @@ public class clientfunctions
 					str += args.at(i).toString() + " ";
 				}
 				
-				GravityNetClient.global.Send(new Bits().writeByte(
-						message.toByte(MessageCode.MESSAGE)).writeString(str));
+				GravityClient.global.Send(new Bits().writeByte(
+						MessageCode.MESSAGE.toByte()).writeString(str));
 				return new Value();
 			}
 			return new Value("Not enough arguments. Format: send <data>");

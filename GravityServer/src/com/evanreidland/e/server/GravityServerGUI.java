@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 
+import com.evanreidland.e.engine;
 import com.evanreidland.e.commands.enginescript;
 import com.evanreidland.e.script.basefunctions;
 import com.evanreidland.e.script.text.Script;
@@ -68,9 +69,16 @@ public class GravityServerGUI extends JPanel implements Runnable,
 	
 	public void run()
 	{
+		long nextTime = System.currentTimeMillis() + 5;
 		while (running)
 		{
-			GravityServer.global.updateGame();
+			if (System.currentTimeMillis() >= nextTime)
+			{
+				engine.aquire();
+				GravityServer.global.updateGame();
+				nextTime = System.currentTimeMillis() + 5;
+				engine.release();
+			}
 		}
 		System.out.println("Fin.");
 	}

@@ -7,6 +7,7 @@ import com.evanreidland.e.event.Event;
 import com.evanreidland.e.event.ent.EntitySpawnedEvent;
 import com.evanreidland.e.graphics.graphics;
 import com.evanreidland.e.net.Bits;
+import com.evanreidland.e.script.Stack;
 
 public class Entity extends EObject
 {
@@ -15,7 +16,9 @@ public class Entity extends EObject
 	
 	public double radius, mass;
 	
-	public boolean bStatic, bSpawned, bDead;
+	public boolean bStatic, bSpawned, bDead, bSent;
+	
+	public Stack stack;
 	
 	public String toString()
 	{
@@ -215,8 +218,10 @@ public class Entity extends EObject
 		}
 		bits.writeDouble(mass);
 		bits.writeDouble(radius);
-		
+		boolean tSpawned = bSpawned;
+		bSpawned = false;
 		bits.write(flags.toBits(eflags.table, true));
+		bSpawned = tSpawned;
 		
 		return bits;
 	}
@@ -252,10 +257,14 @@ public class Entity extends EObject
 		bStatic = false;
 		bDead = false;
 		bSpawned = false;
+		bSent = false;
 		
 		flags.addFromObject(this, "bStatic", "static");
 		flags.addFromObject(this, "bDead", "dead");
 		flags.addFromObject(this, "bSpawned", "spawned");
+		flags.addFromObject(this, "bSent", "sent");
+		
+		stack = new Stack();
 	}
 	
 	public Entity(String className)

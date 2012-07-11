@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import com.evanreidland.e.Flags;
-import com.evanreidland.e.Flags.State;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.event.Event;
 import com.evanreidland.e.event.ent.EntityDestroyedEvent;
@@ -75,7 +74,7 @@ public class EntityList
 			entities.add(ent);
 			if (ent.getID() == 0)
 			{
-				ID.registerID(ID.newID(), ent);
+				ent.Be();
 			}
 			entMap.put(ent.getID(), ent);
 			Event.addPersonalListener(ent);
@@ -148,10 +147,10 @@ public class EntityList
 		for (int i = 0; i < entities.size(); i++)
 		{
 			Entity ent = entities.get(i);
-			if (ent.flags.get("spawned") == State.False)
+			if (!ent.bSpawned)
 			{
 				ent.Spawn();
-				ent.flags.set("spawned", true);
+				ent.bSpawned = true;
 			}
 			ent.onThink();
 		}
@@ -175,7 +174,7 @@ public class EntityList
 		}
 	}
 	
-	public int getSize()
+	public int size()
 	{
 		return entities.size();
 	}

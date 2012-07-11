@@ -1,32 +1,36 @@
 package com.evanreidland.e.server;
 
-import java.util.Vector;
-
 import com.evanreidland.e.Game;
-import com.evanreidland.e.Vector3;
+import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
-import com.evanreidland.e.net.Bits;
-import com.evanreidland.e.server.ent.NotReallyAnEnemy;
-import com.evanreidland.e.shared.Player;
+import com.evanreidland.e.server.ent.ServerEnemy;
+import com.evanreidland.e.server.ent.ServerLaser;
+import com.evanreidland.e.server.ent.ServerShip;
 import com.evanreidland.e.shared.config.ServerConfig;
-import com.evanreidland.e.shared.ent.Ship;
-import com.evanreidland.e.shared.enums.MessageCode;
 
 public class GravityServerGame extends Game
 {
-	
-	private Vector<Player> mConnectedPlayers;
-	
 	public void onUpdate()
 	{
+		for (int i = 0; i < ents.list.size(); i++)
+		{
+			Entity ent = ents.list.get(i);
+			if (!ent.bSent)
+			{
+				ent.bSent = true;
+				GravityServer.global.sendEntitySpawn(ent);
+			}
+		}
+		ents.list.onThink();
 	}
 	
 	public void onInit()
 	{
-		mConnectedPlayers = new Vector<Player>();
 		ServerConfig.setupConfigs();
 		
-		ents.Register("enemy", NotReallyAnEnemy.class); // >:D
+		ents.Register("enemy", ServerEnemy.class);
+		ents.Register("laser", ServerLaser.class);
+		ents.Register("ship", ServerShip.class);
 	}
 	
 	// Unused.
@@ -37,34 +41,5 @@ public class GravityServerGame extends Game
 	public void onRenderHUD()
 	{
 		
-	}
-	
-	public void addNewPlayer(Player player)
-	{
-		mConnectedPlayers.add(player);
-		// SpawnShipForPlayer(player);
-	}
-	
-	private void SpawnShipForPlayer(Player player)
-	{
-		Ship playerShip = new Ship("battleship");
-		
-		playerShip.pos = new Vector3(2, 0, 0);
-		playerShip.flags.set("player", true);
-		playerShip.flags.set("targetable", true);
-		playerShip.mass = 0.0001;
-		playerShip.bStatic = false;
-		playerShip.Spawn();
-		
-		player.setPlayerShip(playerShip);
-		
-		Bits bits = new Bits();
-		
-		bits.writeByte((byte) MessageCode.ENT_NEW.ordinal());
-		bits.writeLong(playerShip.getID());
-		bits.writeString(playerShip.getClassName());
-		bits.write(playerShip.toBits());
-		
-		GravityServer.global.broadcastData(bits);
 	}
 }

@@ -1,22 +1,29 @@
 package com.evanreidland.e.shared;
 
-import com.evanreidland.e.shared.ent.Ship;
-
-public class Player {
+public class Player
+{
 	
-	private long mServerId;
-	private Ship mOwnedShip;
+	private long id;
+	private long shipID;
 	
-	
-	public Player(long serverId) {
-		this.mServerId = serverId;
+	public Player(long id)
+	{
+		this.id = id;
+		this.shipID = 0;
 	}
 	
-	public long getServerId() {
-		return mServerId;
+	public long getID()
+	{
+		return id;
 	}
 	
-	public void setPlayerShip(Ship ship) {
-		mOwnedShip = ship;
+	public long getShipID()
+	{
+		return shipID;
+	}
+	
+	public void setPlayerShip(long shipID)
+	{
+		this.shipID = shipID;
 	}
 }
