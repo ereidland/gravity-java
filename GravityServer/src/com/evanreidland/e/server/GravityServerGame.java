@@ -50,8 +50,8 @@ public class GravityServerGame extends Game
 		Ship playerShip = new Ship("battleship");
 		
 		playerShip.pos = new Vector3(2, 0, 0);
-		playerShip.flags.setState("player", true);
-		playerShip.flags.setState("targetable", true);
+		playerShip.flags.set("player", true);
+		playerShip.flags.set("targetable", true);
 		playerShip.mass = 0.0001;
 		playerShip.bStatic = false;
 		playerShip.Spawn();

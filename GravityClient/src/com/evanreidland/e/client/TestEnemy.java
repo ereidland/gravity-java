@@ -4,7 +4,6 @@ import com.evanreidland.e.Flags;
 import com.evanreidland.e.Game;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
-import com.evanreidland.e.roll;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.SearchData;
 import com.evanreidland.e.ent.ents;
@@ -36,7 +35,7 @@ public class TestEnemy extends Entity
 			{
 				nextShot = Game.getTime() + 1000;
 				
-				double shotSpeed = roll.randomDouble(0.5, 1);
+				double shotSpeed = 4;
 				Vector3 launchPos = pos.plus(angle.getForward().multipliedBy(
 						0.01));
 				Target target = phys.getTarget(launchPos, vel, data.ent.pos,
@@ -55,9 +54,9 @@ public class TestEnemy extends Entity
 			}
 		}
 		
-		flags.setState("self", true);
+		flags.set("self", true);
 		data = ents.findNearest(pos, 1, new Flags("enemy targetable !self"));
-		flags.setState("self", false);
+		flags.set("self", false);
 		if (data.isPositive)
 		{
 			if (data.length < radius)

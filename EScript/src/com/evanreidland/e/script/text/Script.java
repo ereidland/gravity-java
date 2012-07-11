@@ -113,7 +113,7 @@ public class Script
 	
 	public Stack fromArgs(String[] split)
 	{
-		Stack stack = new Stack();
+		Stack stack = newStack();
 		if (split.length > 1)
 		{
 			for (int i = 1; i < split.length; i++)
@@ -129,7 +129,6 @@ public class Script
 				}
 			}
 		}
-		stack.context = env;
 		return stack;
 	}
 	
@@ -145,12 +144,12 @@ public class Script
 		String[] split = Split(line);
 		if (split.length > 0)
 		{
-			Stack s = fromArgs(split);
+			Stack stack = fromArgs(split);
 			Function f = env.getFunction(split[0].toLowerCase());
 			
 			if (f.getName() != "_null")
 			{
-				return f.Call(s);
+				return f.Call(stack);
 			}
 			else
 			{
@@ -163,7 +162,7 @@ public class Script
 	
 	public Script(Stack env)
 	{
-		env = new Stack();
+		this.env = env;
 	}
 	
 	public Script()

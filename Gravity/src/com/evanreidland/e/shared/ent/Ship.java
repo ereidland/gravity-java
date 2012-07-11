@@ -46,7 +46,7 @@ public class Ship extends Entity
 
 		model = null;
 
-		flags.setState("ship", true);
+		flags.set("ship", true);
 	}
 
 	public Ship(String shipType)

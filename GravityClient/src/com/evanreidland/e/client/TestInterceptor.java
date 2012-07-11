@@ -59,7 +59,7 @@ public class TestInterceptor extends Entity
 			ent.pos.setAs(pos);
 			ent.vel.setAs(vel);
 			ent.mass = mass;
-			ent.flags.setState("enemy", flags.getState("enemy"));
+			ent.flags.set("enemy", flags.get("enemy"));
 			ent.Spawn();
 		}
 	}
@@ -68,7 +68,7 @@ public class TestInterceptor extends Entity
 	{
 		pos.setAs((Vector3) getArg(args, 0, Vector3.Zero()));
 		vel.setAs((Vector3) getArg(args, 1, Vector3.Zero()));
-		flags.setState("enemy", (Boolean) getArg(args, 2, Boolean.FALSE));
+		flags.set("enemy", (Boolean) getArg(args, 2, Boolean.FALSE));
 		target = (Vector3) getArg(args, 3, null);
 		thrust = (Double) getArg(args, 4, 10d);
 		force = (Double) getArg(args, 5, 10d);

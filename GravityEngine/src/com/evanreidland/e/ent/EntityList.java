@@ -148,10 +148,10 @@ public class EntityList
 		for (int i = 0; i < entities.size(); i++)
 		{
 			Entity ent = entities.get(i);
-			if (ent.flags.getState("spawned") == State.False)
+			if (ent.flags.get("spawned") == State.False)
 			{
 				ent.Spawn();
-				ent.flags.setState("spawned", true);
+				ent.flags.set("spawned", true);
 			}
 			ent.onThink();
 		}

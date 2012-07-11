@@ -15,7 +15,7 @@ public class Entity extends EObject
 	
 	public double radius, mass;
 	
-	public boolean bStatic, bSpawned;
+	public boolean bStatic, bSpawned, bDead;
 	
 	public String toString()
 	{
@@ -24,17 +24,17 @@ public class Entity extends EObject
 	
 	public void Kill()
 	{
-		flags.setState("dead", State.True);
+		bDead = true;
 	}
 	
 	public boolean isAlive()
 	{
-		return flags.getState("dead") == State.False;
+		return !bDead;
 	}
 	
 	public boolean isDead()
 	{
-		return flags.getState("dead") == State.True;
+		return bDead;
 	}
 	
 	public void Receive(Bits data)
@@ -80,7 +80,7 @@ public class Entity extends EObject
 	
 	public void onThink()
 	{
-		State f = flags.getState("dead");
+		State f = flags.get("dead");
 		if (!bStatic
 				&& (f == State.False || f == State.Undef || f == State.Either))
 		{
@@ -134,6 +134,21 @@ public class Entity extends EObject
 		}
 	}
 	
+	public void shiftByDelta(double delta)
+	{
+		pos.add(vel.multipliedBy(delta));
+	}
+	
+	public void shiftByDeltaMS(long delta)
+	{
+		shiftByDelta(delta / 1000d);
+	}
+	
+	public void shiftByTimeOffset(long timeReference)
+	{
+		shiftByDeltaMS(System.currentTimeMillis() - timeReference);
+	}
+	
 	public void applyGravity(Entity other, double delta)
 	{
 		applyGravity(other.pos, other.mass, delta);
@@ -167,7 +182,6 @@ public class Entity extends EObject
 		}
 		bSpawned = true;
 		onSpawn();
-		flags.setState("spawned", true);
 		Event.Call("onSpawn", new EntitySpawnedEvent(this));
 		
 	}
@@ -188,7 +202,6 @@ public class Entity extends EObject
 		return index >= 0 && index < args.length ? args[index] : def;
 	}
 	
-	// TODO improve.
 	public Bits toBits()
 	{
 		Bits bits = new Bits();
@@ -202,6 +215,8 @@ public class Entity extends EObject
 		}
 		bits.writeDouble(mass);
 		bits.writeDouble(radius);
+		
+		bits.write(flags.toBits(eflags.table, true));
 		
 		return bits;
 	}
@@ -222,6 +237,8 @@ public class Entity extends EObject
 		}
 		mass = bits.readDouble();
 		radius = bits.readDouble();
+		
+		flags.setFromBits(bits, eflags.table);
 	}
 	
 	public Entity(String className, long id)
@@ -231,9 +248,14 @@ public class Entity extends EObject
 		vel = Vector3.Zero();
 		angle = Vector3.Zero();
 		angleVel = Vector3.Zero();
-		bStatic = false;
 		
-		flags.setState("dead", State.False);
+		bStatic = false;
+		bDead = false;
+		bSpawned = false;
+		
+		flags.addFromObject(this, "bStatic", "static");
+		flags.addFromObject(this, "bDead", "dead");
+		flags.addFromObject(this, "bSpawned", "spawned");
 	}
 	
 	public Entity(String className)

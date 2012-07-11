@@ -33,6 +33,6 @@ public class Planet extends Entity
 		sprite = null;
 		model = null;
 		bStatic = true;
-		flags.setState("planet", true);
+		flags.set("planet", true);
 	}
 }

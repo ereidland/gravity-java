@@ -120,6 +120,19 @@ public class StringTable
 		getMappedString(str);
 	}
 	
+	public void addList(String[] str)
+	{
+		for (int i = 0; i < str.length; i++)
+		{
+			add(str[i]);
+		}
+	}
+	
+	public void addList(String str)
+	{
+		addList(str.split(" "));
+	}
+	
 	public String getString(Bits bits)
 	{
 		if (bits.readBit()) // Sent?

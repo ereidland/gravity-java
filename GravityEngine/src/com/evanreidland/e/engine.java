@@ -13,6 +13,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import com.evanreidland.e.audio.sound;
+import com.evanreidland.e.ent.eflags;
 import com.evanreidland.e.event.Event;
 import com.evanreidland.e.event.ent.EntityDestroyedEvent;
 import com.evanreidland.e.event.ent.EntitySpawnedEvent;
@@ -220,6 +221,14 @@ public class engine
 		
 		Event.setManager("onSpawn", EntitySpawnedEvent.class);
 		Event.setManager("onDestroy", EntityDestroyedEvent.class);
+		
+		// Setup standard flags:
+		
+		eflags.table.addList(new String[]
+		{
+				"ally", "enemy", "dead", "projectile", "solid", "sent",
+				"spawned"
+		});
 		
 		if (game != null)
 		{
