@@ -1,13 +1,14 @@
 package com.evanreidland.e.net;
 
 import java.net.Socket;
+import java.util.Vector;
 
-public abstract class TCPClient
+public abstract class TCPClient extends Aquireable
 {
-	
+	public static long waitTime = 5;
 	private Socket socket;
 	
-	private Thread receiveThread;
+	private Thread receiveThread, sendThread;
 	private String addr;
 	private int port;
 	
@@ -17,7 +18,26 @@ public abstract class TCPClient
 	private boolean isConnecting;
 	
 	private PacketBuffer queue;
-	private SendThread activeSender;
+	
+	private Vector<TCPPacket> packets;
+	
+	public int getPacketCount()
+	{
+		int count;
+		aquire();
+		count = packets.size();
+		release();
+		return count;
+	}
+	
+	public TCPPacket pull()
+	{
+		TCPPacket packet;
+		aquire();
+		packet = packets.size() > 0 ? packets.remove(0) : null;
+		release();
+		return packet;
+	}
 	
 	public boolean isConnecting()
 	{
@@ -43,22 +63,18 @@ public abstract class TCPClient
 	{
 		if (remainingBits == 0)
 		{
-			int rbits = data.getRemainingBits();
-			if (rbits >= 8)
+			Bits basePacket = formingPacket.skipTo(0).getRemainingBits() > 0 ? new Bits()
+					.write(formingPacket).write(data) : data;
+			if (basePacket.getRemainingBits() >= 32)
 			{
-				if (data.readBit())
-				{
-					remainingBits = data.readByte();
-				}
-				else if (rbits >= 16 && data.readBit())
-				{
-					remainingBits = data.readShort();
-				}
-				else if (rbits >= 32)
-				{
-					remainingBits = data.readInt();
-				}
-				processData(data);
+				formingPacket = new Bits();
+				remainingBits = data.readInt();
+				processData(basePacket);
+			}
+			else
+			{
+				formingPacket = new Bits();
+				formingPacket.write(basePacket.skipTo(0));
 			}
 		}
 		else
@@ -67,7 +83,9 @@ public abstract class TCPClient
 			{
 				formingPacket.writeBits(data.readBits(remainingBits),
 						remainingBits);
-				onReceive(formingPacket.trim());
+				aquire();
+				packets.add(new TCPPacket(0, formingPacket));
+				release();
 				
 				formingPacket = new Bits();
 				remainingBits = 0;
@@ -88,47 +106,45 @@ public abstract class TCPClient
 	
 	private class SendThread implements Runnable
 	{
-		public PacketBuffer buffer;
 		
 		public void run()
 		{
+			NetLog.Log("Send thread initialized.");
 			try
 			{
-				while (buffer.canPull())
+				while (socket != null)
 				{
-					Bits data = buffer.pull();
-					Bits finalData = new Bits();
-					int len = (int) Math.ceil(data.getRemainingBits() / 8f) * 8;
-					finalData
-							.writeBit(data.getRemainingBits() <= Byte.MAX_VALUE);
-					if (len <= Byte.MAX_VALUE)
+					Bits data = queue.pull();
+					if (data != null)
 					{
-						finalData.writeByte((byte) len);
-					}
-					else if (len <= Short.MAX_VALUE)
-					{
-						finalData.writeBit(true);
-						finalData.writeShort((short) len);
+						Bits finalData = new Bits();
+						int len = data.getRemainingBytes() * 8;
+						finalData.writeInt(len);
+						finalData.write(data);
+						socket.getOutputStream().write(
+								finalData.readRemaining());
 					}
 					else
 					{
-						finalData.writeBit(false);
-						finalData.writeInt(len);
+						try
+						{
+							Thread.sleep(waitTime);
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+						}
 					}
-					finalData.writeBits(data.readRemaining(), len);
-					socket.getOutputStream().write(finalData.readRemaining());
 				}
 			}
 			catch (Exception e)
 			{
 				onException(e, TCPEvent.SEND);
 			}
-			activeSender = null;
 		}
 		
-		public SendThread(PacketBuffer buffer)
+		public SendThread()
 		{
-			this.buffer = buffer;
 		}
 	}
 	
@@ -136,6 +152,7 @@ public abstract class TCPClient
 	{
 		public void run()
 		{
+			NetLog.Log("Receive thread initialized.");
 			try
 			{
 				while (socket != null)
@@ -176,7 +193,9 @@ public abstract class TCPClient
 			{
 				TCPClient.this.addr = addr;
 				TCPClient.this.port = port;
-				onSocketConnect();
+				aquire();
+				packets.add(new TCPPacket(0, TCPEvent.CONNECT));
+				release();
 			}
 			else
 			{
@@ -196,29 +215,26 @@ public abstract class TCPClient
 	public void Connect(String addr, int port)
 	{
 		isConnecting = true;
-		new Thread(new ConnectThread(addr, port)).start();
+		Thread thread = new Thread(new ConnectThread(addr, port));
+		thread.setName("Client.Connect");
+		thread.start();
 	}
 	
-	private void onSocketConnect()
+	public void startListening()
 	{
 		receiveThread = new Thread(new ReceiveThread());
+		receiveThread.setName("Client.Receive");
 		receiveThread.start();
 		
-		onConnect();
+		sendThread = new Thread(new SendThread());
+		sendThread.setName("Client.Send");
+		sendThread.start();
 	}
 	
 	public void Send(Bits data)
 	{
 		queue.push(data);
-		if (activeSender == null)
-		{
-			new Thread(new SendThread(queue)).start();
-		}
 	}
-	
-	public abstract void onReceive(Bits data);
-	
-	public abstract void onConnect();
 	
 	public abstract void onException(Exception e, TCPEvent event);
 	
@@ -233,6 +249,7 @@ public abstract class TCPClient
 			e.printStackTrace();
 		}
 		receiveThread = null;
+		sendThread = null;
 		addr = "localhost";
 		port = 27015;
 	}
@@ -241,11 +258,12 @@ public abstract class TCPClient
 	{
 		socket = null;
 		receiveThread = null;
+		sendThread = null;
 		
 		remainingBits = 0;
 		formingPacket = new Bits();
 		
 		queue = new PacketBuffer();
-		activeSender = null;
+		packets = new Vector<TCPPacket>();
 	}
 }

@@ -12,6 +12,7 @@ import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.event.ent.EntityDestroyedEvent;
 import com.evanreidland.e.event.ent.EntitySpawnedEvent;
 import com.evanreidland.e.net.Bits;
+import com.evanreidland.e.net.TCPPacket;
 import com.evanreidland.e.net.TCPServer;
 import com.evanreidland.e.server.ent.ServerShip;
 import com.evanreidland.e.shared.Player;
@@ -57,7 +58,6 @@ public class GravityServer extends TCPServer
 	
 	public void onDisconnect(long id)
 	{
-		engine.aquire();
 		Log("Server.onDisconnect: " + id + getFullAddress(id));
 		
 		Player player = getPlayer(id);
@@ -70,12 +70,10 @@ public class GravityServer extends TCPServer
 			}
 			players.remove(player);
 		}
-		engine.release();
 	}
 	
 	public void onNewConnection(long id)
 	{
-		engine.aquire();
 		Log("Server.onNewConnection: " + id + getFullAddress(id));
 		
 		players.add(new Player(id));
@@ -87,8 +85,9 @@ public class GravityServer extends TCPServer
 					roll.randomDouble(1, 2)));
 			ent.flags.add("player targetable");
 			
+			sendAllEntities(id);
+			
 			Bits bits = new Bits();
-			bits.write(getEntitySpawnBits(ent));
 			bits.write(getShipForPlayerBits(id, ent));
 			
 			sendData(id, bits);
@@ -98,7 +97,6 @@ public class GravityServer extends TCPServer
 			engine.logger.log(Level.SEVERE,
 					"Entity type, \"ship\" does not exist!");
 		}
-		engine.release();
 		
 	}
 	
@@ -128,7 +126,6 @@ public class GravityServer extends TCPServer
 	{
 		for (int i = 0; i < ents.list.size(); i++)
 		{
-			Log("In sendAllEntities");
 			sendEntitySpawn(id, ents.list.get(i));
 		}
 	}
@@ -138,7 +135,6 @@ public class GravityServer extends TCPServer
 		Bits bits = new Bits();
 		bits.writeByte(MessageCode.ENT_REM.toByte());
 		bits.writeLong(ent.getID());
-		
 		broadcastData(bits);
 	}
 	
@@ -188,17 +184,19 @@ public class GravityServer extends TCPServer
 						str));
 	}
 	
-	public void onReceiveData(long id, Bits data)
+	public void onReceive(long id, Bits data)
 	{
-		engine.aquire();
 		try
 		{
-			while (data.getRemainingBits() >= 8)
+			if (data.getRemainingBits() >= 8)
 			{
 				byte b = data.readByte();
 				MessageCode code = MessageCode.from(b);
 				if (code == null)
-					break;
+				{
+					engine.Log("Null code!");
+					return;
+				}
 				Player player;
 				Entity ent;
 				ServerShip ship;
@@ -217,8 +215,8 @@ public class GravityServer extends TCPServer
 							ent = ents.get(player.getShipID());
 							if (ent != null)
 							{
-								Vector3 velThrust = Vector3.fromBits(data), angleThrust = Vector3
-										.fromBits(data);
+								Vector3 velThrust = Vector3.fromBits(data);
+								Vector3 angleThrust = Vector3.fromBits(data);
 								ship = (ServerShip) ent;
 								ship.velThrust.setAs(velThrust);
 								ship.angleThrust.setAs(angleThrust);
@@ -243,6 +241,7 @@ public class GravityServer extends TCPServer
 						}
 						break;
 					default:
+						engine.Log("Unused code: " + code.toString());
 						break;
 				}
 			}
@@ -256,12 +255,6 @@ public class GravityServer extends TCPServer
 				Log(el[i].toString());
 			}
 		}
-		engine.release();
-	}
-	
-	public void processCustom()
-	{
-		
 	}
 	
 	public void onListenException(Exception e)
@@ -286,9 +279,31 @@ public class GravityServer extends TCPServer
 		engine.Initialize();
 	}
 	
-	public void updateGame()
+	public void Update()
 	{
 		engine.Update();
+		TCPPacket packet;
+		
+		while ((packet = pull()) != null)
+		{
+			if (packet.isEvent())
+			{
+				switch (packet.getEvent())
+				{
+					case CONNECT:
+						startListening(packet.getID());
+						onNewConnection(packet.getID());
+						break;
+					case DISCONNECT:
+						onDisconnect(packet.getID());
+						break;
+				}
+			}
+			else
+			{
+				onReceive(packet.getID(), packet.bits);
+			}
+		}
 	}
 	
 	public GravityServer()

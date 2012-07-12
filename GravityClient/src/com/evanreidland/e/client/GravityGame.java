@@ -11,6 +11,7 @@ import com.evanreidland.e.client.control.key;
 import com.evanreidland.e.client.ent.ClientEnemy;
 import com.evanreidland.e.client.ent.ClientLaser;
 import com.evanreidland.e.client.ent.ClientShip;
+import com.evanreidland.e.commands.enginescript;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.event.Event;
 import com.evanreidland.e.graphics.Model;
@@ -152,6 +153,7 @@ public class GravityGame extends GameClientBase
 	public void onUpdate()
 	{
 		super.onUpdate();
+		
 		if (input.getKeyState(key.KEY_CONTROL)
 				&& input.isKeyDown(key.KEY_ENTER))
 		{
@@ -166,11 +168,11 @@ public class GravityGame extends GameClientBase
 			double speed = 1;
 			if (input.getKeyState(key.KEY_9))
 			{
-				viewHeight += speed;
+				viewHeight += speed * Game.getDelta();
 			}
 			if (input.getKeyState(key.KEY_8))
 			{
-				viewHeight -= speed;
+				viewHeight -= speed * Game.getDelta();
 			}
 			if (viewHeight < 0.01)
 				viewHeight = 0.01;
@@ -223,13 +225,6 @@ public class GravityGame extends GameClientBase
 					{
 						velThrust.add(ship.angle.getRight());
 					}
-					
-					if (input.isKeyDown(key.KEY_C))
-					{
-						ship.vel.setAs(0, 0, 0);
-						ship.angleVel.setAs(0, 0, 0);
-						ship.bStatic = !ship.bStatic;
-					}
 				}
 				else
 				{
@@ -257,7 +252,7 @@ public class GravityGame extends GameClientBase
 					
 				}
 			}
-			ship.velThrust.setAs(velThrust.Normalize());
+			ship.velThrust.setAs(velThrust);
 			ship.angleThrust.setAs(angleThrust);
 		}
 		
@@ -266,7 +261,7 @@ public class GravityGame extends GameClientBase
 		if (ship != null)
 		{
 			
-			graphics.camera.angle.setAs(ship.angle);// planet.pos.minus(ship.pos).getAngle());
+			graphics.camera.angle.setAs(ship.angle);
 			graphics.camera.pos.setAs(ship.pos.plus(
 					graphics.camera.getForward()
 							.multipliedBy(-viewHeight * 2.5)).plus(
@@ -380,6 +375,7 @@ public class GravityGame extends GameClientBase
 		flashing = false;
 		
 		basefunctions.registerAll(script.env);
+		enginescript.registerAll(script.env);
 		clientfunctions.registerAll(script.env);
 		
 		// Note: creates a static reference, GravityClient.global.

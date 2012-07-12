@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.PrintStream;
 import java.util.Vector;
-import java.util.concurrent.Semaphore;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -20,37 +19,14 @@ import com.evanreidland.e.event.ent.EntityDestroyedEvent;
 import com.evanreidland.e.event.ent.EntitySpawnedEvent;
 import com.evanreidland.e.graphics.FontResourceManager;
 import com.evanreidland.e.graphics.graphics;
+import com.evanreidland.e.net.Aquireable;
 import com.evanreidland.e.script.Value;
 import com.evanreidland.e.script.Variable;
 
 public class engine
 {
-	public static Semaphore semaphore = new Semaphore(1, true);
 	public static Logger logger = Logger.getLogger("com.evanreidland.e");
-	
-	public static void aquire()
-	{
-		try
-		{
-			semaphore.acquire();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-	
-	public static void release()
-	{
-		try
-		{
-			semaphore.release();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
+	private static Aquireable logAquire = new Aquireable();
 	
 	private static class EngineLogHandler extends Handler
 	{
@@ -67,12 +43,14 @@ public class engine
 			String str = "[" + record.getLevel().toString() + "]: "
 					+ record.getMessage();
 			
+			logAquire.aquire();
 			log.add(str);
 			if (log.size() > maxLogs)
 			{
 				log = new Vector<String>(log.subList(log.size() - maxLogs,
 						log.size()));
 			}
+			logAquire.release();
 		}
 		
 	}

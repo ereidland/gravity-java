@@ -18,6 +18,6 @@ public class ServerLaser extends ServerEntity
 	public ServerLaser(long id)
 	{
 		super("laser", id);
-		deathTime = Game.getTime() + 5;
+		deathTime = Game.getTime() + 2000;
 	}
 }

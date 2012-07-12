@@ -9,7 +9,7 @@ import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.phys.phys;
 import com.evanreidland.e.phys.phys.Target;
 
-public class ServerEnemy extends Entity
+public class ServerEnemy extends ServerEntity
 {
 	long nextShot;
 	

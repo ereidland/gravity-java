@@ -10,6 +10,7 @@ import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.net.Bits;
 import com.evanreidland.e.net.TCPClient;
 import com.evanreidland.e.net.TCPEvent;
+import com.evanreidland.e.net.TCPPacket;
 import com.evanreidland.e.shared.enums.MessageCode;
 
 public class GravityClient extends TCPClient
@@ -19,14 +20,16 @@ public class GravityClient extends TCPClient
 	
 	public void onReceive(Bits data)
 	{
-		engine.aquire();
 		try
 		{
-			while (data.getRemainingBits() >= 8)
+			if (data.getRemainingBits() >= 8)
 			{
 				MessageCode code = MessageCode.from(data.readByte());
 				if (code == null)
-					break;
+				{
+					engine.Log("Null code!");
+					return;
+				}
 				Entity ent = null;
 				long time, id;
 				switch (code)
@@ -109,15 +112,20 @@ public class GravityClient extends TCPClient
 						}
 						break;
 					default:
+						engine.Log("Unused code: " + code.toString());
 						break;
 				}
+			}
+			else if (data.getRemainingBits() > 0)
+			{
+				engine.logger.log(Level.WARNING,
+						"Extra bits: " + data.getRemainingBits());
 			}
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		engine.release();
 	}
 	
 	public void sendThrust(Vector3 velThrust, Vector3 angleThrust)
@@ -132,6 +140,39 @@ public class GravityClient extends TCPClient
 	public void onConnect()
 	{
 		engine.Log("Connected!");
+		startListening();
+	}
+	
+	public void Update()
+	{
+		try
+		{
+			TCPPacket packet;
+			while ((packet = pull()) != null)
+			{
+				if (packet.isEvent())
+				{
+					switch (packet.getEvent())
+					{
+						case CONNECT:
+							onConnect();
+							break;
+						case DISCONNECT:
+							engine.Log("Disconnected!");
+							break;
+					}
+				}
+				else
+				{
+					onReceive(packet.bits);
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			engine.logger.log(Level.SEVERE, "Exception: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 	
 	public void onException(Exception e, TCPEvent event)

@@ -1,5 +1,7 @@
 package com.evanreidland.e.commands;
 
+import java.util.Set;
+
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
 import com.evanreidland.e.ent.Entity;
@@ -52,7 +54,6 @@ public class enginescript
 				// TODO If server, send off this event. The event system could
 				// be useful here, but I want your input first.
 				ent.pos.setAs(pos);
-				ent.Spawn();
 				return new Value("Spawned " + ent.getClassName() + "/"
 						+ ent.getID() + " @ " + ent.pos.toRoundedString());
 			}
@@ -107,6 +108,27 @@ public class enginescript
 		}
 	}
 	
+	public static class LogThreads extends Function
+	{
+		public Value Call(Stack args)
+		{
+			Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+			Thread[] threadArray = threadSet.toArray(new Thread[threadSet
+					.size()]);
+			for (int i = 0; i < threadArray.length; i++)
+			{
+				engine.Log("Thread: " + threadArray[i].getName() + "/"
+						+ threadArray[i].getId());
+			}
+			return new Value();
+		}
+		
+		public LogThreads()
+		{
+			super("threads");
+		}
+	}
+	
 	public static void registerAll(Stack env)
 	{
 		basefunctions.printFunction = new Print();
@@ -115,6 +137,6 @@ public class enginescript
 		
 		env.addFunction(new BuildFont());
 		
-		// TODO add more functions!
+		env.addFunction(new LogThreads());
 	}
 }

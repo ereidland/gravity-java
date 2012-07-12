@@ -9,9 +9,9 @@ public class ServerShip extends ServerEntity
 	
 	public void onThink()
 	{
+		super.onThink();
 		vel.add(velThrust.multipliedBy(Game.getDelta()));
 		angleVel.add(angleThrust.multipliedBy(Game.getDelta()));
-		super.onThink();
 		sendPos();
 	}
 	
