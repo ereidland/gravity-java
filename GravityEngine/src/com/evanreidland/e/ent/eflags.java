@@ -1,6 +1,7 @@
 package com.evanreidland.e.ent;
 
 import com.evanreidland.e.Flags;
+import com.evanreidland.e.net.StringTable;
 
 public class eflags
 {
@@ -29,4 +30,6 @@ public class eflags
 	{
 		"!dead"
 	});
+	
+	public static StringTable table = new StringTable(true);
 }

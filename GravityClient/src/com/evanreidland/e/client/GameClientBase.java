@@ -21,16 +21,17 @@ import com.evanreidland.e.shared.ent.register;
 public abstract class GameClientBase extends Game
 {
 	private double lCamWidth, lCamHeight;
-
+	
 	public void onUpdate()
 	{
+		GravityClient.global.Update();
 		if (graphics.camera.width != lCamWidth
 				|| graphics.camera.height != lCamHeight)
 		{
 			lCamWidth = graphics.camera.width;
 			lCamHeight = graphics.camera.height;
 			hud.gui.Layout();
-
+			
 		}
 		hud.gui.Update();
 		if (input.isKeyDown(key.MOUSE_LBUTTON))
@@ -40,24 +41,24 @@ public abstract class GameClientBase extends Game
 				hud.gui.onClick(Game.mousePos.x, Game.mousePos.y);
 			}
 		}
-
+		
 		String typed = input.getTyped();
 		for (int i = 0; i < typed.length(); i++)
 		{
 			hud.gui.onType(typed.charAt(i));
 		}
 	}
-
+	
 	public void onRenderHUD()
 	{
 		hud.gui.Render();
 	}
-
+	
 	public void onRender()
 	{
-
+		
 	}
-
+	
 	public void onInit()
 	{
 		graphics.setGraphicsManager(new GLGraphicsManager());
@@ -66,16 +67,16 @@ public abstract class GameClientBase extends Game
 		graphics.setDataClass(VBOGraphicsData.class);
 		graphics.setLightClass(GLLight.class);
 		graphics.setRenderListClass(GLRenderList.class);
-
+		
 		engine.addResourceManager(ResourceType.Sound,
 				new ALAudioResourceManager());
 		sound.setAudioManager(new ALAudioManager());
 		alsound.init();
-
+		
 		EApplet.active.clearR = 0.0f;
 		EApplet.active.clearG = 0.1f;
 		EApplet.active.clearB = 0.2f;
-
+		
 		register.All();
 	}
 }

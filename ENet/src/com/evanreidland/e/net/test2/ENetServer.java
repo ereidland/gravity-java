@@ -15,20 +15,18 @@ public class ENetServer
 			String str = new String(p.data.getBytes());
 			NetLog.Log("Server - Received from " + p.getSource().toString()
 					+ ": " + str);
-
+			
 			str = str.toUpperCase();
 			Send(str.getBytes(), p.getSource(), p.getSourcePort());
 		}
-
+		
 	}
-
+	
 	public static void main(String args[]) throws Exception
 	{
-		NetLog.addLogger(new NetLog.SystemOutLog());
-
 		Server server = new Server();
 		server.Listen(27015);
-
+		
 		while (server.getState() == ConnectionState.LISTENING)
 			;
 	}

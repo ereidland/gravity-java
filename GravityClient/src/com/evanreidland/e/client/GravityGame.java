@@ -9,14 +9,20 @@ import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
 import com.evanreidland.e.client.control.input;
 import com.evanreidland.e.client.control.key;
+<<<<<<< HEAD
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.EntityList;
 import com.evanreidland.e.ent.SearchData;
+=======
+import com.evanreidland.e.client.ent.ClientEnemy;
+import com.evanreidland.e.client.ent.ClientLaser;
+import com.evanreidland.e.client.ent.ClientShip;
+import com.evanreidland.e.commands.enginescript;
+>>>>>>> development
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.event.Event;
 import com.evanreidland.e.graphics.Model;
 import com.evanreidland.e.graphics.Model.ModelType;
-import com.evanreidland.e.graphics.ModelSceneObject;
 import com.evanreidland.e.graphics.Quad;
 import com.evanreidland.e.graphics.font;
 import com.evanreidland.e.graphics.generate;
@@ -24,7 +30,6 @@ import com.evanreidland.e.graphics.graphics;
 import com.evanreidland.e.script.basefunctions;
 import com.evanreidland.e.script.text.Script;
 import com.evanreidland.e.shared.config.ServerConfig;
-import com.evanreidland.e.shared.ent.Ship;
 
 public class GravityGame extends GameClientBase
 {
@@ -34,11 +39,19 @@ public class GravityGame extends GameClientBase
 	
 	Resource skybox;
 	
+<<<<<<< HEAD
 	Ship ship;
 	
 	long nextShot;
 	
 	double viewHeight = 0.01, deltaScaling = 1;
+=======
+	ClientShip ship;
+	
+	long nextShot;
+	
+	double viewHeight = 0.01, idleAngle = 0;
+>>>>>>> development
 	
 	Script script;
 	String consoleText;
@@ -110,7 +123,11 @@ public class GravityGame extends GameClientBase
 		}
 	}
 	
+<<<<<<< HEAD
 	public void renderConsole()
+=======
+	public void renderConsole(double ypos)
+>>>>>>> development
 	{
 		Quad q = new Quad();
 		graphics.setTexture(null);
@@ -132,11 +149,11 @@ public class GravityGame extends GameClientBase
 					font1,
 					log.get(i),
 					graphics.camera.bottomLeft().plus(
-							new Vector3(0, 64 + (log.size() - i)
+							new Vector3(0, ypos + (log.size() - i)
 									* (fontSize + 4), 0)), fontSize, false);
 		}
 		font.Render2d(font1, ">" + consoleText + (flashing ? "_" : ""),
-				graphics.camera.bottomLeft().plus(new Vector3(0, 64, 0)),
+				graphics.camera.bottomLeft().plus(new Vector3(0, ypos, 0)),
 				fontSize, false);
 	}
 	
@@ -155,6 +172,7 @@ public class GravityGame extends GameClientBase
 	public void onUpdate()
 	{
 		super.onUpdate();
+		
 		if (input.getKeyState(key.KEY_CONTROL)
 				&& input.isKeyDown(key.KEY_ENTER))
 		{
@@ -164,37 +182,23 @@ public class GravityGame extends GameClientBase
 		{
 			updateConsole();
 		}
-		else if (currentMenu == 0)
+		else if (currentMenu == 0 && ship != null)
 		{
-			double speed = getDelta();
-			if (input.getKeyState(key.KEY_1) && Game.getTime() >= nextShot)
-			{
-				Entity ent = ents.Create(
-						"missile",
-						new Object[]
-						{
-								ship.pos.plus(ship.angle.getForward()
-										.multipliedBy(0.01)),
-								ship.vel.plus(ship.angle.getForward()
-										.multipliedBy(2)), false, null, 1d,
-								10d,
-						});
-				ent.Spawn();
-				nextShot = Game.getTime() + 100;
-			}
+			double speed = 1;
 			if (input.getKeyState(key.KEY_9))
 			{
-				viewHeight += speed;
+				viewHeight += speed * Game.getDelta();
 			}
 			if (input.getKeyState(key.KEY_8))
 			{
-				viewHeight -= speed;
+				viewHeight -= speed * Game.getDelta();
 			}
 			if (viewHeight < 0.01)
 				viewHeight = 0.01;
 			if (viewHeight > 1)
 				viewHeight = 1;
 			
+<<<<<<< HEAD
 			if (input.getKeyState(key.KEY_3))
 			{
 				deltaScaling += getDelta() * 20;
@@ -212,50 +216,56 @@ public class GravityGame extends GameClientBase
 			if (deltaScaling > 100)
 				deltaScaling = 100;
 			
+=======
+>>>>>>> development
 			// for ( int i = 0; i < ents.list.getSize(); i++ ) {
 			// ents.list.get(i).relativity = deltaScaling; // For now while I
 			// test this.
 			// }
 			
+<<<<<<< HEAD
+=======
+			Vector3 velThrust = Vector3.Zero(), angleThrust = Vector3.Zero();
+			
+>>>>>>> development
 			if (input.getKeyState(key.KEY_SHIFT))
 			{
-				speed *= 2;
 				if (input.getKeyState(key.KEY_UP))
 				{
-					ship.vel.add(ship.angle.getForward().multipliedBy(speed));
+					velThrust.add(ship.angle.getForward());
 				}
 				if (input.getKeyState(key.KEY_DOWN))
 				{
-					ship.vel.add(ship.angle.getForward().multipliedBy(-speed));
+					velThrust.add(ship.angle.getForward().multipliedBy(-1));
 				}
 				if (input.getKeyState(key.KEY_LEFT))
 				{
-					ship.vel.add(ship.angle.getRight().multipliedBy(-speed));
+					velThrust.add(ship.angle.getRight().multipliedBy(-1));
 				}
 				if (input.getKeyState(key.KEY_RIGHT))
 				{
-					ship.vel.add(ship.angle.getRight().multipliedBy(speed));
+					velThrust.add(ship.angle.getRight());
 				}
 			}
 			else
 			{
 				if (input.getKeyState(key.KEY_CONTROL))
 				{
-					speed *= 2;
 					if (input.getKeyState(key.KEY_UP))
 					{
-						ship.vel.add(ship.angle.getUp().multipliedBy(speed));
+						velThrust.add(ship.angle.getUp());
 					}
 					if (input.getKeyState(key.KEY_DOWN))
 					{
-						ship.vel.add(ship.angle.getUp().multipliedBy(-speed));
+						velThrust.add(ship.angle.getUp().multipliedBy(-1));
 					}
 					if (input.getKeyState(key.KEY_LEFT))
 					{
-						ship.vel.add(ship.angle.getRight().multipliedBy(-speed));
+						velThrust.add(ship.angle.getRight().multipliedBy(-1));
 					}
 					if (input.getKeyState(key.KEY_RIGHT))
 					{
+<<<<<<< HEAD
 						ship.vel.add(ship.angle.getRight().multipliedBy(speed));
 					}
 					
@@ -264,6 +274,9 @@ public class GravityGame extends GameClientBase
 						ship.vel.setAs(0, 0, 0);
 						ship.angleVel.setAs(0, 0, 0);
 						ship.bStatic = !ship.bStatic;
+=======
+						velThrust.add(ship.angle.getRight());
+>>>>>>> development
 					}
 				}
 				else
@@ -274,25 +287,29 @@ public class GravityGame extends GameClientBase
 					}
 					if (input.getKeyState(key.KEY_LEFT))
 					{
-						ship.angleVel.z -= speed;// Math.cos(ship.angle.y)*speed;
+						angleThrust.z -= speed;// Math.cos(ship.angle.y)*speed;
 					}
 					if (input.getKeyState(key.KEY_RIGHT))
 					{
-						ship.angleVel.z += speed;// Math.cos(ship.angle.y)*speed;
+						angleThrust.z += speed;// Math.cos(ship.angle.y)*speed;
 					}
 					
 					if (input.getKeyState(key.KEY_UP))
 					{
-						ship.angleVel.x += Math.abs(speed);
+						angleThrust.x += Math.abs(speed);
 					}
 					if (input.getKeyState(key.KEY_DOWN))
 					{
-						ship.angleVel.x -= Math.abs(speed);
+						angleThrust.x -= Math.abs(speed);
 					}
+					
 				}
 			}
+			ship.velThrust.setAs(velThrust);
+			ship.angleThrust.setAs(angleThrust);
 		}
 		
+<<<<<<< HEAD
 		// ents.list.simulateGravity(getDelta());
 		ents.list.onThink();
 		
@@ -300,6 +317,25 @@ public class GravityGame extends GameClientBase
 		graphics.camera.pos.setAs(ship.pos.plus(
 				graphics.camera.getForward().multipliedBy(-viewHeight * 2.5))
 				.plus(graphics.camera.getUp().multipliedBy(viewHeight)));
+=======
+		ents.list.onThink();
+		
+		if (ship != null)
+		{
+			
+			graphics.camera.angle.setAs(ship.angle);
+			graphics.camera.pos.setAs(ship.pos.plus(
+					graphics.camera.getForward()
+							.multipliedBy(-viewHeight * 2.5)).plus(
+					graphics.camera.getUp().multipliedBy(viewHeight)));
+		}
+		else
+		{
+			idleAngle += Game.getDelta() * 0.1;
+			graphics.camera.angle.setAs(new Vector3(engine.Pi_2, 0, idleAngle));
+			graphics.camera.pos.setAs(Vector3.Zero());
+		}
+>>>>>>> development
 	}
 	
 	public void onRender()
@@ -315,18 +351,34 @@ public class GravityGame extends GameClientBase
 	public void onRenderHUD()
 	{
 		super.onRenderHUD();
-		font.Render2d(font1, "Pos: " + ship.pos.toRoundedString(),
-				graphics.camera.bottomLeft().plus(0, 16, 0), 16, false);
-		font.Render2d(font1,
-				"Ang: " + ship.angle.clipAngle().toRoundedString(),
-				graphics.camera.bottomLeft().plus(0, 32, 0), 16, false);
+		double ypos = 16;
+		if (ship != null)
+		{
+			font.Render2d(font1, "Pos: " + ship.pos.toRoundedString(),
+					graphics.camera.bottomLeft().plus(0, ypos, 0), 16, false);
+			ypos += 16;
+			font.Render2d(font1, "Ang: "
+					+ ship.angle.clipAngle().toRoundedString(), graphics.camera
+					.bottomLeft().plus(0, ypos, 0), 16, false);
+			ypos += 16;
+			font.Render2d(font1, "Thrust: " + ship.velThrust.toRoundedString()
+					+ ", " + ship.angleThrust.toRoundedString(),
+					graphics.camera.bottomLeft().plus(0, ypos, 0), 16, false);
+			ypos += 16;
+		}
 		font.Render2d(font1,
 				"Delta: " + String.format("%03.03f", Game.getDelta()),
+<<<<<<< HEAD
 				graphics.camera.bottomLeft().plus(0, 48, 0), 16, false);
+=======
+				graphics.camera.bottomLeft().plus(0, ypos, 0), 16, false);
+		ypos += 16;
+>>>>>>> development
 		
 		double s = 10;
 		graphics.unbindTexture();
 		
+<<<<<<< HEAD
 		EntityList list = ents.list.getWithFlags(new Flags("missile enemy"),
 				true);
 		for (int i = 0; i < list.size(); i++)
@@ -346,6 +398,9 @@ public class GravityGame extends GameClientBase
 				"enemy targetable"));
 		Vector3 p = data.isPositive ? graphics.toScreen(data.ent.pos)
 				: Game.mousePos;
+=======
+		Vector3 p = Game.mousePos;
+>>>>>>> development
 		graphics.drawLine(p.plus(new Vector3(-s, 0, 0)),
 				p.plus(new Vector3(0, -s, 0)), 2, 1, 1, 1, 0.5f);
 		graphics.drawLine(p.plus(new Vector3(0, -s, 0)),
@@ -357,17 +412,19 @@ public class GravityGame extends GameClientBase
 		
 		if (showConsole)
 		{
-			renderConsole();
+			renderConsole(ypos);
 		}
 	}
 	
 	public void registerEntities()
 	{
-		ents.Register("missile", TestInterceptor.class);
 		ents.Register("explosion", Explosion.class);
-		ents.Register("enemy", TestEnemy.class);
+		ents.Register("laser", ClientLaser.class);
+		ents.Register("enemy", ClientEnemy.class);
+		ents.Register("ship", ClientShip.class);
 	}
 	
+<<<<<<< HEAD
 	public void createEntities()
 	{
 		ship = (Ship) ents.Create("ship");
@@ -400,6 +457,11 @@ public class GravityGame extends GameClientBase
 		shipModel = generate.Cube(new Vector3(0, 0, 0), new Vector3(0.01f,
 				0.01f, 0.01f), new Vector3());
 		shipModel.tex = engine.loadTexture("shiptest1.png");
+=======
+	public void loadGraphics()
+	{
+		generate.setModelType(ModelType.RenderList);
+>>>>>>> development
 		
 		font.buildFont("Courier New", 32, true, false);
 		font1 = engine.loadFont("Courier Newx32");
@@ -437,16 +499,25 @@ public class GravityGame extends GameClientBase
 		flashing = false;
 		
 		basefunctions.registerAll(script.env);
+		enginescript.registerAll(script.env);
 		clientfunctions.registerAll(script.env);
 		
+<<<<<<< HEAD
 		// Note: these both create a static self-reference on construction.
 		new GravityNetClient();
+=======
+		// Note: creates a static reference, GravityClient.global.
+		new GravityClient(this);
+>>>>>>> development
 		
 		registerEntities();
 		loadGraphics();
 		loadSound();
 		buildGUI();
+<<<<<<< HEAD
 		createEntities();
+=======
+>>>>>>> development
 		
 		graphics.camera.farDist = 1000000000d;
 	}
@@ -455,6 +526,6 @@ public class GravityGame extends GameClientBase
 	{
 		EApplication app = new EApplication(new EApplet());
 		engine.game = new GravityGame();
-		app.runApplet("Gravity Alpha v0.1", false);
+		app.runApplet("Gravity Multiplayer Alpha v0.1", false);
 	}
 }

@@ -4,58 +4,123 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
+import java.util.logging.Level;
 
-public abstract class TCPServer
+public abstract class TCPServer extends Aquireable
 {
 	private ServerSocket socket;
 	private int port;
-
+	
 	private long lastID = 0;
 	private Vector<Client> clients;
-
+	
 	private Thread listenThread;
-
+	
+	private Vector<TCPPacket> packets;
+	
+	public int getPacketCount()
+	{
+		int count;
+		aquire();
+		count = packets.size();
+		release();
+		return count;
+	}
+	
+	public TCPPacket pull()
+	{
+		TCPPacket packet;
+		aquire();
+		packet = packets.size() > 0 ? packets.remove(0) : null;
+		release();
+		return packet;
+	}
+	
 	public int getPort()
 	{
 		return port;
 	}
-
+	
 	private class Client
 	{
 		public long id;
 		public Socket socket;
-		public Thread receiveThread;
-
+		public Thread receiveThread, sendThread;
+		
 		public Bits formingPacket;
 		public int remainingBits;
-
+		
+		public PacketBuffer queue;
+		
+		private class SendThread implements Runnable
+		{
+			public void run()
+			{
+				NetLog.Log("Send thread initialized for " + id);
+				try
+				{
+					while (socket != null)
+					{
+						Bits data = queue.pull();
+						if (data != null)
+						{
+							Bits finalData = new Bits();
+							int len = data.getRemainingBytes() * 8;
+							finalData.writeInt(len);
+							finalData.write(data);
+							socket.getOutputStream().write(
+									finalData.readRemaining());
+						}
+						else
+						{
+							try
+							{
+								Thread.sleep(TCPClient.waitTime);
+							}
+							catch (Exception e)
+							{
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+				catch (Exception e)
+				{
+					onException(e, TCPEvent.SEND);
+				}
+				
+			}
+			
+			public SendThread()
+			{
+			}
+		}
+		
 		public void onException(Exception e, TCPEvent event)
 		{
 			e.printStackTrace();
-			onDisconnect(id);
+			aquire();
+			packets.add(new TCPPacket(id, TCPEvent.DISCONNECT));
+			release();
 			clients.remove(this);
 		}
-
+		
 		public void processData(Bits data)
 		{
 			if (remainingBits == 0)
 			{
-				int rbits = data.getRemainingBits();
-				if (rbits >= 8)
+				Bits basePacket = formingPacket.skipTo(0).getRemainingBits() > 0 ? new Bits()
+						.write(formingPacket).write(data) : data;
+				if (basePacket.getRemainingBits() >= 32)
 				{
-					if (data.readBit())
-					{
-						remainingBits = data.readByte();
-					}
-					else if (rbits >= 16 && data.readBit())
-					{
-						remainingBits = data.readShort();
-					}
-					else if (rbits >= 32)
-					{
-						remainingBits = data.readInt();
-					}
-					processData(data);
+					formingPacket = new Bits();
+					remainingBits = data.readInt();
+					processData(basePacket);
+				}
+				else
+				{
+					formingPacket = new Bits();
+					formingPacket.write(basePacket.skipTo(0));
 				}
 			}
 			else
@@ -64,11 +129,13 @@ public abstract class TCPServer
 				{
 					formingPacket.writeBits(data.readBits(remainingBits),
 							remainingBits);
-					onReceiveData(id, formingPacket.trim());
-
+					aquire();
+					packets.add(new TCPPacket(id, formingPacket));
+					release();
+					
 					formingPacket = new Bits();
 					remainingBits = 0;
-
+					
 					if (data.getRemainingBits() > 0)
 					{
 						processData(data);
@@ -83,12 +150,12 @@ public abstract class TCPServer
 				}
 			}
 		}
-
+		
 		public void Send(Bits data)
 		{
-			new Thread(new SendThread(this, data)).start();
+			queue.push(data);
 		}
-
+		
 		public void close()
 		{
 			try
@@ -100,65 +167,90 @@ public abstract class TCPServer
 				e.printStackTrace();
 			}
 		}
-
-		public void listenForData()
+		
+		public void startListening()
 		{
 			receiveThread = new Thread(new ReceiveThread(this));
+			receiveThread.setName("Server.Receive." + id);
 			receiveThread.start();
+			
+			sendThread = new Thread(new SendThread());
+			sendThread.setName("Server.Send." + id);
+			sendThread.start();
 		}
-
+		
 		public Client(Socket socket)
 		{
 			id = ++lastID;
 			receiveThread = null;
+			sendThread = null;
 			formingPacket = new Bits();
 			remainingBits = 0;
+			queue = new PacketBuffer();
 			this.socket = socket;
 		}
 	}
-
+	
+	public Vector<Long> getClients()
+	{
+		Vector<Long> list = new Vector<Long>();
+		for (int i = 0; i < clients.size(); i++)
+		{
+			list.add(clients.get(i).id);
+		}
+		return list;
+	}
+	
+	public void startListening(long clientID)
+	{
+		Client client = getClient(clientID);
+		if (client != null)
+		{
+			client.startListening();
+		}
+		else
+		{
+			NetLog.logger.log(Level.SEVERE, "Client does not exist: "
+					+ clientID);
+		}
+	}
+	
 	public String getAddress(long id)
 	{
 		Client client = getClient(id);
 		return client != null ? client.socket.getInetAddress().toString() : "";
 	}
-
+	
 	public int getPort(long id)
 	{
 		Client client = getClient(id);
 		return client != null ? client.socket.getPort() : 0;
 	}
-
+	
 	public String getFullAddress(long id)
 	{
 		return getAddress(id) + ":" + getPort(id);
 	}
-
-	public abstract void onDisconnect(long id);
-
-	public abstract void onNewConnection(long id);
-
-	public abstract void onReceiveData(long id, Bits data);
-
+	
 	public abstract void onListenException(Exception e);
-
+	
 	public void broadcastData(long allBut, Bits data)
 	{
 		for (int i = 0; i < clients.size(); i++)
 		{
 			Client client = clients.get(i);
-			if (client.id != allBut)
+			if (allBut == -1 || client.id != allBut)
 			{
 				client.Send(data);
 			}
 		}
 	}
-
+	
 	public void broadcastData(Bits data)
 	{
 		broadcastData(-1, data);
 	}
-
+	
 	private Client getClient(long id)
 	{
 		for (int i = 0; i < clients.size(); i++)
@@ -171,7 +263,7 @@ public abstract class TCPServer
 		}
 		return null;
 	}
-
+	
 	public void sendData(long id, Bits data)
 	{
 		Client client = getClient(id);
@@ -180,63 +272,24 @@ public abstract class TCPServer
 			client.Send(data);
 		}
 	}
-
-	private class SendThread implements Runnable
-	{
-		public Client client;
-		public Bits data;
-
-		public void run()
-		{
-			try
-			{
-				Bits finalData = new Bits();
-				int len = data.getRemainingBits();
-				finalData.writeBit(data.getRemainingBits() <= Byte.MAX_VALUE);
-				if (len <= Byte.MAX_VALUE)
-				{
-					finalData.writeByte((byte) len);
-				}
-				else if (len <= Short.MAX_VALUE)
-				{
-					finalData.writeBit(true);
-					finalData.writeShort((short) len);
-				}
-				else
-				{
-					finalData.writeBit(false);
-					finalData.writeInt(len);
-				}
-				finalData.writeBits(data.readRemaining(), len);
-				client.socket.getOutputStream()
-						.write(finalData.readRemaining());
-			}
-			catch (Exception e)
-			{
-				client.onException(e, TCPEvent.SEND);
-			}
-		}
-
-		public SendThread(Client client, Bits data)
-		{
-			this.client = client;
-			this.data = data;
-		}
-	}
-
+	
 	private class ReceiveThread implements Runnable
 	{
 		public Client client;
-
+		
 		public void run()
 		{
+			NetLog.Log("Receive thread initialized for " + client.id);
 			while (client.socket != null)
 			{
 				try
 				{
 					if (!client.socket.isConnected())
 					{
-						onDisconnect(client.id);
+						aquire();
+						packets.add(new TCPPacket(client.id,
+								TCPEvent.DISCONNECT));
+						release();
 						clients.remove(client);
 					}
 					else
@@ -248,6 +301,17 @@ public abstract class TCPServer
 							client.socket.getInputStream().read(bytes);
 							client.processData(new Bits().writeBytes(bytes));
 						}
+						else
+						{
+							try
+							{
+								Thread.sleep(TCPClient.waitTime);
+							}
+							catch (Exception e)
+							{
+								e.printStackTrace();
+							}
+						}
 					}
 				}
 				catch (Exception e)
@@ -256,22 +320,24 @@ public abstract class TCPServer
 					break;
 				}
 			}
-
-			onDisconnect(client.id);
+			
+			aquire();
+			packets.add(new TCPPacket(client.id, TCPEvent.DISCONNECT));
+			release();
 			clients.remove(client);
 		}
-
+		
 		public ReceiveThread(Client client)
 		{
 			this.client = client;
 		}
 	}
-
+	
 	public boolean isListening()
 	{
 		return socket != null;
 	}
-
+	
 	private class ListenThread implements Runnable
 	{
 		public void run()
@@ -283,8 +349,9 @@ public abstract class TCPServer
 					Socket clientSocket = socket.accept();
 					Client client = new Client(clientSocket);
 					clients.add(client);
-					onNewConnection(client.id);
-					client.listenForData();
+					aquire();
+					packets.add(new TCPPacket(client.id, TCPEvent.CONNECT));
+					release();
 				}
 			}
 			catch (Exception e)
@@ -294,11 +361,11 @@ public abstract class TCPServer
 			}
 		}
 	}
-
+	
 	public void Listen(int port)
 	{
 		this.port = port;
-
+		
 		if (listenThread == null)
 		{
 			try
@@ -310,6 +377,7 @@ public abstract class TCPServer
 				onListenException(e);
 			}
 			listenThread = new Thread(new ListenThread());
+			listenThread.setName("Server.Listen");
 			listenThread.start();
 		}
 		else
@@ -317,7 +385,7 @@ public abstract class TCPServer
 			onListenException(new Exception("Already listening"));
 		}
 	}
-
+	
 	public void close()
 	{
 		socket = null;
@@ -329,10 +397,11 @@ public abstract class TCPServer
 		clients.clear();
 		lastID = 1;
 	}
-
+	
 	public TCPServer()
 	{
 		clients = new Vector<Client>();
+		packets = new Vector<TCPPacket>();
 		port = 27015;
 		socket = null;
 	}

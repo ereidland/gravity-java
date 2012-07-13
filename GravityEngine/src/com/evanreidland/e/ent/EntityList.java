@@ -14,7 +14,7 @@ public class EntityList
 	private Vector<Entity> entities;
 	private HashMap<Long, Entity> entMap;
 	public double ignoreThreshold = 0.001;
-
+	
 	public void simulateGravity(double delta)
 	{
 		for (int i = 0; i < entities.size(); i++)
@@ -32,7 +32,7 @@ public class EntityList
 			}
 		}
 	}
-
+	
 	public Vector3 getGravitationalInfluence(Entity ent)
 	{
 		Vector3 v = Vector3.Zero();
@@ -49,7 +49,7 @@ public class EntityList
 		}
 		return v;
 	}
-
+	
 	public Vector3 getUniversalOrbitalVelocity(Entity ent)
 	{
 		Vector3 v = Vector3.Zero();
@@ -66,18 +66,22 @@ public class EntityList
 		}
 		return v;
 	}
-
+	
 	public Entity add(Entity ent)
 	{
 		if (!entities.contains(ent))
 		{
 			entities.add(ent);
+			if (ent.getID() == 0)
+			{
+				ent.Be();
+			}
 			entMap.put(ent.getID(), ent);
 			Event.addPersonalListener(ent);
 		}
 		return ent;
 	}
-
+	
 	public Entity remove(Entity ent)
 	{
 		Event.Call("onDestroy", new EntityDestroyedEvent(ent));
@@ -87,18 +91,18 @@ public class EntityList
 		entMap.remove(ent.getID());
 		return ent;
 	}
-
+	
 	public Entity get(int index)
 	{
 		return index >= 0 && index < entities.size() ? entities.get(index)
 				: null;
 	}
-
+	
 	public Entity getByID(long id)
 	{
 		return entMap.get(id);
 	}
-
+	
 	public EntityList getWithFlags(Flags flags, boolean strict)
 	{
 		EntityList list = new EntityList();
@@ -110,14 +114,14 @@ public class EntityList
 				list.add(ent);
 			}
 		}
-
+		
 		return list;
 	}
-
+	
 	public void removeWithFlags(Flags flags, boolean strict)
 	{
 		int i = 0;
-
+		
 		while (i < entities.size())
 		{
 			Entity ent = entities.get(i);
@@ -132,22 +136,28 @@ public class EntityList
 			}
 		}
 	}
-
+	
 	public void removeWithFlags(Flags flags)
 	{
 		removeWithFlags(flags, false);
 	}
-
+	
 	public void onThink()
 	{
 		for (int i = 0; i < entities.size(); i++)
 		{
-			entities.get(i).onThink();
+			Entity ent = entities.get(i);
+			if (!ent.bSpawned)
+			{
+				ent.Spawn();
+				ent.bSpawned = true;
+			}
+			ent.onThink();
 		}
-
+		
 		removeWithFlags(eflags.dead);
 	}
-
+	
 	public void onRender()
 	{
 		for (int i = 0; i < entities.size(); i++)
@@ -155,7 +165,7 @@ public class EntityList
 			entities.get(i).onRender();
 		}
 	}
-
+	
 	public void onRenderHUD()
 	{
 		for (int i = 0; i < entities.size(); i++)
@@ -163,12 +173,12 @@ public class EntityList
 			entities.get(i).onRenderHUD();
 		}
 	}
-
+	
 	public int size()
 	{
 		return entities.size();
 	}
-
+	
 	public SearchData traceToNearest(Vector3 start, Vector3 end, double radius,
 			Flags flags)
 	{
@@ -177,7 +187,7 @@ public class EntityList
 		for (int i = 0; i < entities.size(); i++)
 		{
 			Entity ent = entities.get(i);
-
+			
 			if (flags == null || ent.matchesFlags(flags, true))
 			{
 				Vector3 nearPos = line.nearestPoint(ent.pos);
@@ -197,21 +207,21 @@ public class EntityList
 		}
 		return data;
 	}
-
+	
 	public SearchData findNearest(Vector3 origin, double radius, Flags flags)
 	{
 		SearchData data = new SearchData();
 		for (int i = 0; i < entities.size(); i++)
 		{
 			Entity ent = entities.get(i);
-
+			
 			if (flags != null && !ent.matchesFlags(flags, true))
 			{
 				continue;
 			}
-
+			
 			double len = ent.pos.minus(origin).getLength2d() - ent.radius;
-
+			
 			if (len < radius)
 			{
 				if (!data.isPositive || len < data.length)
@@ -225,7 +235,7 @@ public class EntityList
 		}
 		return data;
 	}
-
+	
 	public EntityList()
 	{
 		entities = new Vector<Entity>();

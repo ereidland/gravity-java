@@ -11,7 +11,7 @@ public class ENetStressServer
 	private static class Server extends UDPHandler
 	{
 		long lastTime = 0;// , received = 0;
-
+		
 		public void onReceive(Packet p)
 		{
 			p.logInfo();
@@ -29,15 +29,12 @@ public class ENetStressServer
 					p.getSourcePort());
 		}
 	}
-
+	
 	public static void main(String args[]) throws Exception
 	{
-		NetLog.addLogger(new NetLog.SystemOutLog());
-
 		Server server = new Server();
 		server.Listen(27015);
-
-		while (server.getState() == ConnectionState.LISTENING)
-			;
+		
+		while (server.getState() == ConnectionState.LISTENING);
 	}
 }

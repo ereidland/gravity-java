@@ -1,5 +1,7 @@
 package com.evanreidland.e.commands;
 
+import java.util.Set;
+
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
 import com.evanreidland.e.ent.Entity;
@@ -27,21 +29,21 @@ public class enginescript
 			}
 			return new Value();
 		}
-
+		
 		public Print()
 		{
 			super("print");
 		}
 	}
-
+	
 	public static class Spawn extends Function
 	{
 		public Value Call(Stack args)
 		{
 			Entity ent = ents.Create(args.at(0).toString());
-
-			Vector3 pos = new Vector3(args.at(2).toDouble(), args.at(3)
-					.toDouble(), args.at(4).toDouble());
+			
+			Vector3 pos = new Vector3(args.at(1).toDouble(), args.at(2)
+					.toDouble(), args.at(3).toDouble());
 			if (ent == null)
 			{
 				return new Value("Entity class, '" + args.at(0).toString()
@@ -49,18 +51,21 @@ public class enginescript
 			}
 			else
 			{
+				// TODO If server, send off this event. The event system could
+				// be useful here, but I want your input first.
 				ent.pos.setAs(pos);
-				ent.Spawn();
+				return new Value("Spawned " + ent.getClassName() + "/"
+						+ ent.getID() + " @ " + ent.pos.toRoundedString());
 			}
-			return new Value();
+			
 		}
-
+		
 		public Spawn()
 		{
 			super("spawn");
 		}
 	}
-
+	
 	public static class BuildFont extends Function
 	{
 		public Value Call(Stack args)
@@ -96,21 +101,42 @@ public class enginescript
 			}
 			return new Value("Could not build font: no name specified.");
 		}
-
+		
 		public BuildFont()
 		{
 			super("build.font");
 		}
 	}
-
+	
+	public static class LogThreads extends Function
+	{
+		public Value Call(Stack args)
+		{
+			Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+			Thread[] threadArray = threadSet.toArray(new Thread[threadSet
+					.size()]);
+			for (int i = 0; i < threadArray.length; i++)
+			{
+				engine.Log("Thread: " + threadArray[i].getName() + "/"
+						+ threadArray[i].getId());
+			}
+			return new Value();
+		}
+		
+		public LogThreads()
+		{
+			super("threads");
+		}
+	}
+	
 	public static void registerAll(Stack env)
 	{
-		env.addFunction(new Print());
+		basefunctions.printFunction = new Print();
 		env.addFunction(new Spawn());
 		env.addFunction(new basefunctions.CallOther("ent_create", new Spawn()));
-
+		
 		env.addFunction(new BuildFont());
-
-		// TODO add more functions!
+		
+		env.addFunction(new LogThreads());
 	}
 }

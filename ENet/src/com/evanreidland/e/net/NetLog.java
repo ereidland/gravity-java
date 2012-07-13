@@ -1,37 +1,14 @@
 package com.evanreidland.e.net;
 
-import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class NetLog
 {
-	public abstract static class Logger
-	{
-		public abstract void Log(String str);
-	}
-
-	public static class SystemOutLog extends Logger
-	{
-		public void Log(String str)
-		{
-			System.out.println(str);
-		}
-	}
-
-	private static Vector<Logger> loggers = new Vector<Logger>();
-
-	public static void addLogger(Logger logger)
-	{
-		if (logger != null)
-		{
-			loggers.add(logger);
-		}
-	}
-
+	public static Logger logger = Logger.getLogger("com.evanreidland.e");
+	
 	public static void Log(String str)
 	{
-		for (int i = 0; i < loggers.size(); i++)
-		{
-			loggers.get(i).Log(str);
-		}
+		logger.log(Level.INFO, str);
 	}
 }

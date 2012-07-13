@@ -1,5 +1,7 @@
 package com.evanreidland.e;
 
+import com.evanreidland.e.net.Bits;
+
 public class Vector3
 {
 	public double x, y, z;
@@ -736,5 +738,17 @@ public class Vector3
 		this.x = x;
 		this.y = y;
 		this.z = z;
+	}
+	
+	// Net
+	public Bits toBits()
+	{
+		return new Bits().writeDouble(x).writeDouble(y).writeDouble(z);
+	}
+	
+	public static Vector3 fromBits(Bits bits)
+	{
+		return new Vector3(bits.readDouble(), bits.readDouble(),
+				bits.readDouble());
 	}
 }

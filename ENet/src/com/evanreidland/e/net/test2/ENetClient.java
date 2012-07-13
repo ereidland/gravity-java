@@ -19,16 +19,15 @@ public class ENetClient
 			NetLog.Log("Client - Received from " + p.getSource().toString()
 					+ ":" + str);
 		}
-
+		
 	}
-
+	
 	public static void main(String args[]) throws Exception
 	{
-		NetLog.addLogger(new NetLog.SystemOutLog());
-
+		
 		Client client = new Client();
 		client.Connect("127.0.0.1", 27015);
-
+		
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		while (client.getState() == ConnectionState.CONNECTED)
 		{

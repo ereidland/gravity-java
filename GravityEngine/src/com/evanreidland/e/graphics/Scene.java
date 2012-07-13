@@ -179,7 +179,7 @@ public class Scene extends SceneObject
 			SceneObject object = objects.get(i);
 			if (object.getParentEntity() != null)
 			{
-				if (object.getParentEntity().flags.getState("dead") == State.True)
+				if (object.getParentEntity().flags.get("dead") == State.True)
 				{
 					dead.add(object);
 				}
@@ -196,7 +196,7 @@ public class Scene extends SceneObject
 			SceneObject object = orderedObjects.get(i);
 			if (object.getParentEntity() != null)
 			{
-				if (object.getParentEntity().flags.getState("dead") == State.True)
+				if (object.getParentEntity().flags.get("dead") == State.True)
 				{
 					dead.add(object);
 				}
