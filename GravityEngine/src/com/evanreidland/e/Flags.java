@@ -301,7 +301,6 @@ public class Flags
 		{
 			String str = bits.readString();
 			State state = stateFromBits(bits);
-			engine.Log("Flags << " + str + "/" + state.toString());
 			set(str, state);
 		}
 	}
@@ -313,7 +312,6 @@ public class Flags
 		{
 			String str = ref.getString(bits);
 			State state = stateFromBits(bits);
-			engine.Log("Flags << " + str + "/" + state.toString());
 			set(str, state);
 		}
 		

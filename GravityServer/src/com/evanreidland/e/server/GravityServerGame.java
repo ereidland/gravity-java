@@ -1,7 +1,6 @@
 package com.evanreidland.e.server;
 
 import com.evanreidland.e.Game;
-import com.evanreidland.e.engine;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.server.ent.ServerEnemy;
@@ -18,7 +17,6 @@ public class GravityServerGame extends Game
 			Entity ent = ents.list.get(i);
 			if (!ent.bSent)
 			{
-				engine.Log("Sending unsent " + ent.toString());
 				GravityServer.global.sendEntitySpawn(ent);
 			}
 		}
