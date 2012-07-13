@@ -31,17 +31,7 @@ public class Camera
 	
 	public Vector3 toScreen(Vector3 v)
 	{
-		Vector3 point = v.minus(pos);
-		point.Rotate(angle.multipliedBy(-1));
-		Vector3 angle = point.minus(pos).getAngle();
-		
-		double ratio = width / height, radfov = Math.toRadians(fov);
-		
-		point.z = 0;
-		point.x = (angle.z / (radfov * 0.5)) * width * 0.5;
-		point.y = (angle.x / (radfov * 0.5)) * height * 0.5;
-		
-		return point;
+		return graphics.toScreen(v);
 	}
 	
 	public Vector3 getForward()
@@ -111,13 +101,13 @@ public class Camera
 	
 	public Camera()
 	{
-		nearDist = 1;
-		farDist = 1000;
+		nearDist = 0.0001;
+		farDist = 1000000;
 		fov = 45;
 		perspective = 1;
 		orthoScale = 1;
-		width = 1;
-		height = 1;
+		width = 0;
+		height = 0;
 		is3D = true;
 		pos = new Vector3();
 		angle = new Vector3();

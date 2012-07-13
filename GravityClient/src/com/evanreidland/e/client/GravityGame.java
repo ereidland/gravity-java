@@ -11,6 +11,7 @@ import com.evanreidland.e.client.control.input;
 import com.evanreidland.e.client.control.key;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.EntityList;
+import com.evanreidland.e.ent.SearchData;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.event.Event;
 import com.evanreidland.e.graphics.Model;
@@ -330,9 +331,21 @@ public class GravityGame extends GameClientBase
 				true);
 		for (int i = 0; i < list.size(); i++)
 		{
-			// TODO something.
+			Vector3 p = graphics.toScreen(list.get(i).pos);
+			graphics.drawLine(p.plus(new Vector3(-s, 0, 0)),
+					p.plus(new Vector3(0, -s, 0)), 2, 1, 1, 1, 0.5f);
+			graphics.drawLine(p.plus(new Vector3(0, -s, 0)),
+					p.plus(new Vector3(s, 0, 0)), 2, 1, 1, 1, 0.5f);
+			graphics.drawLine(p.plus(new Vector3(s, 0, 0)),
+					p.plus(new Vector3(0, s, 0)), 2, 1, 1, 1, 0.5f);
+			graphics.drawLine(p.plus(new Vector3(0, s, 0)),
+					p.plus(new Vector3(-s, 0, 0)), 2, 1, 1, 1, 0.5f);
+			
 		}
-		Vector3 p = Game.mousePos;
+		SearchData data = ents.list.findNearest(ship.pos, 1000, new Flags(
+				"enemy targetable"));
+		Vector3 p = data.isPositive ? graphics.toScreen(data.ent.pos)
+				: Game.mousePos;
 		graphics.drawLine(p.plus(new Vector3(-s, 0, 0)),
 				p.plus(new Vector3(0, -s, 0)), 2, 1, 1, 1, 0.5f);
 		graphics.drawLine(p.plus(new Vector3(0, -s, 0)),
