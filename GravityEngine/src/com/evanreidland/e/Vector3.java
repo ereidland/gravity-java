@@ -538,6 +538,11 @@ public class Vector3
 		return setAs(Vector3.fromAngle2d(getAngle2d()).multiply(getLength()));
 	}
 	
+	public Vector3 Rotated2d(double howMuch)
+	{
+		return cloned().Rotate2d(howMuch);
+	}
+	
 	public Vector3 Rotate(Vector3 howMuch)
 	{
 		if (howMuch.x == 0 && howMuch.y == 0 && howMuch.z == 0)
@@ -570,6 +575,38 @@ public class Vector3
 		cur.multiply(getLength());
 		
 		return setAs(cur);
+	}
+	
+	public Vector3 Rotated(Vector3 howMuch)
+	{
+		return cloned().Rotate(howMuch);
+	}
+	
+	public static double angleDifference(double origin, double other)
+	{
+		double diff = other - origin;
+		if (diff > Math.PI)
+		{
+			if (origin < other)
+			{
+				diff = other - (origin + Math.PI * 2);
+			}
+			else
+			{
+				diff = (other + Math.PI * 2) - origin;
+			}
+		}
+		
+		return diff;
+	}
+	
+	public static Vector3 getAngleDifference(Vector3 origin, Vector3 other)
+	{
+		Vector3 or = origin.cloned().clipAngle(true), ot = other.cloned()
+				.clipAngle(true);
+		
+		return new Vector3(angleDifference(or.x, ot.x), angleDifference(or.y,
+				ot.y), angleDifference(or.z, ot.z));
 	}
 	
 	public static enum VectorFormat
