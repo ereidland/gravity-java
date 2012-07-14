@@ -30,6 +30,8 @@ public abstract class GraphicsManager
 	
 	public abstract Vector3 toScreen(Vector3 point);
 	
+	public abstract Vector3 toWorld(Vector3 point);
+	
 	public abstract void drawLine(Vector3 pos1, Vector3 pos2, double width,
 			double r, double g, double b, double a);
 	

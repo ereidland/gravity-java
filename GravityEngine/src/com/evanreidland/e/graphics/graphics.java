@@ -253,6 +253,15 @@ public class graphics
 		return Vector3.Zero();
 	}
 	
+	public static Vector3 toWorld(Vector3 screenPos)
+	{
+		if (graphicsManager != null)
+		{
+			return graphicsManager.toWorld(screenPos);
+		}
+		return Vector3.Zero();
+	}
+	
 	public static void setCamera2D(Camera cam)
 	{
 		if (graphicsManager != null)
