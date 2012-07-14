@@ -47,7 +47,6 @@ public class GravityClient extends TCPClient
 							ent.setupFromBits(data);
 							ent.bSpawned = false;
 							ent.shiftByTimeOffset(time);
-							engine.Log("Received " + className + "/" + id);
 						}
 						else
 						{

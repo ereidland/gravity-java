@@ -118,6 +118,25 @@ public class EntityList
 		return list;
 	}
 	
+	public EntityList getWithFlags(Flags flags)
+	{
+		return getWithFlags(flags, true);
+	}
+	
+	public EntityList getWithinRadius(Vector3 pos, double radius)
+	{
+		EntityList list = new EntityList();
+		for (int i = 0; i < entities.size(); i++)
+		{
+			Entity ent = entities.get(i);
+			if (ent.pos.getDistance(pos) <= radius)
+			{
+				list.add(ent);
+			}
+		}
+		return list;
+	}
+	
 	public void removeWithFlags(Flags flags, boolean strict)
 	{
 		int i = 0;

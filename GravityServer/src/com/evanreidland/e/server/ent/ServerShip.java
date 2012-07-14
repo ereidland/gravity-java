@@ -20,6 +20,7 @@ public class ServerShip extends ServerEntity
 		super("ship", id);
 		velThrust = Vector3.Zero();
 		angleThrust = Vector3.Zero();
+		radius = 0.01;
 	}
 	
 }

@@ -312,6 +312,7 @@ public class Flags
 		{
 			String str = ref.getString(bits);
 			State state = stateFromBits(bits);
+			engine.Log("Flag << " + str + "/" + state);
 			set(str, state);
 		}
 		

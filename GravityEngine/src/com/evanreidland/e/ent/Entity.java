@@ -220,7 +220,7 @@ public class Entity extends EObject
 		bits.writeDouble(radius);
 		boolean tSpawned = bSpawned;
 		bSpawned = false;
-		bits.write(flags.toBits(eflags.table, true));
+		bits.write(flags.toBits(eflags.table, false));
 		bSpawned = tSpawned;
 		
 		return bits;

@@ -3,145 +3,98 @@ package com.evanreidland.e.gui;
 import java.util.HashMap;
 import java.util.Vector;
 
+import com.evanreidland.e.Flags;
 import com.evanreidland.e.Vector3;
+import com.evanreidland.e.graphics.Quad;
+import com.evanreidland.e.phys.Rect3;
 
-//Note: Although GUIObjects can have child objects, all objects are added to the GUI the object is a part of.
 public class GUI
 {
-	public static enum Layout
+	public Rect3 rect;
+	public boolean bVisible, bActive;
+	public Flags flags;
+	
+	private String name;
+	
+	public String getName()
 	{
-		DEFAULT, RIGHT_DOWN, RIGHT, DOWN,
+		return name;
 	}
-
-	private Vector<GUIObject> objects;
-	private HashMap<String, GUIObject> objectsMap;
-
-	public Layout layout;
-	public Vector3 layoutOrigin;
-
-	public GUIObject addObject(GUIObject object)
+	
+	private Vector<GUI> objects;
+	private HashMap<String, GUI> objectMap;
+	
+	public void add(GUI object)
 	{
 		if (!objects.contains(object))
 		{
 			objects.add(object);
-			objectsMap.put(object.getName(), object);
+			objectMap.put(object.getName(), object);
 		}
-		return object;
 	}
-
-	public void Render()
+	
+	public void remove(GUI object)
+	{
+		if (objects.remove(object))
+		{
+			objectMap.remove(object.getName());
+		}
+	}
+	
+	public GUI getObject(String name)
+	{
+		return objectMap.get(name);
+	}
+	
+	public void onUpdate()
 	{
 		for (int i = 0; i < objects.size(); i++)
 		{
-			GUIObject object = objects.get(i);
-			if (object.parent == null
-					&& !object.settings.get("hidden").asBool())
+			GUI object = objects.get(i);
+			if (object.bActive)
 			{
-				object.Render();
+				object.onUpdate();
 			}
 		}
 	}
-
-	public void Update()
+	
+	public void onRender()
 	{
 		for (int i = 0; i < objects.size(); i++)
 		{
-			GUIObject object = objects.get(i);
-			if (object.parent == null)
+			GUI object = objects.get(i);
+			if (object.bVisible)
 			{
-				object.Update();
+				object.onRender();
 			}
 		}
 	}
-
-	public GUIObject getObject(String name)
-	{
-		return objectsMap.get(name);
-	}
-
-	public GUIObject removeObject(GUIObject object)
-	{
-		if (object != null)
-		{
-			if (object.getGUI() != null)
-			{
-				object.remove();
-			}
-			else
-			{
-				objects.remove(object);
-				objectsMap.remove(object.getName());
-			}
-		}
-		return object;
-	}
-
-	public GUIObject removeObject(String name)
-	{
-		return removeObject(objectsMap.get(name));
-	}
-
-	public Vector<GUIObject> getObjectChildren(String parentName)
-	{
-		Vector<GUIObject> children = new Vector<GUIObject>();
-		for (int i = 0; i < objects.size(); i++)
-		{
-			GUIObject object = objects.get(i);
-			if (object.parent != null
-					&& object.parent.getName().equals(parentName))
-			{
-				children.add(object);
-			}
-		}
-		return children;
-	}
-
-	public void set(String objectName, String name, String newValue)
-	{
-		GUIObject object = getObject(objectName);
-		if (object != null)
-		{
-			object.settings.set(name, newValue);
-		}
-	}
-
-	public void setForChildren(String objectName, String name, String newValue)
-	{
-		Vector<GUIObject> children = getObjectChildren(objectName);
-		for (int i = 0; i < children.size(); i++)
-		{
-			GUIObject object = children.get(i);
-			object.settings.set(name, newValue);
-			setForChildren(object.getName(), name, newValue);
-		}
-	}
-
-	public void layoutObject(GUIObject object)
-	{
-		// TODO code.
-	}
-
-	public void Layout()
+	
+	public void onType(char key)
 	{
 		for (int i = 0; i < objects.size(); i++)
 		{
-			GUIObject object = objects.get(i);
-			if (object.parent != null)
+			GUI object = objects.get(i);
+			if (object.bActive)
 			{
-				layoutObject(object);
+				object.onType(key);
 			}
 		}
 	}
-
-	public boolean onClick(double x, double y)
+	
+	public boolean checkClick(double x, double y, boolean down)
 	{
-		for (int i = 0; i < objects.size(); i++)
+		if (rect.containsPoint(new Vector3(x, y, 0)))
 		{
-			GUIObject object = objects.get(i);
-			if (object.parent == null
-					&& object.rect.containsPoint(new Vector3(x, y, 0)))
+			boolean grabs = onClick(x, y, down);
+			if (grabs)
 			{
-				if (object.onClick(x, y))
+				return true;
+			}
+			for (int i = 0; i < objects.size(); i++)
+			{
+				grabs = objects.get(i).checkClick(x, y, down);
+				if (grabs)
 				{
 					return true;
 				}
@@ -149,21 +102,49 @@ public class GUI
 		}
 		return false;
 	}
-
-	public void onType(char key)
+	
+	public boolean onClick(double x, double y, boolean down)
+	{
+		return false;
+	}
+	
+	public void Layout()
 	{
 		for (int i = 0; i < objects.size(); i++)
 		{
-			objects.get(i).onType(key);
+			GUI object = objects.get(i);
+			if (object.bActive)
+			{
+				object.onUpdate();
+			}
 		}
 	}
-
-	public GUI()
+	
+	public void renderQuadOnRect(Quad quad, Rect3 rect)
 	{
-		objects = new Vector<GUIObject>();
-		objectsMap = new HashMap<String, GUIObject>();
-
-		layout = Layout.RIGHT_DOWN;
-		layoutOrigin = Vector3.Zero();
+		quad.vert[0].pos = new Vector3(rect.a.x, rect.a.y, 0);
+		quad.vert[1].pos = new Vector3(rect.b.x, rect.a.y, 0);
+		quad.vert[2].pos = new Vector3(rect.b.x, rect.b.y, 0);
+		quad.vert[3].pos = new Vector3(rect.a.x, rect.b.y, 0);
+		quad.pass();
+	}
+	
+	public void renderQuadOnRect(Quad quad)
+	{
+		renderQuadOnRect(quad, rect);
+	}
+	
+	public GUI(String name)
+	{
+		this.name = name;
+		objects = new Vector<GUI>();
+		objectMap = new HashMap<String, GUI>();
+		rect = new Rect3(Vector3.Zero(), Vector3.Zero());
+		flags = new Flags();
+		bVisible = false;
+		bActive = true;
+		
+		flags.addFromObject(this, "bVisible", "visible");
+		flags.addFromObject(this, "bActive", "active");
 	}
 }

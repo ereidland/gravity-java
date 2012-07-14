@@ -3,6 +3,7 @@ package com.evanreidland.e.client.ent;
 import com.evanreidland.e.engine;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
+import com.evanreidland.e.graphics.BillboardSceneObject;
 import com.evanreidland.e.graphics.LongBillboardSceneObject;
 import com.evanreidland.e.graphics.SceneObject.AnchorType;
 import com.evanreidland.e.graphics.Sprite;
@@ -46,6 +47,8 @@ public class ClientLaser extends Entity
 		billboard = new LongBillboardSceneObject(sprite, pos.cloned(),
 				pos.plus(vel), 0.1, 0.4, 0.5, true);
 		graphics.scene.addObject(billboard, this, AnchorType.POS);
+		graphics.scene.addObject(new BillboardSceneObject(sprite, true), this,
+				AnchorType.POS);
 	}
 	
 	public ClientLaser(long id)

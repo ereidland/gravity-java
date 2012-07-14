@@ -33,12 +33,21 @@ public abstract class GameClientBase extends Game
 			hud.gui.Layout();
 			
 		}
-		hud.gui.Update();
+		hud.gui.onUpdate();
+		
 		if (input.isKeyDown(key.MOUSE_LBUTTON))
 		{
 			if (hud.gui != null)
 			{
-				hud.gui.onClick(Game.mousePos.x, Game.mousePos.y);
+				hud.gui.checkClick(Game.mousePos.x, Game.mousePos.y, true);
+			}
+		}
+		
+		if (input.isKeyDown(key.MOUSE_RBUTTON))
+		{
+			if (hud.gui != null)
+			{
+				hud.gui.checkClick(Game.mousePos.x, Game.mousePos.y, false);
 			}
 		}
 		
@@ -51,7 +60,7 @@ public abstract class GameClientBase extends Game
 	
 	public void onRenderHUD()
 	{
-		hud.gui.Render();
+		hud.gui.onRender();
 	}
 	
 	public void onRender()

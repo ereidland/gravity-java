@@ -2,6 +2,7 @@ package com.evanreidland.e.client;
 
 import java.util.Vector;
 
+import com.evanreidland.e.Flags;
 import com.evanreidland.e.Game;
 import com.evanreidland.e.Resource;
 import com.evanreidland.e.Vector3;
@@ -12,11 +13,14 @@ import com.evanreidland.e.client.ent.ClientEnemy;
 import com.evanreidland.e.client.ent.ClientLaser;
 import com.evanreidland.e.client.ent.ClientShip;
 import com.evanreidland.e.commands.enginescript;
+import com.evanreidland.e.ent.Entity;
+import com.evanreidland.e.ent.EntityList;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.event.Event;
 import com.evanreidland.e.graphics.Model;
 import com.evanreidland.e.graphics.Model.ModelType;
 import com.evanreidland.e.graphics.Quad;
+import com.evanreidland.e.graphics.Sprite;
 import com.evanreidland.e.graphics.font;
 import com.evanreidland.e.graphics.generate;
 import com.evanreidland.e.graphics.graphics;
@@ -26,7 +30,7 @@ import com.evanreidland.e.shared.config.ServerConfig;
 
 public class GravityGame extends GameClientBase
 {
-	Resource font1;
+	Resource font1, targetedTex, targetableTex;
 	
 	Model shipModel;
 	
@@ -44,6 +48,12 @@ public class GravityGame extends GameClientBase
 	boolean showConsole, flashing;
 	
 	int currentMenu = 0;
+	
+	Vector3 lastViewSize;
+	
+	public void onResize()
+	{
+	}
 	
 	public void updateConsole()
 	{
@@ -154,6 +164,13 @@ public class GravityGame extends GameClientBase
 	{
 		super.onUpdate();
 		
+		if (lastViewSize.x != graphics.camera.width
+				|| lastViewSize.y != graphics.camera.height)
+		{
+			lastViewSize.x = graphics.camera.width;
+			lastViewSize.y = graphics.camera.height;
+			onResize();
+		}
 		if (input.getKeyState(key.KEY_CONTROL)
 				&& input.isKeyDown(key.KEY_ENTER))
 		{
@@ -254,7 +271,7 @@ public class GravityGame extends GameClientBase
 		
 		if (ship != null)
 		{
-			
+			idleAngle += Game.getDelta();
 			graphics.camera.angle.setAs(ship.angle);
 			graphics.camera.pos.setAs(ship.pos.plus(
 					graphics.camera.getForward()
@@ -302,6 +319,20 @@ public class GravityGame extends GameClientBase
 				graphics.camera.bottomLeft().plus(0, ypos, 0), 16, false);
 		ypos += 16;
 		
+		if (ship != null)
+		{
+			EntityList list = ents.list.getWithFlags(new Flags(
+					"enemy targetable"), true);
+			Sprite sprite = new Sprite(32, 32, targetableTex);
+			sprite.angle.z = idleAngle;
+			for (int i = 0; i < list.size(); i++)
+			{
+				Entity ent = list.get(i);
+				sprite.pos.setAs(graphics.toScreen(ent.pos));
+				sprite.render2D();
+			}
+		}
+		
 		double s = 10;
 		graphics.unbindTexture();
 		
@@ -337,6 +368,7 @@ public class GravityGame extends GameClientBase
 		font1 = engine.loadFont("Courier Newx32");
 		
 		skybox = engine.loadTexture("skybox1.png");
+		targetableTex = engine.loadTexture("targetable.png");
 	}
 	
 	public void loadSound()
@@ -346,6 +378,7 @@ public class GravityGame extends GameClientBase
 	
 	public void buildGUI()
 	{
+		onResize();
 		// Button button = new Button(128, 64, "button");
 		// button.tex = engine.loadTexture("button1.png");
 		// button.Position(graphics.camera.topLeft().minus(0,
@@ -355,6 +388,8 @@ public class GravityGame extends GameClientBase
 	
 	public void onInit()
 	{
+		lastViewSize = new Vector3(graphics.camera.width,
+				graphics.camera.height, 0);
 		engine.maxLogs = 40;
 		super.onInit();
 		ServerConfig.setupConfigs();

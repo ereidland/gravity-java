@@ -46,5 +46,8 @@ public class ServerEnemy extends ServerEntity
 	{
 		super("enemy", id);
 		nextShot = 0;
+		radius = 0.01;
+		
+		flags.add(new Flags("enemy targetable"));
 	}
 }

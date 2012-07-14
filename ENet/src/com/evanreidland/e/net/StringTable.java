@@ -76,7 +76,7 @@ public class StringTable
 	
 	public Bits getBits(String str, boolean create)
 	{
-		MappedString mappedStr = getMappedString(str);
+		MappedString mappedStr = getMappedString(str, create);
 		Bits bits = new Bits();
 		if (mappedStr != null)
 		{

@@ -137,10 +137,10 @@ public class Sprite
 		d.tx = 1;
 		d.ty = 1;
 		
-		Vector3 right = new Vector3((double) Math.cos(angle.y),
-				(double) Math.sin(angle.y), 0), up = new Vector3(
-				(double) Math.cos(angle.y + engine.Pi_2),
-				(double) Math.sin(angle.y + engine.Pi_2), 0);
+		Vector3 right = new Vector3((double) Math.cos(angle.z),
+				(double) Math.sin(angle.z), 0), up = new Vector3(
+				(double) Math.cos(angle.z + engine.Pi_2),
+				(double) Math.sin(angle.z + engine.Pi_2), 0);
 		
 		a.pos.setAs(pos.plus(up.multipliedBy(h2).plus(right.multipliedBy(w2))));
 		b.pos.setAs(pos.plus(up.multipliedBy(h2).plus(right.multipliedBy(-w2))));
