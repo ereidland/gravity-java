@@ -78,6 +78,8 @@ public class GravityServer extends TCPServer
 		
 		players.add(new Player(id));
 		
+		sendAllEntities(id);
+		
 		Entity ent = ents.Create("ship");
 		if (ent != null)
 		{
@@ -85,9 +87,10 @@ public class GravityServer extends TCPServer
 					roll.randomDouble(1, 2)));
 			ent.flags.add("player targetable");
 			
-			sendAllEntities(id);
-			
 			Bits bits = new Bits();
+			bits.write(getEntitySpawnBits(ent));
+			broadcastData(bits);
+			bits = new Bits();
 			bits.write(getShipForPlayerBits(id, ent));
 			
 			sendData(id, bits);

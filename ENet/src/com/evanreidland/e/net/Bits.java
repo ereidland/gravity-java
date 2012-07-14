@@ -182,23 +182,23 @@ public class Bits
 	
 	public short readShort()
 	{
-		byte[] bytes = readBytes(2);
-		return (short) (bytes.length == 2 ? (bytes[1] & 0xFF)
-				| ((bytes[0] & 0xFF) << 8) : 0);
+		ByteBuffer buff = ByteBuffer.allocate(2).put(readBytes(2));
+		buff.flip();
+		return buff.limit() == 2 ? buff.getShort() : 0;
 	}
 	
 	public int readInt()
 	{
 		ByteBuffer buff = ByteBuffer.allocate(4).put(readBytes(4));
 		buff.flip();
-		return buff.getInt();
+		return buff.limit() == 4 ? buff.getInt() : 0;
 	}
 	
 	public long readLong()
 	{
 		ByteBuffer buff = ByteBuffer.allocate(8).put(readBytes(8));
 		buff.flip();
-		return buff.getLong();
+		return buff.limit() == 8 ? buff.getLong() : 0;
 	}
 	
 	public float readFloat()
@@ -264,12 +264,12 @@ public class Bits
 		
 		int newEnd = end + howMany;
 		
-		if (newEnd > data.length * 8)
+		if (newEnd >= data.length * 8)
 		{
 			if (data.length > 0)
 			{
 				int newSize = data.length;
-				while (newSize * 8 < newEnd)
+				while (newSize * 8 <= newEnd)
 				{
 					newSize *= 2;
 				}
@@ -373,6 +373,11 @@ public class Bits
 	public Bits write(Bits bits)
 	{
 		return write(bits, bits.getRemainingBits());
+	}
+	
+	public Bits copy()
+	{
+		return new Bits().writeBits(data, end);
 	}
 	
 	public byte[] getBytes()

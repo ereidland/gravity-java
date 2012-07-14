@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import com.evanreidland.e.net.Bits;
 import com.evanreidland.e.net.TCPClient;
 import com.evanreidland.e.net.TCPEvent;
+import com.evanreidland.e.net.TCPPacket;
 
 public class TCPClientTest
 {
@@ -20,6 +21,33 @@ public class TCPClientTest
 		{
 			System.out
 					.println("Connected to " + getAddress() + ":" + getPort());
+			startListening();
+		}
+		
+		public void Update()
+		{
+			TCPPacket packet;
+			while ((packet = pull()) != null)
+			{
+				if (packet.isEvent())
+				{
+					switch (packet.getEvent())
+					{
+						case CONNECT:
+							onConnect();
+							break;
+						case DISCONNECT:
+							System.out.println("Disconnected!");
+							break;
+					}
+				}
+				else
+				{
+					System.out.println("In length: "
+							+ packet.bits.getRemainingBits());
+					onReceive(packet.bits);
+				}
+			}
 		}
 		
 		public void onException(Exception e, TCPEvent event)
@@ -59,8 +87,13 @@ public class TCPClientTest
 		{
 			if (!client.isConnecting())
 			{
-				String str = in.readLine();
-				client.Send(new Bits().writeString(str));
+				client.Update();
+				if (in.ready())
+				{
+					String str = in.readLine();
+					System.out.println("Sending:" + str);
+					client.Send(new Bits().writeString(str));
+				}
 			}
 		}
 		
