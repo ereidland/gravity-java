@@ -68,7 +68,7 @@ public abstract class TCPClient extends Aquireable
 			if (basePacket.getRemainingBits() >= 32)
 			{
 				formingPacket = new Bits();
-				remainingBits = data.readInt();
+				remainingBits = basePacket.readInt();
 				processData(basePacket);
 			}
 			else

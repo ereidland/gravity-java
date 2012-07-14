@@ -114,7 +114,7 @@ public abstract class TCPServer extends Aquireable
 				if (basePacket.getRemainingBits() >= 32)
 				{
 					formingPacket = new Bits();
-					remainingBits = data.readInt();
+					remainingBits = basePacket.readInt();
 					processData(basePacket);
 				}
 				else
@@ -168,9 +168,65 @@ public abstract class TCPServer extends Aquireable
 			}
 		}
 		
+		private class ReceiveThread implements Runnable
+		{
+			public void run()
+			{
+				NetLog.Log("Receive thread initialized for " + id);
+				while (socket != null)
+				{
+					try
+					{
+						if (!socket.isConnected())
+						{
+							aquire();
+							packets.add(new TCPPacket(id, TCPEvent.DISCONNECT));
+							release();
+							clients.remove(this);
+						}
+						else
+						{
+							int size = socket.getInputStream().available();
+							if (size > 0)
+							{
+								byte[] bytes = new byte[size];
+								socket.getInputStream().read(bytes);
+								processData(new Bits().writeBytes(bytes));
+							}
+							else
+							{
+								try
+								{
+									Thread.sleep(TCPClient.waitTime);
+								}
+								catch (Exception e)
+								{
+									e.printStackTrace();
+								}
+							}
+						}
+					}
+					catch (Exception e)
+					{
+						onException(e, TCPEvent.RECEIVE);
+						break;
+					}
+				}
+				
+				aquire();
+				packets.add(new TCPPacket(id, TCPEvent.DISCONNECT));
+				release();
+				clients.remove(this);
+			}
+			
+			public ReceiveThread()
+			{
+			}
+		}
+		
 		public void startListening()
 		{
-			receiveThread = new Thread(new ReceiveThread(this));
+			receiveThread = new Thread(new ReceiveThread());
 			receiveThread.setName("Server.Receive." + id);
 			receiveThread.start();
 			
@@ -181,7 +237,9 @@ public abstract class TCPServer extends Aquireable
 		
 		public Client(Socket socket)
 		{
+			aquire();
 			id = ++lastID;
+			release();
 			receiveThread = null;
 			sendThread = null;
 			formingPacket = new Bits();
@@ -241,7 +299,7 @@ public abstract class TCPServer extends Aquireable
 			Client client = clients.get(i);
 			if (allBut == -1 || client.id != allBut)
 			{
-				client.Send(data);
+				client.Send(data.copy());
 			}
 		}
 	}
@@ -270,66 +328,6 @@ public abstract class TCPServer extends Aquireable
 		if (client != null)
 		{
 			client.Send(data);
-		}
-	}
-	
-	private class ReceiveThread implements Runnable
-	{
-		public Client client;
-		
-		public void run()
-		{
-			NetLog.Log("Receive thread initialized for " + client.id);
-			while (client.socket != null)
-			{
-				try
-				{
-					if (!client.socket.isConnected())
-					{
-						aquire();
-						packets.add(new TCPPacket(client.id,
-								TCPEvent.DISCONNECT));
-						release();
-						clients.remove(client);
-					}
-					else
-					{
-						int size = client.socket.getInputStream().available();
-						if (size > 0)
-						{
-							byte[] bytes = new byte[size];
-							client.socket.getInputStream().read(bytes);
-							client.processData(new Bits().writeBytes(bytes));
-						}
-						else
-						{
-							try
-							{
-								Thread.sleep(TCPClient.waitTime);
-							}
-							catch (Exception e)
-							{
-								e.printStackTrace();
-							}
-						}
-					}
-				}
-				catch (Exception e)
-				{
-					client.onException(e, TCPEvent.RECEIVE);
-					break;
-				}
-			}
-			
-			aquire();
-			packets.add(new TCPPacket(client.id, TCPEvent.DISCONNECT));
-			release();
-			clients.remove(client);
-		}
-		
-		public ReceiveThread(Client client)
-		{
-			this.client = client;
 		}
 	}
 	
