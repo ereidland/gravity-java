@@ -10,6 +10,12 @@ import com.evanreidland.e.engine;
 public class ents
 {
 	public static EntityList list = new EntityList();
+	private static long lastID = 1;
+	
+	public static long getLastID()
+	{
+		return lastID;
+	}
 	
 	private static class ClassFactory
 	{
@@ -19,7 +25,7 @@ public class ents
 		{
 			try
 			{
-				Entity ent = (Entity) cons.newInstance(ID.newID());
+				Entity ent = (Entity) cons.newInstance(++lastID);
 				if (ent != null)
 				{
 					ent.Be();
@@ -45,7 +51,7 @@ public class ents
 				Entity ent = (Entity) cons.newInstance(forcedID);
 				if (ent != null)
 				{
-					ent.beForced();
+					ent.Be(forcedID);
 				}
 				if (list != null)
 				{
@@ -71,6 +77,7 @@ public class ents
 						&& consList[i].getParameterTypes()[0]
 								.equals(long.class))
 				{
+					engine.Log("Woot on " + factoryClass.getName());
 					cons = consList[i];
 				}
 			}
@@ -106,7 +113,7 @@ public class ents
 	
 	public static Entity Create(Entity ent)
 	{
-		return Create(ent, ID.newID());
+		return Create(ent, ++lastID);
 	}
 	
 	// Note: Should only be called client-side after a signal from the server.

@@ -85,8 +85,6 @@ public class EntityList
 	public Entity remove(Entity ent)
 	{
 		Event.Call("onDestroy", new EntityDestroyedEvent(ent));
-		Event.removeListener(ent);
-		ID.removeID(ent.getID());
 		entities.remove(ent);
 		entMap.remove(ent.getID());
 		return ent;

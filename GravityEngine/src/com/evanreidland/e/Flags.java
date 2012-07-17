@@ -3,10 +3,11 @@ package com.evanreidland.e;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
+import com.evanreidland.e.net.Bitable;
 import com.evanreidland.e.net.Bits;
 import com.evanreidland.e.net.StringTable;
 
-public class Flags
+public class Flags implements Bitable
 {
 	public static enum State
 	{
@@ -294,7 +295,7 @@ public class Flags
 		return bits;
 	}
 	
-	public void setFromBits(Bits bits)
+	public void loadBits(Bits bits)
 	{
 		short count = bits.readShort();
 		for (int i = 0; i < count; i++)

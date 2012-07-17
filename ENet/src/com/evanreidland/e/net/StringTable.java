@@ -3,7 +3,7 @@ package com.evanreidland.e.net;
 import java.util.HashMap;
 
 //Added this to be useful for strings that are used many times.
-public class StringTable
+public class StringTable implements Bitable
 {
 	private short lastID;
 	private boolean isOrigin;
@@ -176,7 +176,7 @@ public class StringTable
 		return bits;
 	}
 	
-	public void setupFromBits(Bits bits)
+	public void loadBits(Bits bits)
 	{
 		short count = bits.readShort();
 		for (int i = 0; i < count; i++)

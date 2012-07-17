@@ -21,7 +21,7 @@ public class StringTableClientTest
 			if (table == null)
 			{
 				table = new StringTable(false);
-				table.setupFromBits(data);
+				table.loadBits(data);
 			}
 			else
 			{

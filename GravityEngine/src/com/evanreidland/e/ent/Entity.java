@@ -1,15 +1,17 @@
 package com.evanreidland.e.ent;
 
+import com.evanreidland.e.Flags;
 import com.evanreidland.e.Flags.State;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
 import com.evanreidland.e.event.Event;
 import com.evanreidland.e.event.ent.EntitySpawnedEvent;
 import com.evanreidland.e.graphics.graphics;
+import com.evanreidland.e.net.Bitable;
 import com.evanreidland.e.net.Bits;
 import com.evanreidland.e.script.Stack;
 
-public class Entity extends EObject
+public class Entity implements Bitable
 {
 	public static boolean debug = false;
 	public Vector3 pos, vel, angle, angleVel;
@@ -19,6 +21,40 @@ public class Entity extends EObject
 	public boolean bStatic, bSpawned, bDead, bSent;
 	
 	public Stack stack;
+	
+	public Flags flags;
+	private String className;
+	private long id;
+	
+	public boolean matchesFlags(Flags oflags, boolean strict)
+	{
+		return flags.matchesOther(oflags, strict);
+	}
+	
+	public long getID()
+	{
+		return id;
+	}
+	
+	public boolean isValid()
+	{
+		return id != 0;
+	}
+	
+	public String getClassName()
+	{
+		return className;
+	}
+	
+	public void Be(long targetID)
+	{
+		id = targetID;
+	}
+	
+	public void Be()
+	{
+		Be(id);
+	}
 	
 	public String toString()
 	{
@@ -228,9 +264,9 @@ public class Entity extends EObject
 	
 	// Note: These should always be read in the order they are sent. If
 	// extending a class that has additional data to send, call
-	// super.setupFromBits before the other code. Same goes for toBits.
+	// super.loadBits before the other code. Same goes for toBits.
 	
-	public void setupFromBits(Bits bits)
+	public void loadBits(Bits bits)
 	{
 		bStatic = bits.readBit();
 		pos.setAs(Vector3.fromBits(bits));
@@ -248,7 +284,10 @@ public class Entity extends EObject
 	
 	public Entity(String className, long id)
 	{
-		super(className, id);
+		this.className = className;
+		this.id = id;
+		flags = new Flags();
+		
 		pos = Vector3.Zero();
 		vel = Vector3.Zero();
 		angle = Vector3.Zero();

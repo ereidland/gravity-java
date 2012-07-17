@@ -44,7 +44,7 @@ public class GravityClient extends TCPClient
 						ent = ents.createWithID(className, id);
 						if (ent != null)
 						{
-							ent.setupFromBits(data);
+							ent.loadBits(data);
 							ent.bSpawned = false;
 							ent.shiftByTimeOffset(time);
 						}

@@ -1,8 +1,9 @@
 package com.evanreidland.e;
 
+import com.evanreidland.e.net.Bitable;
 import com.evanreidland.e.net.Bits;
 
-public class Vector3
+public class Vector3 implements Bitable
 {
 	public double x, y, z;
 	
@@ -746,9 +747,15 @@ public class Vector3
 		return new Bits().writeDouble(x).writeDouble(y).writeDouble(z);
 	}
 	
+	public void loadBits(Bits bits)
+	{
+		setAs(bits.readDouble(), bits.readDouble(), bits.readDouble());
+	}
+	
 	public static Vector3 fromBits(Bits bits)
 	{
-		return new Vector3(bits.readDouble(), bits.readDouble(),
-				bits.readDouble());
+		Vector3 v = new Vector3();
+		v.loadBits(bits);
+		return v;
 	}
 }
