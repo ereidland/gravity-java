@@ -4,14 +4,14 @@ import com.evanreidland.e.Flags;
 import com.evanreidland.e.Flags.State;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
+import com.evanreidland.e.action.Actor;
 import com.evanreidland.e.event.Event;
 import com.evanreidland.e.event.ent.EntitySpawnedEvent;
 import com.evanreidland.e.graphics.graphics;
 import com.evanreidland.e.net.Bitable;
 import com.evanreidland.e.net.Bits;
-import com.evanreidland.e.script.Stack;
 
-public class Entity implements Bitable
+public class Entity extends Actor implements Bitable
 {
 	public static boolean debug = false;
 	public Vector3 pos, vel, angle, angleVel;
@@ -20,9 +20,6 @@ public class Entity implements Bitable
 	
 	public boolean bStatic, bSpawned, bDead, bSent;
 	
-	public Stack stack;
-	
-	public Flags flags;
 	private String className;
 	private long id;
 	
@@ -119,6 +116,7 @@ public class Entity implements Bitable
 	
 	public void onThink()
 	{
+		super.Update();
 		State f = flags.get("dead");
 		if (!bStatic
 				&& (f == State.False || f == State.Undef || f == State.Either))
@@ -131,7 +129,7 @@ public class Entity implements Bitable
 	
 	public void onDie()
 	{
-		
+		killActions();
 	}
 	
 	public double getOrbitalVelocity(double distance, double sourceMass)
@@ -284,9 +282,9 @@ public class Entity implements Bitable
 	
 	public Entity(String className, long id)
 	{
+		super();
 		this.className = className;
 		this.id = id;
-		flags = new Flags();
 		
 		pos = Vector3.Zero();
 		vel = Vector3.Zero();
@@ -302,8 +300,6 @@ public class Entity implements Bitable
 		flags.addFromObject(this, "bDead", "dead");
 		flags.addFromObject(this, "bSpawned", "spawned");
 		flags.addFromObject(this, "bSent", "sent");
-		
-		stack = new Stack();
 	}
 	
 	public Entity(String className)

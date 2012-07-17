@@ -8,6 +8,7 @@ import com.evanreidland.e.client.ent.ClientShip;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.net.Bits;
+import com.evanreidland.e.net.StringTable;
 import com.evanreidland.e.net.TCPClient;
 import com.evanreidland.e.net.TCPEvent;
 import com.evanreidland.e.net.TCPPacket;
@@ -17,6 +18,7 @@ public class GravityClient extends TCPClient
 {
 	public static GravityClient global;
 	public static GravityGame game;
+	public StringTable table;
 	
 	public void onReceive(Bits data)
 	{
@@ -40,7 +42,7 @@ public class GravityClient extends TCPClient
 					case ENT_NEW:
 						time = data.readLong();
 						id = data.readLong();
-						String className = data.readString();
+						String className = table.getString(data);
 						ent = ents.createWithID(className, id);
 						if (ent != null)
 						{
@@ -185,5 +187,6 @@ public class GravityClient extends TCPClient
 	{
 		global = this;
 		GravityClient.game = game;
+		table = new StringTable(false);
 	}
 }

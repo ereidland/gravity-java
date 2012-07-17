@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import com.evanreidland.e.Flags;
+import com.evanreidland.e.script.Stack;
 
 public class Actor
 {
@@ -12,6 +13,7 @@ public class Actor
 	private HashMap<String, ActionList> actionTypesMap;
 	
 	public Flags flags;
+	public Stack vars;
 	
 	private ActionList getList(String name, boolean create)
 	{
@@ -40,6 +42,37 @@ public class Actor
 		}
 	}
 	
+	public void killActions()
+	{
+		for (int i = 0; i < actionTypes.size(); i++)
+		{
+			actionTypes.get(i).killAll();
+		}
+		
+		actionTypes.clear();
+		actionTypesMap.clear();
+	}
+	
+	public void Update()
+	{
+		Vector<ActionList> toRemove = new Vector<ActionList>();
+		for (int i = 0; i < actionTypes.size(); i++)
+		{
+			ActionList list = actionTypes.get(i);
+			if (list.Update())
+			{
+				toRemove.add(list);
+			}
+		}
+		
+		for (int i = 0; i < toRemove.size(); i++)
+		{
+			ActionList list = toRemove.get(i);
+			actionTypes.remove(list);
+			actionTypesMap.remove(list.getName());
+		}
+	}
+	
 	public Actor()
 	{
 		this(new Flags());
@@ -48,6 +81,7 @@ public class Actor
 	public Actor(Flags flags)
 	{
 		this.flags = flags;
+		vars = new Stack();
 		actionTypes = new Vector<ActionList>();
 		actionTypesMap = new HashMap<String, ActionList>();
 	}

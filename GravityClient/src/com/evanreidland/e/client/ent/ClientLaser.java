@@ -23,7 +23,7 @@ public class ClientLaser extends Entity
 	
 	public void onDie()
 	{
-		Entity ent = ents.Create("explosion", new Double[]
+		Entity ent = ents.CreateLocal("explosion", new Double[]
 		{
 				0d, 0.5d, 0.5d, 1d, 0d
 		});

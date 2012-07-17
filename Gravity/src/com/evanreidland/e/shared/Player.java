@@ -1,15 +1,23 @@
 package com.evanreidland.e.shared;
 
+import com.evanreidland.e.net.StringTable;
+
 public class Player
 {
-	
+	private StringTable table;
 	private long id;
 	private long shipID;
 	
-	public Player(long id)
+	public StringTable getTable()
+	{
+		return table;
+	}
+	
+	public Player(long id, boolean bServer)
 	{
 		this.id = id;
 		this.shipID = 0;
+		this.table = new StringTable(bServer);
 	}
 	
 	public long getID()

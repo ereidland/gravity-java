@@ -77,7 +77,6 @@ public class ents
 						&& consList[i].getParameterTypes()[0]
 								.equals(long.class))
 				{
-					engine.Log("Woot on " + factoryClass.getName());
 					cons = consList[i];
 				}
 			}
@@ -100,6 +99,12 @@ public class ents
 		return factory != null ? factory.Create() : null;
 	}
 	
+	public static Entity CreateLocal(String className)
+	{
+		ClassFactory factory = factories.get(className);
+		return factory != null ? factory.CreateForced(-(++lastID)) : null;
+	}
+	
 	// Note: Should only be called client-side after a signal from the server.
 	public static Entity Create(Entity ent, long targetID)
 	{
@@ -114,6 +119,11 @@ public class ents
 	public static Entity Create(Entity ent)
 	{
 		return Create(ent, ++lastID);
+	}
+	
+	public static Entity CreateLocal(Entity ent)
+	{
+		return Create(ent, -(++lastID));
 	}
 	
 	// Note: Should only be called client-side after a signal from the server.
@@ -137,6 +147,16 @@ public class ents
 			Object[] args)
 	{
 		Entity ent = createWithID(className, forcedID);
+		if (ent != null)
+		{
+			ent.Setup(args);
+		}
+		return ent;
+	}
+	
+	public static Entity CreateLocal(String className, Object[] args)
+	{
+		Entity ent = CreateLocal(className);
 		if (ent != null)
 		{
 			ent.Setup(args);

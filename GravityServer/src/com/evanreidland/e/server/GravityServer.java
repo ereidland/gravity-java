@@ -76,7 +76,7 @@ public class GravityServer extends TCPServer
 	{
 		Log("Server.onNewConnection: " + id + getFullAddress(id));
 		
-		players.add(new Player(id));
+		players.add(new Player(id, true));
 		
 		sendAllEntities(id);
 		
@@ -87,12 +87,10 @@ public class GravityServer extends TCPServer
 					roll.randomDouble(1, 2)));
 			ent.flags.add("player targetable");
 			
-			Bits bits = new Bits();
-			bits.write(getEntitySpawnBits(ent));
-			broadcastData(bits);
-			bits = new Bits();
-			bits.write(getShipForPlayerBits(id, ent));
+			sendEntitySpawn(ent);
 			
+			Bits bits = new Bits();
+			bits.write(getShipForPlayerBits(id, ent));
 			sendData(id, bits);
 		}
 		else
@@ -103,33 +101,39 @@ public class GravityServer extends TCPServer
 		
 	}
 	
-	public Bits getEntitySpawnBits(Entity ent)
+	public Bits getEntitySpawnBits(Entity ent, Player player)
 	{
+		
 		ent.bSent = true;
 		Bits bits = new Bits();
 		bits.writeByte(MessageCode.ENT_NEW.toByte());
 		bits.writeLong(System.currentTimeMillis());
 		bits.writeLong(ent.getID());
-		bits.writeString(ent.getClassName());
+		bits.write(player.getTable().getBits(ent.getClassName()));
 		bits.write(ent.toBits());
 		return bits;
 	}
 	
 	public void sendEntitySpawn(long to, Entity ent)
 	{
-		sendData(to, getEntitySpawnBits(ent));
+		Player player = getPlayer(to);
+		sendData(to, getEntitySpawnBits(ent, player));
 	}
 	
 	public void sendEntitySpawn(Entity ent)
 	{
-		broadcastData(getEntitySpawnBits(ent));
+		for (int i = 0; i < players.size(); i++)
+		{
+			sendEntitySpawn(players.get(i).getID(), ent);
+		}
 	}
 	
 	public void sendAllEntities(long id)
 	{
+		Player player = getPlayer(id);
 		for (int i = 0; i < ents.list.size(); i++)
 		{
-			sendEntitySpawn(id, ents.list.get(i));
+			sendData(id, getEntitySpawnBits(ents.list.get(i), player));
 		}
 	}
 	

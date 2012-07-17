@@ -19,7 +19,7 @@ public class ActionList
 		return actions.isEmpty();
 	}
 	
-	public void Update()
+	public boolean Update()
 	{
 		if (!actions.isEmpty())
 		{
@@ -52,6 +52,8 @@ public class ActionList
 				}
 			}
 		}
+		
+		return actions.isEmpty();
 	}
 	
 	public void add(Action action)
