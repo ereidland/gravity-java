@@ -103,24 +103,6 @@ public abstract class TCPServer extends Aquireable
 			clients.remove(this);
 		}
 		
-		/*
-		 * public void processData(Bits data) { if (remainingBits == 0) { Bits
-		 * basePacket = formingPacket.skipTo(0).getRemainingBits() > 0 ? new
-		 * Bits() .write(formingPacket).write(data) : data; if
-		 * (basePacket.getRemainingBits() >= 32) { formingPacket = new Bits();
-		 * remainingBits = basePacket.readInt(); processData(basePacket); } else
-		 * { formingPacket = new Bits();
-		 * formingPacket.write(basePacket.skipTo(0)); } } else { if
-		 * (data.getRemainingBits() >= remainingBits) {
-		 * formingPacket.writeBits(data.readBits(remainingBits), remainingBits);
-		 * aquire(); packets.add(new TCPPacket(id, formingPacket)); release();
-		 * formingPacket = new Bits(); remainingBits = 0; if
-		 * (data.getRemainingBits() > 0) { processData(data); } } else if
-		 * (data.getRemainingBytes() > 0) { int fremainingBits =
-		 * data.getRemainingBits(); remainingBits -= fremainingBits;
-		 * formingPacket.writeBits(data.readRemaining(), fremainingBits); } } }
-		 */
-		
 		public void Send(Bits data)
 		{
 			queue.push(data);

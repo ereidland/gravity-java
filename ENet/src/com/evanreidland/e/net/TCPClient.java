@@ -13,9 +13,6 @@ public abstract class TCPClient extends Aquireable
 	private String addr;
 	private int port;
 	
-	private int remainingBits;
-	private Bits formingPacket;
-	
 	private boolean isConnecting;
 	
 	private PacketBuffer queue;
@@ -58,51 +55,6 @@ public abstract class TCPClient extends Aquireable
 	public boolean isConnected()
 	{
 		return socket != null && socket.isConnected();
-	}
-	
-	public void processData(Bits data)
-	{
-		if (remainingBits == 0)
-		{
-			Bits basePacket = formingPacket.skipTo(0).getRemainingBits() > 0 ? new Bits()
-					.write(formingPacket).write(data) : data;
-			if (basePacket.getRemainingBits() >= 32)
-			{
-				formingPacket = new Bits();
-				remainingBits = basePacket.readInt();
-				processData(basePacket);
-			}
-			else
-			{
-				formingPacket = new Bits();
-				formingPacket.write(basePacket.skipTo(0));
-			}
-		}
-		else
-		{
-			if (data.getRemainingBits() >= remainingBits)
-			{
-				formingPacket.writeBits(data.readBits(remainingBits),
-						remainingBits);
-				aquire();
-				packets.add(new TCPPacket(0, formingPacket));
-				release();
-				
-				formingPacket = new Bits();
-				remainingBits = 0;
-				
-				if (data.getRemainingBits() > 0)
-				{
-					processData(data);
-				}
-			}
-			else if (data.getRemainingBytes() > 0)
-			{
-				int fremainingBits = data.getRemainingBits();
-				remainingBits -= fremainingBits;
-				formingPacket.writeBits(data.readRemaining(), fremainingBits);
-			}
-		}
 	}
 	
 	private class SendThread implements Runnable
