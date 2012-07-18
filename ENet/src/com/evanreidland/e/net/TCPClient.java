@@ -219,9 +219,6 @@ public abstract class TCPClient extends Aquireable
 		receiveThread = null;
 		sendThread = null;
 		
-		remainingBits = 0;
-		formingPacket = new Bits();
-		
 		queue = new PacketBuffer();
 		packets = new Vector<TCPPacket>();
 	}
