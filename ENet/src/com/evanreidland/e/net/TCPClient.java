@@ -1,5 +1,6 @@
 package com.evanreidland.e.net;
 
+import java.io.DataInputStream;
 import java.net.Socket;
 import java.util.Vector;
 
@@ -118,7 +119,7 @@ public abstract class TCPClient extends Aquireable
 					if (data != null)
 					{
 						Bits finalData = new Bits();
-						int len = data.getRemainingBytes() * 8;
+						int len = data.getRemainingBytes();
 						finalData.writeInt(len);
 						finalData.write(data);
 						socket.getOutputStream().write(
@@ -157,12 +158,18 @@ public abstract class TCPClient extends Aquireable
 			{
 				while (socket != null)
 				{
-					int size = socket.getInputStream().available();
+					DataInputStream str = new DataInputStream(
+							socket.getInputStream());
+					int size = str.readInt();
 					if (size > 0)
 					{
 						byte[] bytes = new byte[size];
-						socket.getInputStream().read(bytes);
-						processData(new Bits().writeBytes(bytes));
+						str.readFully(bytes, 0, size);
+						
+						aquire();
+						packets.add(new TCPPacket(0, new Bits()
+								.writeBytes(bytes)));
+						release();
 					}
 				}
 			}

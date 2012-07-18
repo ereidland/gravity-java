@@ -1,5 +1,6 @@
 package com.evanreidland.e.net;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -47,9 +48,6 @@ public abstract class TCPServer extends Aquireable
 		public Socket socket;
 		public Thread receiveThread, sendThread;
 		
-		public Bits formingPacket;
-		public int remainingBits;
-		
 		public PacketBuffer queue;
 		
 		private class SendThread implements Runnable
@@ -65,7 +63,7 @@ public abstract class TCPServer extends Aquireable
 						if (data != null)
 						{
 							Bits finalData = new Bits();
-							int len = data.getRemainingBytes() * 8;
+							int len = data.getRemainingBytes();
 							finalData.writeInt(len);
 							finalData.write(data);
 							socket.getOutputStream().write(
@@ -105,51 +103,23 @@ public abstract class TCPServer extends Aquireable
 			clients.remove(this);
 		}
 		
-		public void processData(Bits data)
-		{
-			if (remainingBits == 0)
-			{
-				Bits basePacket = formingPacket.skipTo(0).getRemainingBits() > 0 ? new Bits()
-						.write(formingPacket).write(data) : data;
-				if (basePacket.getRemainingBits() >= 32)
-				{
-					formingPacket = new Bits();
-					remainingBits = basePacket.readInt();
-					processData(basePacket);
-				}
-				else
-				{
-					formingPacket = new Bits();
-					formingPacket.write(basePacket.skipTo(0));
-				}
-			}
-			else
-			{
-				if (data.getRemainingBits() >= remainingBits)
-				{
-					formingPacket.writeBits(data.readBits(remainingBits),
-							remainingBits);
-					aquire();
-					packets.add(new TCPPacket(id, formingPacket));
-					release();
-					
-					formingPacket = new Bits();
-					remainingBits = 0;
-					
-					if (data.getRemainingBits() > 0)
-					{
-						processData(data);
-					}
-				}
-				else if (data.getRemainingBytes() > 0)
-				{
-					int fremainingBits = data.getRemainingBits();
-					remainingBits -= fremainingBits;
-					formingPacket.writeBits(data.readRemaining(),
-							fremainingBits);
-				}
-			}
-		}
+		/*
+		 * public void processData(Bits data) { if (remainingBits == 0) { Bits
+		 * basePacket = formingPacket.skipTo(0).getRemainingBits() > 0 ? new
+		 * Bits() .write(formingPacket).write(data) : data; if
+		 * (basePacket.getRemainingBits() >= 32) { formingPacket = new Bits();
+		 * remainingBits = basePacket.readInt(); processData(basePacket); } else
+		 * { formingPacket = new Bits();
+		 * formingPacket.write(basePacket.skipTo(0)); } } else { if
+		 * (data.getRemainingBits() >= remainingBits) {
+		 * formingPacket.writeBits(data.readBits(remainingBits), remainingBits);
+		 * aquire(); packets.add(new TCPPacket(id, formingPacket)); release();
+		 * formingPacket = new Bits(); remainingBits = 0; if
+		 * (data.getRemainingBits() > 0) { processData(data); } } else if
+		 * (data.getRemainingBytes() > 0) { int fremainingBits =
+		 * data.getRemainingBits(); remainingBits -= fremainingBits;
+		 * formingPacket.writeBits(data.readRemaining(), fremainingBits); } } }
+		 */
 		
 		public void Send(Bits data)
 		{
@@ -186,23 +156,18 @@ public abstract class TCPServer extends Aquireable
 						}
 						else
 						{
-							int size = socket.getInputStream().available();
+							DataInputStream str = new DataInputStream(
+									socket.getInputStream());
+							int size = str.readInt();
 							if (size > 0)
 							{
 								byte[] bytes = new byte[size];
-								socket.getInputStream().read(bytes);
-								processData(new Bits().writeBytes(bytes));
-							}
-							else
-							{
-								try
-								{
-									Thread.sleep(TCPClient.waitTime);
-								}
-								catch (Exception e)
-								{
-									e.printStackTrace();
-								}
+								str.readFully(bytes, 0, size);
+								
+								aquire();
+								packets.add(new TCPPacket(id, new Bits()
+										.writeBytes(bytes)));
+								release();
 							}
 						}
 					}
@@ -242,8 +207,6 @@ public abstract class TCPServer extends Aquireable
 			release();
 			receiveThread = null;
 			sendThread = null;
-			formingPacket = new Bits();
-			remainingBits = 0;
 			queue = new PacketBuffer();
 			this.socket = socket;
 		}

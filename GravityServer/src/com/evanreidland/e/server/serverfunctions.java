@@ -4,7 +4,6 @@ import com.evanreidland.e.script.Function;
 import com.evanreidland.e.script.Stack;
 import com.evanreidland.e.script.Value;
 import com.evanreidland.e.script.basefunctions;
-import com.evanreidland.e.script.basefunctions.CallOther;
 import com.evanreidland.e.script.text.Script;
 
 public class serverfunctions
@@ -67,6 +66,5 @@ public class serverfunctions
 		basefunctions.printFunction = new Print();
 		env.addFunction(new Listen());
 		env.addFunction(new StartGame());
-		env.addFunction(new CallOther("listen", new Listen()));
 	}
 }
