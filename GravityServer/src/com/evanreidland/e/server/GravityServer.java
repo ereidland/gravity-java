@@ -7,6 +7,8 @@ import com.evanreidland.e.Game;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
 import com.evanreidland.e.roll;
+import com.evanreidland.e.action.Action;
+import com.evanreidland.e.action.ActionListener;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.event.ent.EntityDestroyedEvent;
@@ -18,7 +20,7 @@ import com.evanreidland.e.server.ent.ServerShip;
 import com.evanreidland.e.shared.Player;
 import com.evanreidland.e.shared.enums.MessageCode;
 
-public class GravityServer extends TCPServer
+public class GravityServer extends TCPServer implements ActionListener
 {
 	public static GravityServer global;
 	
@@ -189,6 +191,26 @@ public class GravityServer extends TCPServer
 				ignoreID,
 				new Bits().writeByte(MessageCode.MESSAGE.toByte()).writeString(
 						str));
+	}
+	
+	public void onStarted(Action action)
+	{
+		if (action.getActor() == null)
+		{
+			engine.Log("Action, \"" + action.getName() + "\" had a null actor!");
+			return;
+		}
+		for (int i = 0; i < players.size(); i++)
+		{
+			Player player = players.get(i);
+			Bits bits = new Bits();
+			bits.writeByte(MessageCode.ACT_START.toByte());
+			bits.writeLong(action.getActor().getID());
+			bits.write(player.getTable().getBits(action.getName()));
+			bits.write(action.toBits());
+			
+			sendData(player.getID(), bits);
+		}
 	}
 	
 	public void onReceive(long id, Bits data)

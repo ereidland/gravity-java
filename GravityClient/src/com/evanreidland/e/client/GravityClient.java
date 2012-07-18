@@ -4,6 +4,8 @@ import java.util.logging.Level;
 
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
+import com.evanreidland.e.action.Action;
+import com.evanreidland.e.action.act;
 import com.evanreidland.e.client.ent.ClientShip;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
@@ -112,15 +114,23 @@ public class GravityClient extends TCPClient
 									+ id + ") did not exist!");
 						}
 						break;
+					case ACT_START:
+						long actorID = data.readLong();
+						String name = table.getString(data);
+						ent = ents.get(actorID);
+						Action action = act.Create(name);
+						
+						if (ent != null && action != null)
+						{
+							action.loadBits(data);
+							engine.Log("Started action: " + action.getName());
+							act.Start(ent, action);
+						}
+						break;
 					default:
 						engine.Log("Unused code: " + code.toString());
 						break;
 				}
-			}
-			else if (data.getRemainingBits() > 0)
-			{
-				engine.logger.log(Level.WARNING,
-						"Extra bits: " + data.getRemainingBits());
 			}
 		}
 		catch (Exception e)

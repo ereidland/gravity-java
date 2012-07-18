@@ -5,7 +5,13 @@ import java.util.Vector;
 public class ActionList
 {
 	private String name;
-	public boolean ordered;
+	public boolean ordered, firstStarted;
+	private Actor actor;
+	
+	public Actor getActor()
+	{
+		return actor;
+	}
 	
 	public String getName()
 	{
@@ -26,45 +32,54 @@ public class ActionList
 			if (ordered)
 			{
 				Action action = actions.firstElement();
-				if (action.Update())
+				if (!firstStarted)
+				{
+					if (action.onStart())
+					{
+						action.onEnd(false);
+						actions.remove(0);
+						firstStarted = false;
+						return Update();
+					}
+					else
+					{
+						firstStarted = true;
+					}
+				}
+				else if (action.Update())
 				{
 					action.onEnd(false);
 					actions.remove(0);
+					firstStarted = false;
+					return Update();
 				}
 			}
 			else
 			{
-				Vector<Action> toRemove = new Vector<Action>();
-				for (int i = 0; i < actions.size(); i++)
+				int i = 0;
+				while (i < actions.size())
 				{
-					Action action = actions.get(i);
-					if (action.Update())
+					if (actions.get(i).Update())
 					{
-						toRemove.add(action);
+						actions.remove(i);
 					}
+					else
+						i++;
 				}
 				
-				for (int i = 0; i < toRemove.size(); i++)
-				{
-					Action action = toRemove.get(i);
-					action.onEnd(false);
-					actions.remove(action);
-				}
 			}
+			return false;
 		}
 		
-		return actions.isEmpty();
+		return true;
 	}
 	
 	public void add(Action action)
 	{
 		if (!actions.contains(action))
 		{
-			if (!action.onStart())
-			{
-				actions.add(action);
-			}
-			
+			action.setActor(actor);
+			actions.add(action);
 		}
 	}
 	
@@ -78,9 +93,13 @@ public class ActionList
 		actions.clear();
 	}
 	
-	public ActionList(String name)
+	public ActionList(String name, Actor actor)
 	{
 		this.name = name;
+		this.actor = actor;
 		ordered = false;
+		
+		actions = new Vector<Action>();
+		firstStarted = false;
 	}
 }

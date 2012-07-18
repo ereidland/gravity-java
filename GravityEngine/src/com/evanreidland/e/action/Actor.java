@@ -13,14 +13,36 @@ public class Actor
 	private HashMap<String, ActionList> actionTypesMap;
 	
 	public Flags flags;
-	public Stack vars;
+	public Stack vars; // Potentially usable with networking.
+	
+	private long id;
+	
+	public long getID()
+	{
+		return id;
+	}
+	
+	public boolean isValid()
+	{
+		return id != 0;
+	}
+	
+	public void Be(long targetID)
+	{
+		id = targetID;
+	}
+	
+	public void Be()
+	{
+		Be(id);
+	}
 	
 	private ActionList getList(String name, boolean create)
 	{
 		ActionList list = actionTypesMap.get(name);
 		if (list == null && create)
 		{
-			list = new ActionList(name);
+			list = new ActionList(name, this);
 			actionTypesMap.put(name, list);
 			actionTypes.add(list);
 		}
@@ -73,14 +95,15 @@ public class Actor
 		}
 	}
 	
-	public Actor()
+	public Actor(long id)
 	{
-		this(new Flags());
+		this(new Flags(), id);
 	}
 	
-	public Actor(Flags flags)
+	public Actor(Flags flags, long id)
 	{
 		this.flags = flags;
+		this.id = id;
 		vars = new Stack();
 		actionTypes = new Vector<ActionList>();
 		actionTypesMap = new HashMap<String, ActionList>();

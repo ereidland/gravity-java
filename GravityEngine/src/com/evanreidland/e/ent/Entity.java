@@ -21,36 +21,15 @@ public class Entity extends Actor implements Bitable
 	public boolean bStatic, bSpawned, bDead, bSent;
 	
 	private String className;
-	private long id;
 	
 	public boolean matchesFlags(Flags oflags, boolean strict)
 	{
 		return flags.matchesOther(oflags, strict);
 	}
 	
-	public long getID()
-	{
-		return id;
-	}
-	
-	public boolean isValid()
-	{
-		return id != 0;
-	}
-	
 	public String getClassName()
 	{
 		return className;
-	}
-	
-	public void Be(long targetID)
-	{
-		id = targetID;
-	}
-	
-	public void Be()
-	{
-		Be(id);
 	}
 	
 	public String toString()
@@ -282,9 +261,8 @@ public class Entity extends Actor implements Bitable
 	
 	public Entity(String className, long id)
 	{
-		super();
+		super(id);
 		this.className = className;
-		this.id = id;
 		
 		pos = Vector3.Zero();
 		vel = Vector3.Zero();

@@ -78,6 +78,7 @@ public class ents
 								.equals(long.class))
 				{
 					cons = consList[i];
+					break;
 				}
 			}
 		}

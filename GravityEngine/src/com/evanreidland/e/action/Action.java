@@ -6,8 +6,23 @@ import com.evanreidland.e.net.Bits;
 public abstract class Action implements Bitable
 {
 	private String name;
-	public boolean isTimed, isOrdered;
-	public float remainingTime, maxTime;
+	private Actor actor;
+	public boolean isOrdered;
+	
+	public Actor getActor()
+	{
+		return actor;
+	}
+	
+	public boolean setActor(Actor actor)
+	{
+		if (actor == null)
+		{
+			this.actor = actor;
+			return true;
+		}
+		return false;
+	}
 	
 	public String getName()
 	{
@@ -16,22 +31,11 @@ public abstract class Action implements Bitable
 	
 	public Bits toBits()
 	{
-		Bits bits = new Bits();
-		bits.writeBit(isTimed);
-		if (isTimed)
-		{
-			bits.writeFloat(remainingTime);
-		}
-		return bits;
+		return new Bits();
 	}
 	
 	public void loadBits(Bits bits)
 	{
-		isTimed = bits.readBit();
-		if (isTimed)
-		{
-			remainingTime = bits.readFloat();
-		}
 	}
 	
 	public abstract boolean Update();
@@ -40,11 +44,12 @@ public abstract class Action implements Bitable
 	
 	public abstract void onEnd(boolean forced);
 	
+	// Note: all actions that extend this must have a default constructor for
+	// factory usage.
 	public Action(String name)
 	{
 		this.name = name;
-		isTimed = false;
-		remainingTime = 0;
-		maxTime = 0;
+		actor = null;
+		isOrdered = true;
 	}
 }
