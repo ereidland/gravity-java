@@ -95,4 +95,13 @@ public class act
 			listeners.get(i).onStarted(action);
 		}
 	}
+	
+	public static void Start(Actor actor, String actionName)
+	{
+		Action action = Create(actionName);
+		if (action != null)
+		{
+			act.Start(actor, action);
+		}
+	}
 }

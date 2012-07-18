@@ -2,7 +2,6 @@ package com.evanreidland.e.client.ent;
 
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
-import com.evanreidland.e.client.GravityClient;
 import com.evanreidland.e.graphics.Model;
 import com.evanreidland.e.graphics.ModelSceneObject;
 import com.evanreidland.e.graphics.generate;
@@ -29,7 +28,6 @@ public class ClientShip extends ClientEntity
 	public void onThink()
 	{
 		super.onThink();
-		GravityClient.global.sendThrust(velThrust, angleThrust);
 	}
 	
 	public ClientShip(long id)

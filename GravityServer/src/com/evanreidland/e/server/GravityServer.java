@@ -9,6 +9,7 @@ import com.evanreidland.e.engine;
 import com.evanreidland.e.roll;
 import com.evanreidland.e.action.Action;
 import com.evanreidland.e.action.ActionListener;
+import com.evanreidland.e.action.act;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.event.ent.EntityDestroyedEvent;
@@ -18,6 +19,8 @@ import com.evanreidland.e.net.TCPPacket;
 import com.evanreidland.e.net.TCPServer;
 import com.evanreidland.e.server.ent.ServerShip;
 import com.evanreidland.e.shared.Player;
+import com.evanreidland.e.shared.action.EntityMoveAction;
+import com.evanreidland.e.shared.action.EntityStopAction;
 import com.evanreidland.e.shared.enums.MessageCode;
 
 public class GravityServer extends TCPServer implements ActionListener
@@ -269,6 +272,10 @@ public class GravityServer extends TCPServer implements ActionListener
 									+ id + " does not exist!");
 						}
 						break;
+					case ACT_REQ:
+						processAction(id, MessageCode.from(data.readByte()),
+								data);
+						break;
 					default:
 						engine.Log("Unused code: " + code.toString());
 						break;
@@ -286,6 +293,29 @@ public class GravityServer extends TCPServer implements ActionListener
 		}
 	}
 	
+	public void processAction(long playerID, MessageCode code, Bits bits)
+	{
+		if (code != null)
+		{
+			Player player = getPlayer(playerID);
+			Entity ship = ents.get(player.getShipID());
+			switch (code)
+			{
+				case ACT_REQ_MOVE:
+					act.Start(ship,
+							new EntityMoveAction(ship, Vector3.fromBits(bits)));
+					break;
+				case ACT_REQ_STOP:
+					act.Start(ship, new EntityStopAction(ship));
+					break;
+			}
+		}
+		else
+		{
+			engine.Log("NULL code from id " + playerID + "!");
+		}
+	}
+	
 	public void onListenException(Exception e)
 	{
 		Log("Exception: " + e.getMessage());
@@ -293,6 +323,7 @@ public class GravityServer extends TCPServer implements ActionListener
 	
 	public void onEntitySpawned(EntitySpawnedEvent event)
 	{
+		
 	}
 	
 	public void onEntityDestroyed(EntityDestroyedEvent event)
