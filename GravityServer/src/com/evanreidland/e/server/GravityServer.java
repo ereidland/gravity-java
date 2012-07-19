@@ -9,6 +9,7 @@ import com.evanreidland.e.engine;
 import com.evanreidland.e.roll;
 import com.evanreidland.e.action.Action;
 import com.evanreidland.e.action.ActionListener;
+import com.evanreidland.e.action.act;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.event.ent.EntityDestroyedEvent;
@@ -16,8 +17,9 @@ import com.evanreidland.e.event.ent.EntitySpawnedEvent;
 import com.evanreidland.e.net.Bits;
 import com.evanreidland.e.net.TCPPacket;
 import com.evanreidland.e.net.TCPServer;
-import com.evanreidland.e.server.ent.ServerShip;
 import com.evanreidland.e.shared.Player;
+import com.evanreidland.e.shared.action.EntityMoveAction;
+import com.evanreidland.e.shared.action.EntityStopAction;
 import com.evanreidland.e.shared.enums.MessageCode;
 
 public class GravityServer extends TCPServer implements ActionListener
@@ -226,9 +228,6 @@ public class GravityServer extends TCPServer implements ActionListener
 					engine.Log("Null code!");
 					return;
 				}
-				Player player;
-				Entity ent;
-				ServerShip ship;
 				switch (code)
 				{
 					case MESSAGE:
@@ -237,37 +236,9 @@ public class GravityServer extends TCPServer implements ActionListener
 						Log(message);
 						broadcastMessage(id, message);
 						break;
-					case ENT_UPDATETHRUST:
-						player = getPlayer(id);
-						if (player != null)
-						{
-							ent = ents.get(player.getShipID());
-							if (ent != null)
-							{
-								Vector3 velThrust = Vector3.fromBits(data);
-								Vector3 angleThrust = Vector3.fromBits(data);
-								ship = (ServerShip) ent;
-								ship.velThrust.setAs(velThrust);
-								ship.angleThrust.setAs(angleThrust);
-							}
-							else
-							{
-								Vector3.fromBits(data);
-								Vector3.fromBits(data);
-								engine.logger
-										.log(Level.WARNING,
-												"Player "
-														+ id
-														+ " tried to update thrust when they do not own a ship.");
-							}
-						}
-						else
-						{
-							Vector3.fromBits(data);
-							Vector3.fromBits(data);
-							engine.logger.log(Level.SEVERE, "Player with ID "
-									+ id + " does not exist!");
-						}
+					case ACT_REQ:
+						processAction(id, MessageCode.from(data.readByte()),
+								data);
 						break;
 					default:
 						engine.Log("Unused code: " + code.toString());
@@ -286,6 +257,39 @@ public class GravityServer extends TCPServer implements ActionListener
 		}
 	}
 	
+	public void processAction(long playerID, MessageCode code, Bits bits)
+	{
+		if (code != null)
+		{
+			Player player = getPlayer(playerID);
+			Entity ship = ents.get(player.getShipID());
+			if (ship != null)
+			{
+				switch (code)
+				{
+					case ACT_REQ_MOVE:
+						act.Start(
+								ship,
+								new EntityMoveAction(ship, Vector3
+										.fromBits(bits)));
+						break;
+					case ACT_REQ_STOP:
+						act.Start(ship, new EntityStopAction(ship));
+						break;
+				}
+			}
+			else
+			{
+				engine.Log("Player " + playerID
+						+ " can't do anything because they don't have a ship!");
+			}
+		}
+		else
+		{
+			engine.Log("NULL code from id " + playerID + "!");
+		}
+	}
+	
 	public void onListenException(Exception e)
 	{
 		Log("Exception: " + e.getMessage());
@@ -293,6 +297,7 @@ public class GravityServer extends TCPServer implements ActionListener
 	
 	public void onEntitySpawned(EntitySpawnedEvent event)
 	{
+		
 	}
 	
 	public void onEntityDestroyed(EntityDestroyedEvent event)
@@ -339,5 +344,7 @@ public class GravityServer extends TCPServer implements ActionListener
 	{
 		players = new Vector<Player>();
 		global = this;
+		
+		act.addListener(this);
 	}
 }

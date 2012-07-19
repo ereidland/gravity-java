@@ -6,6 +6,7 @@ import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.server.ent.ServerEnemy;
 import com.evanreidland.e.server.ent.ServerLaser;
 import com.evanreidland.e.server.ent.ServerShip;
+import com.evanreidland.e.shared.action.sharedactions;
 import com.evanreidland.e.shared.config.ServerConfig;
 
 public class GravityServerGame extends Game
@@ -26,6 +27,8 @@ public class GravityServerGame extends Game
 	public void onInit()
 	{
 		ServerConfig.setupConfigs();
+		
+		sharedactions.registerAll();
 		
 		ents.Register("enemy", ServerEnemy.class);
 		ents.Register("laser", ServerLaser.class);

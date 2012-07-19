@@ -139,6 +139,18 @@ public class GravityClient extends TCPClient
 		}
 	}
 	
+	public void requestMove(Vector3 targetPoint)
+	{
+		Send(new Bits().writeByte(MessageCode.ACT_REQ.toByte())
+				.writeByte(MessageCode.ACT_REQ_MOVE.toByte())
+				.write(targetPoint.toBits()));
+	}
+	
+	public void requestStop()
+	{
+		Send(new Bits().writeByte(MessageCode.ACT_REQ_STOP.toByte()));
+	}
+	
 	public void sendThrust(Vector3 velThrust, Vector3 angleThrust)
 	{
 		Bits bits = new Bits();

@@ -1,6 +1,7 @@
 package com.evanreidland.e.shared.action;
 
 import com.evanreidland.e.engine;
+import com.evanreidland.e.ent.Entity;
 
 public class EntityStopAction extends EntityAction
 {
@@ -15,5 +16,11 @@ public class EntityStopAction extends EntityAction
 	public EntityStopAction()
 	{
 		super("ent_stop");
+	}
+	
+	public EntityStopAction(Entity ent)
+	{
+		this();
+		this.ent = ent;
 	}
 }

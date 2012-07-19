@@ -150,13 +150,21 @@ public class GLGraphicsManager extends GraphicsManager
 		return new Vector3(pos.get(0), pos.get(1), pos.get(2));
 	}
 	
-	public Vector3 toWorld(Vector3 point)
+	public Vector3 unProject(Vector3 point)
 	{
 		FloatBuffer pos = BufferUtils.createFloatBuffer(3);
 		
 		GLU.gluUnProject((float) point.x, (float) point.y, (float) point.z,
 				modelMatrix, projMatrix, viewPort, pos);
 		return new Vector3(pos.get(0), pos.get(1), pos.get(2));
+	}
+	
+	public Vector3 toWorld(Vector3 point)
+	{
+		return unProject(
+				new Vector3(point.x, point.y, graphics.camera.nearDist))
+				.minus(unProject(new Vector3(point.x, point.y,
+						graphics.camera.farDist))).Normalize();
 	}
 	
 	public void passTriangle(double[] data)

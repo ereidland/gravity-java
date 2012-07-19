@@ -16,7 +16,7 @@ public abstract class Action implements Bitable
 	
 	public boolean setActor(Actor actor)
 	{
-		if (actor == null)
+		if (this.actor == null)
 		{
 			this.actor = actor;
 			return true;

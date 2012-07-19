@@ -52,6 +52,7 @@ public class Actor
 	
 	public void add(Action action)
 	{
+		action.setActor(this);
 		getList(action.getName(), true).add(action);
 	}
 	
