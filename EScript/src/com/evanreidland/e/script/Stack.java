@@ -84,9 +84,10 @@ public class Stack
 		{
 			for (int i = 0; i < vars.size(); i++)
 			{
-				if (vars.get(i).getName().equals(var.getName()))
+				Variable lvar = vars.get(i);
+				if (lvar.getName().equals(var.getName()))
 				{
-					vars.set(i, var);
+					lvar.set(var);
 					break;
 				}
 			}
