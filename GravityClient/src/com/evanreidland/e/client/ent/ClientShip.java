@@ -9,7 +9,6 @@ import com.evanreidland.e.graphics.graphics;
 
 public class ClientShip extends ClientEntity
 {
-	public Vector3 velThrust, angleThrust;
 	
 	public void setupGraphics()
 	{
@@ -33,7 +32,5 @@ public class ClientShip extends ClientEntity
 	public ClientShip(long id)
 	{
 		super("ship", id);
-		velThrust = Vector3.Zero();
-		angleThrust = Vector3.Zero();
 	}
 }

@@ -17,7 +17,6 @@ import com.evanreidland.e.event.ent.EntitySpawnedEvent;
 import com.evanreidland.e.net.Bits;
 import com.evanreidland.e.net.TCPPacket;
 import com.evanreidland.e.net.TCPServer;
-import com.evanreidland.e.server.ent.ServerShip;
 import com.evanreidland.e.shared.Player;
 import com.evanreidland.e.shared.action.EntityMoveAction;
 import com.evanreidland.e.shared.action.EntityStopAction;
@@ -229,9 +228,6 @@ public class GravityServer extends TCPServer implements ActionListener
 					engine.Log("Null code!");
 					return;
 				}
-				Player player;
-				Entity ent;
-				ServerShip ship;
 				switch (code)
 				{
 					case MESSAGE:
@@ -239,38 +235,6 @@ public class GravityServer extends TCPServer implements ActionListener
 								+ data.readString();
 						Log(message);
 						broadcastMessage(id, message);
-						break;
-					case ENT_UPDATETHRUST:
-						player = getPlayer(id);
-						if (player != null)
-						{
-							ent = ents.get(player.getShipID());
-							if (ent != null)
-							{
-								Vector3 velThrust = Vector3.fromBits(data);
-								Vector3 angleThrust = Vector3.fromBits(data);
-								ship = (ServerShip) ent;
-								ship.velThrust.setAs(velThrust);
-								ship.angleThrust.setAs(angleThrust);
-							}
-							else
-							{
-								Vector3.fromBits(data);
-								Vector3.fromBits(data);
-								engine.logger
-										.log(Level.WARNING,
-												"Player "
-														+ id
-														+ " tried to update thrust when they do not own a ship.");
-							}
-						}
-						else
-						{
-							Vector3.fromBits(data);
-							Vector3.fromBits(data);
-							engine.logger.log(Level.SEVERE, "Player with ID "
-									+ id + " does not exist!");
-						}
 						break;
 					case ACT_REQ:
 						processAction(id, MessageCode.from(data.readByte()),
@@ -299,15 +263,25 @@ public class GravityServer extends TCPServer implements ActionListener
 		{
 			Player player = getPlayer(playerID);
 			Entity ship = ents.get(player.getShipID());
-			switch (code)
+			if (ship != null)
 			{
-				case ACT_REQ_MOVE:
-					act.Start(ship,
-							new EntityMoveAction(ship, Vector3.fromBits(bits)));
-					break;
-				case ACT_REQ_STOP:
-					act.Start(ship, new EntityStopAction(ship));
-					break;
+				switch (code)
+				{
+					case ACT_REQ_MOVE:
+						act.Start(
+								ship,
+								new EntityMoveAction(ship, Vector3
+										.fromBits(bits)));
+						break;
+					case ACT_REQ_STOP:
+						act.Start(ship, new EntityStopAction(ship));
+						break;
+				}
+			}
+			else
+			{
+				engine.Log("Player " + playerID
+						+ " can't do anything because they don't have a ship!");
 			}
 		}
 		else
@@ -370,5 +344,7 @@ public class GravityServer extends TCPServer implements ActionListener
 	{
 		players = new Vector<Player>();
 		global = this;
+		
+		act.addListener(this);
 	}
 }

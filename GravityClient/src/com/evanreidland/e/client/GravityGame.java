@@ -24,6 +24,7 @@ import com.evanreidland.e.graphics.Sprite;
 import com.evanreidland.e.graphics.font;
 import com.evanreidland.e.graphics.generate;
 import com.evanreidland.e.graphics.graphics;
+import com.evanreidland.e.phys.Ray;
 import com.evanreidland.e.script.basefunctions;
 import com.evanreidland.e.script.text.Script;
 import com.evanreidland.e.shared.action.sharedactions;
@@ -41,7 +42,7 @@ public class GravityGame extends GameClientBase
 	
 	long nextShot;
 	
-	double viewHeight = 1, idleAngle = 0;
+	double viewHeight = 10, idleAngle = 0;
 	
 	Script script;
 	String consoleText;
@@ -183,11 +184,13 @@ public class GravityGame extends GameClientBase
 		}
 		else
 		{
-			if (input.getKeyState(key.MOUSE_RBUTTON))
+			if (input.isKeyDown(key.MOUSE_RBUTTON))
 			{
-				targetPoint = graphics.camera.pos.plus(graphics.toWorld(
-						new Vector3(Game.mousePos.x, Game.mousePos.y, 0))
-						.multipliedBy(10));
+				Ray ray = new Ray(graphics.camera.pos,
+						graphics.toWorld(new Vector3(Game.mousePos.x,
+								Game.mousePos.y, 0)));
+				targetPoint = ray.getPlaneIntersection(Vector3.Zero(),
+						new Vector3(0, 0, 1));
 			}
 			if (input.isKeyDown(key.MOUSE_LBUTTON))
 			{
@@ -199,92 +202,6 @@ public class GravityGame extends GameClientBase
 				{
 					GravityClient.global.requestMove(targetPoint);
 				}
-				// double speed = 1;
-				// if (input.getKeyState(key.KEY_9))
-				// {
-				// viewHeight += speed * Game.getDelta();
-				// }
-				// if (input.getKeyState(key.KEY_8))
-				// {
-				// viewHeight -= speed * Game.getDelta();
-				// }
-				// if (viewHeight < 1)
-				// viewHeight = 1;
-				// if (viewHeight > 10)
-				// viewHeight = 10;
-				//
-				// Vector3 velThrust = Vector3.Zero(), angleThrust = Vector3
-				// .Zero();
-				// if (input.getKeyState(key.KEY_SHIFT))
-				// {
-				// if (input.getKeyState(key.KEY_UP))
-				// {
-				// velThrust.add(ship.angle.getForward());
-				// }
-				// if (input.getKeyState(key.KEY_DOWN))
-				// {
-				// velThrust.add(ship.angle.getForward().multipliedBy(-1));
-				// }
-				// if (input.getKeyState(key.KEY_LEFT))
-				// {
-				// velThrust.add(ship.angle.getRight().multipliedBy(-1));
-				// }
-				// if (input.getKeyState(key.KEY_RIGHT))
-				// {
-				// velThrust.add(ship.angle.getRight());
-				// }
-				// }
-				// else
-				// {
-				// if (input.getKeyState(key.KEY_CONTROL))
-				// {
-				// if (input.getKeyState(key.KEY_UP))
-				// {
-				// velThrust.add(ship.angle.getUp());
-				// }
-				// if (input.getKeyState(key.KEY_DOWN))
-				// {
-				// velThrust.add(ship.angle.getUp().multipliedBy(-1));
-				// }
-				// if (input.getKeyState(key.KEY_LEFT))
-				// {
-				// velThrust.add(ship.angle.getRight()
-				// .multipliedBy(-1));
-				// }
-				// if (input.getKeyState(key.KEY_RIGHT))
-				// {
-				// velThrust.add(ship.angle.getRight());
-				// }
-				// }
-				// else
-				// {
-				// if (ship.angle.x < engine.Pi)
-				// {
-				// speed = -speed;
-				// }
-				// if (input.getKeyState(key.KEY_LEFT))
-				// {
-				// angleThrust.z -= speed;// Math.cos(ship.angle.y)*speed;
-				// }
-				// if (input.getKeyState(key.KEY_RIGHT))
-				// {
-				// angleThrust.z += speed;// Math.cos(ship.angle.y)*speed;
-				// }
-				//
-				// if (input.getKeyState(key.KEY_UP))
-				// {
-				// angleThrust.x += Math.abs(speed);
-				// }
-				// if (input.getKeyState(key.KEY_DOWN))
-				// {
-				// angleThrust.x -= Math.abs(speed);
-				// }
-				//
-				// }
-				// }
-				// ship.velThrust.setAs(velThrust);
-				// ship.angleThrust.setAs(angleThrust);
-				//
 			}
 		}
 		
@@ -293,16 +210,7 @@ public class GravityGame extends GameClientBase
 		graphics.camera.pos.setAs(new Vector3(0, 0, viewHeight));
 		graphics.camera.angle.setAs(Vector3.Zero());
 		
-		/*
-		 * if (ship != null) { idleAngle += Game.getDelta();
-		 * graphics.camera.angle.setAs(ship.angle);
-		 * graphics.camera.pos.setAs(ship.pos.plus( graphics.camera.getForward()
-		 * .multipliedBy(-viewHeight * 2.5)).plus(
-		 * graphics.camera.getUp().multipliedBy(viewHeight))); } else {
-		 * idleAngle += Game.getDelta() * 0.1; graphics.camera.angle.setAs(new
-		 * Vector3(engine.Pi_2, 0, idleAngle));
-		 * graphics.camera.pos.setAs(Vector3.Zero()); }
-		 */
+		idleAngle += Game.getDelta();
 	}
 	
 	public void onRender()
@@ -328,15 +236,11 @@ public class GravityGame extends GameClientBase
 					+ ship.angle.clipAngle().toRoundedString(), graphics.camera
 					.bottomLeft().plus(0, ypos, 0), 16, false);
 			ypos += 16;
-			font.Render2d(font1, "Thrust: " + ship.velThrust.toRoundedString()
-					+ ", " + ship.angleThrust.toRoundedString(),
-					graphics.camera.bottomLeft().plus(0, ypos, 0), 16, false);
-			ypos += 16;
 		}
 		font.Render2d(font1,
-				"Delta: " + String.format("%03.03f", Game.getDelta()) + " / "
-						+ targetPoint.toString(), graphics.camera.bottomLeft()
-						.plus(0, ypos, 0), 16, false);
+				"Delta: " + String.format("%03.03f", Game.getDelta())
+						+ " / p as " + targetPoint.toRoundedString(),
+				graphics.camera.bottomLeft().plus(0, ypos, 0), 16, false);
 		ypos += 16;
 		
 		if (ship != null)

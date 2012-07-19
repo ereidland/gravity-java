@@ -76,9 +76,9 @@ public class ActionList
 	
 	public void add(Action action)
 	{
+		action.setActor(actor);
 		if (!actions.contains(action))
 		{
-			action.setActor(actor);
 			actions.add(action);
 		}
 	}

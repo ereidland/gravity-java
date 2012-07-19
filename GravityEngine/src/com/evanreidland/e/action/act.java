@@ -90,6 +90,7 @@ public class act
 	public static void Start(Actor actor, Action action)
 	{
 		actor.add(action);
+		
 		for (int i = 0; i < listeners.size(); i++)
 		{
 			listeners.get(i).onStarted(action);
