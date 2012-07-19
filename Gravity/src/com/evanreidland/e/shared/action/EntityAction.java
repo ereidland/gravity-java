@@ -1,5 +1,6 @@
 package com.evanreidland.e.shared.action;
 
+import com.evanreidland.e.engine;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.net.Bits;
@@ -29,6 +30,10 @@ public class EntityAction extends SharedAction
 		if (bits.readBit())
 		{
 			ent = ents.get(bits.readLong());
+		}
+		else
+		{
+			engine.Log("Event passed with null entitiy!");
 		}
 	}
 	

@@ -37,6 +37,26 @@ public class Entity extends Actor implements Bitable
 		return getClassName() + "/" + getID();
 	}
 	
+	public void thrustTowards(Vector3 point, double targetSpeed,
+			double maxThrust, double delta)
+	{
+		Vector3 targetVel = point.minus(pos).Normalize()
+				.multipliedBy(targetSpeed);
+		Vector3 diff = targetVel.minus(vel);
+		vel.add(diff.getNormal().multipliedBy(
+				Math.min(diff.getLength(), maxThrust) * delta));
+	}
+	
+	public void thrustTowardsAngle(Vector3 angle, double targetAngleSpeed,
+			double maxAngleThrust, double delta)
+	{
+		Vector3 targetVel = Vector3.getAngleDifference(this.angle, angle)
+				.Normalize().multipliedBy(targetAngleSpeed);
+		Vector3 diff = targetVel.minus(angleVel);
+		angleVel.add(diff.getNormal().multipliedBy(
+				Math.min(diff.getLength(), maxAngleThrust) * delta));
+	}
+	
 	public void Kill()
 	{
 		bDead = true;
@@ -237,6 +257,24 @@ public class Entity extends Actor implements Bitable
 		bSpawned = tSpawned;
 		
 		return bits;
+	}
+	
+	public Bits getPosBits()
+	{
+		Bits bits = new Bits();
+		bits.write(pos.toBits());
+		bits.write(vel.toBits());
+		bits.write(angle.toBits());
+		bits.write(angleVel.toBits());
+		return bits;
+	}
+	
+	public void loadPosBits(Bits bits)
+	{
+		pos.setAs(Vector3.fromBits(bits));
+		vel.setAs(Vector3.fromBits(bits));
+		angle.setAs(Vector3.fromBits(bits));
+		angleVel.setAs(Vector3.fromBits(bits));
 	}
 	
 	// Note: These should always be read in the order they are sent. If

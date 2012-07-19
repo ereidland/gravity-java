@@ -65,6 +65,15 @@ public class Actor
 		}
 	}
 	
+	public void killOthers(String type)
+	{
+		ActionList list = getList(type, false);
+		if (list != null)
+		{
+			list.killOthers();
+		}
+	}
+	
 	public void killActions()
 	{
 		for (int i = 0; i < actionTypes.size(); i++)

@@ -7,7 +7,7 @@ public abstract class Action implements Bitable
 {
 	private String name;
 	private Actor actor;
-	public boolean isOrdered;
+	public boolean isOrdered, isStarted;
 	
 	public Actor getActor()
 	{
@@ -51,5 +51,6 @@ public abstract class Action implements Bitable
 		this.name = name;
 		actor = null;
 		isOrdered = true;
+		isStarted = false;
 	}
 }
