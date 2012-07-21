@@ -18,8 +18,6 @@ import com.evanreidland.e.net.Bits;
 import com.evanreidland.e.net.TCPPacket;
 import com.evanreidland.e.net.TCPServer;
 import com.evanreidland.e.shared.Player;
-import com.evanreidland.e.shared.action.EntityMoveAction;
-import com.evanreidland.e.shared.action.EntityStopAction;
 import com.evanreidland.e.shared.enums.MessageCode;
 
 public class GravityServer extends TCPServer implements ActionListener
@@ -80,7 +78,8 @@ public class GravityServer extends TCPServer implements ActionListener
 	{
 		Log("Server.onNewConnection: " + id + getFullAddress(id));
 		
-		players.add(new Player(id, true));
+		Player player = new Player(id, true);
+		players.add(player);
 		
 		sendAllEntities(id);
 		
@@ -90,6 +89,8 @@ public class GravityServer extends TCPServer implements ActionListener
 			ent.pos.setAs(Vector3.RandomNormal().multipliedBy(
 					roll.randomDouble(1, 2)));
 			ent.flags.add("player targetable");
+			
+			player.permissions.grant("ent_move").addID(ent.getID());
 			
 			sendEntitySpawn(ent);
 			
@@ -228,6 +229,7 @@ public class GravityServer extends TCPServer implements ActionListener
 					engine.Log("Null code!");
 					return;
 				}
+				Player player = getPlayer(id);
 				switch (code)
 				{
 					case MESSAGE:
@@ -237,8 +239,36 @@ public class GravityServer extends TCPServer implements ActionListener
 						broadcastMessage(id, message);
 						break;
 					case ACT_REQ:
-						processAction(id, MessageCode.from(data.readByte()),
-								data);
+						long actorID = data.readLong();
+						Entity ent = ents.get(actorID);
+						if (ent != null)
+						{
+							String type = player.getTable().getString(data);
+							Action action = act.Create(type);
+							if (action != null)
+							{
+								action.loadBits(data);
+								if (action.validate(player.permissions))
+								{
+									act.Start(ent, action);
+								}
+								else
+								{
+									engine.Log("Action \"" + type
+											+ "\" failed to validate.");
+								}
+							}
+							else
+							{
+								engine.Log("Action requested with undefined type: \""
+										+ type + "\"");
+							}
+						}
+						else
+						{
+							engine.Log("Action requested for null entity: "
+									+ actorID);
+						}
 						break;
 					default:
 						engine.Log("Unused code: " + code.toString());
@@ -254,39 +284,6 @@ public class GravityServer extends TCPServer implements ActionListener
 			{
 				Log(el[i].toString());
 			}
-		}
-	}
-	
-	public void processAction(long playerID, MessageCode code, Bits bits)
-	{
-		if (code != null)
-		{
-			Player player = getPlayer(playerID);
-			Entity ship = ents.get(player.getShipID());
-			if (ship != null)
-			{
-				switch (code)
-				{
-					case ACT_REQ_MOVE:
-						act.Start(
-								ship,
-								new EntityMoveAction(ship, Vector3
-										.fromBits(bits)));
-						break;
-					case ACT_REQ_STOP:
-						act.Start(ship, new EntityStopAction(ship));
-						break;
-				}
-			}
-			else
-			{
-				engine.Log("Player " + playerID
-						+ " can't do anything because they don't have a ship!");
-			}
-		}
-		else
-		{
-			engine.Log("NULL code from id " + playerID + "!");
 		}
 	}
 	

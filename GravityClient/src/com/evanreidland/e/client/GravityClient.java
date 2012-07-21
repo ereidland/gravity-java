@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
 import com.evanreidland.e.action.Action;
+import com.evanreidland.e.action.Actor;
 import com.evanreidland.e.action.act;
 import com.evanreidland.e.client.ent.ClientShip;
 import com.evanreidland.e.ent.Entity;
@@ -139,24 +140,13 @@ public class GravityClient extends TCPClient
 		}
 	}
 	
-	public void requestMove(Vector3 targetPoint)
-	{
-		Send(new Bits().writeByte(MessageCode.ACT_REQ.toByte())
-				.writeByte(MessageCode.ACT_REQ_MOVE.toByte())
-				.write(targetPoint.toBits()));
-	}
-	
-	public void requestStop()
-	{
-		Send(new Bits().writeByte(MessageCode.ACT_REQ_STOP.toByte()));
-	}
-	
-	public void sendThrust(Vector3 velThrust, Vector3 angleThrust)
+	public void requestAction(Actor actor, Action action)
 	{
 		Bits bits = new Bits();
-		bits.writeByte(MessageCode.ENT_UPDATETHRUST.toByte());
-		bits.write(velThrust.toBits());
-		bits.write(angleThrust.toBits());
+		bits.writeByte(MessageCode.ACT_REQ.toByte());
+		bits.writeLong(actor.getID());
+		bits.write(table.getBits(action.getName(), false));
+		bits.write(action.toBits());
 		Send(bits);
 	}
 	

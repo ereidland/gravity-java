@@ -10,9 +10,7 @@ public enum MessageCode
 	SELECT_SHIP(), // Select a player's ship.
 	MESSAGE(), // Chat message.
 	ACT_START(), // Started action.
-	ACT_REQ(), // Request action for unit.
-	ACT_REQ_MOVE(), // Request a move action for unit.
-	ACT_REQ_STOP(); // Request a stop action for unit.
+	ACT_REQ(); // Request action for unit.
 	
 	public byte toByte()
 	{

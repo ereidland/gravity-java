@@ -44,6 +44,11 @@ public abstract class Action implements Bitable
 	
 	public abstract void onEnd(boolean forced);
 	
+	public boolean validate(Permissions perms)
+	{
+		return true;
+	}
+	
 	// Note: all actions that extend this must have a default constructor for
 	// factory usage.
 	public Action(String name)

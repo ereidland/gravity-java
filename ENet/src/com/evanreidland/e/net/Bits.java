@@ -180,6 +180,33 @@ public class Bits
 		return bytes.length == 1 ? bytes[0] : 0;
 	}
 	
+	public byte readSmallByte(int bits)
+	{
+		if (bits <= 8)
+		{
+			byte[] bytes = readBits(bits);
+			return bytes.length > 0 ? bytes[0] : 0;
+		}
+		return 0;
+	}
+	
+	public int readSmall(int bits)
+	{
+		if (bits <= 32)
+		{
+			byte[] bytes = readBits(bits);
+			if (bytes.length > 0)
+			{
+				ByteBuffer buff = ByteBuffer.allocate(bytes.length).put(bytes);
+				buff.flip();
+				return bits > 16 ? buff.getInt() : bits > 8 ? buff.getShort()
+						: buff.get(0);
+			}
+			
+		}
+		return 0;
+	}
+	
 	public short readShort()
 	{
 		ByteBuffer buff = ByteBuffer.allocate(2).put(readBytes(2));
@@ -211,22 +238,32 @@ public class Bits
 		return Double.longBitsToDouble(readLong());
 	}
 	
+	public long readSize()
+	{
+		long size = 0;
+		byte small = readSmallByte(2);
+		switch (small)
+		{
+			case 0:
+				size = readByte();
+				break;
+			case 1:
+				size = readShort();
+				break;
+			case 2:
+				size = readInt();
+				break;
+			case 3:
+				size = readLong();
+				break;
+		}
+		return size;
+	}
+	
 	public String readString()
 	{
-		int length = 0;
+		int length = (int) readSize();
 		String str = "";
-		if (readBit())
-		{
-			length = readByte();
-		}
-		else if (readBit())
-		{
-			length = readShort();
-		}
-		else
-		{ // There should never be strings this long in normal use.
-			length = readInt();
-		}
 		str = new String(readBytes(length));
 		return str;
 	}
@@ -312,6 +349,29 @@ public class Bits
 		});
 	}
 	
+	public Bits writeSmallByte(int num, int bits)
+	{
+		if (bits <= 8)
+		{
+			writeBits(new byte[]
+			{
+				(byte) num
+			}, bits);
+		}
+		return this;
+	}
+	
+	public Bits writeSmall(int num, int bits)
+	{
+		if (bits <= 32)
+		{
+			ByteBuffer buff = ByteBuffer.allocate(4).putInt(num);
+			buff.flip();
+			writeBits(buff.array(), bits);
+		}
+		return this;
+	}
+	
 	public Bits writeShort(short toWrite)
 	{
 		return writeBytes(ByteBuffer.allocate(2).putShort(toWrite).array());
@@ -337,29 +397,35 @@ public class Bits
 		return writeBytes(ByteBuffer.allocate(8).putLong(toWrite).array());
 	}
 	
-	public Bits writeString(String str)
+	public Bits writeSize(long size)
 	{
-		byte[] strBytes = str.getBytes();
-		int len = strBytes.length;
-		if (len <= Byte.MAX_VALUE)
+		if (size <= Byte.MAX_VALUE)
 		{
-			writeBit(true);
-			writeByte((byte) len);
+			writeSmallByte(0, 2);
+			writeByte((byte) size);
+		}
+		else if (size <= Short.MAX_VALUE)
+		{
+			writeSmallByte(1, 2);
+			writeShort((short) size);
+		}
+		else if (size <= Integer.MAX_VALUE)
+		{
+			writeSmallByte(2, 2);
+			writeInt((int) size);
 		}
 		else
 		{
-			writeBit(false);
-			if (len <= Short.MAX_VALUE)
-			{
-				writeBit(true);
-				writeShort((short) len);
-			}
-			else
-			{
-				writeBit(false);
-				writeInt(len);
-			}
+			writeSmallByte(3, 2);
+			writeLong(size);
 		}
+		return this;
+	}
+	
+	public Bits writeString(String str)
+	{
+		byte[] strBytes = str.getBytes();
+		writeSize(strBytes.length);
 		writeBytes(strBytes);
 		
 		return this;

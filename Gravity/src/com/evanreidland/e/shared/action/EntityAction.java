@@ -1,11 +1,12 @@
 package com.evanreidland.e.shared.action;
 
 import com.evanreidland.e.engine;
+import com.evanreidland.e.action.Permissions;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.net.Bits;
 
-public class EntityAction extends SharedAction
+public abstract class EntityAction extends SharedAction
 {
 	public Entity ent;
 	
@@ -35,6 +36,15 @@ public class EntityAction extends SharedAction
 		{
 			engine.Log("Event passed with null entitiy!");
 		}
+	}
+	
+	public boolean validate(Permissions perms)
+	{
+		if (ent != null)
+		{
+			return perms.hasID(getName(), ent.getID());
+		}
+		return false;
 	}
 	
 	public EntityAction(String name)

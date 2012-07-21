@@ -27,6 +27,7 @@ import com.evanreidland.e.graphics.graphics;
 import com.evanreidland.e.phys.Ray;
 import com.evanreidland.e.script.basefunctions;
 import com.evanreidland.e.script.text.Script;
+import com.evanreidland.e.shared.action.EntityMoveAction;
 import com.evanreidland.e.shared.action.sharedactions;
 import com.evanreidland.e.shared.config.ServerConfig;
 
@@ -200,7 +201,8 @@ public class GravityGame extends GameClientBase
 			{
 				if (input.isKeyDown(key.MOUSE_RBUTTON))
 				{
-					GravityClient.global.requestMove(targetPoint);
+					GravityClient.global.requestAction(ship,
+							new EntityMoveAction(ship, targetPoint));
 				}
 			}
 		}
@@ -208,7 +210,8 @@ public class GravityGame extends GameClientBase
 		ents.list.onThink();
 		
 		graphics.camera.pos.setAs(new Vector3(0, 0, viewHeight));
-		graphics.camera.angle.setAs(Vector3.Zero());
+		graphics.camera.angle.setAs(Vector3.Zero().minus(graphics.camera.pos)
+				.getAngle());
 		
 		idleAngle += Game.getDelta();
 	}
