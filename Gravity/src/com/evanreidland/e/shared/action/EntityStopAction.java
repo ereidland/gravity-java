@@ -15,7 +15,7 @@ public class EntityStopAction extends EntityAction
 	
 	public EntityStopAction()
 	{
-		super("ent_stop");
+		super("ent_stop", "ent_move");
 	}
 	
 	public EntityStopAction(Entity ent)

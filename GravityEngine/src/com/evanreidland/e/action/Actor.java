@@ -37,13 +37,13 @@ public class Actor
 		Be(id);
 	}
 	
-	private ActionList getList(String name, boolean create)
+	private ActionList getList(String type, boolean create)
 	{
-		ActionList list = actionTypesMap.get(name);
+		ActionList list = actionTypesMap.get(type);
 		if (list == null && create)
 		{
-			list = new ActionList(name, this);
-			actionTypesMap.put(name, list);
+			list = new ActionList(type, this);
+			actionTypesMap.put(type, list);
 			actionTypes.add(list);
 		}
 		
@@ -53,7 +53,7 @@ public class Actor
 	public void add(Action action)
 	{
 		action.setActor(this);
-		getList(action.getName(), true).add(action);
+		getList(action.getType(), true).add(action);
 	}
 	
 	public void kill(String type)

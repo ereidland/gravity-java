@@ -49,7 +49,7 @@ public class EntityMoveAction extends EntityAction
 	
 	public EntityMoveAction()
 	{
-		super("ent_move");
+		super("ent_move", "ent_move");
 		isOrdered = true;
 		
 		closingDistance = 0.1;

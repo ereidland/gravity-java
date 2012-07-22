@@ -5,7 +5,7 @@ import com.evanreidland.e.net.Bits;
 
 public abstract class Action implements Bitable
 {
-	private String name;
+	private String name, type;
 	private Actor actor;
 	public boolean isOrdered, isStarted;
 	
@@ -27,6 +27,11 @@ public abstract class Action implements Bitable
 	public String getName()
 	{
 		return name;
+	}
+	
+	public String getType()
+	{
+		return type;
 	}
 	
 	public Bits toBits()
@@ -51,9 +56,10 @@ public abstract class Action implements Bitable
 	
 	// Note: all actions that extend this must have a default constructor for
 	// factory usage.
-	public Action(String name)
+	public Action(String name, String type)
 	{
 		this.name = name;
+		this.type = type;
 		actor = null;
 		isOrdered = true;
 		isStarted = false;

@@ -1,14 +1,25 @@
 package com.evanreidland.e.shared.action;
 
 import com.evanreidland.e.engine;
+import com.evanreidland.e.action.Action;
 import com.evanreidland.e.action.Permissions;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.net.Bits;
 
-public abstract class EntityAction extends SharedAction
+public abstract class EntityAction extends Action
 {
 	public Entity ent;
+	
+	public boolean onStart()
+	{
+		return false;
+	}
+	
+	public void onEnd(boolean bForced)
+	{
+		
+	}
 	
 	public boolean Update()
 	{
@@ -47,9 +58,9 @@ public abstract class EntityAction extends SharedAction
 		return false;
 	}
 	
-	public EntityAction(String name)
+	public EntityAction(String name, String type)
 	{
-		super(name);
+		super(name, type);
 		ent = null;
 	}
 }
