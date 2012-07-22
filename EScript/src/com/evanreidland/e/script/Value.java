@@ -1,6 +1,9 @@
 package com.evanreidland.e.script;
 
-public class Value
+import com.evanreidland.e.net.Bitable;
+import com.evanreidland.e.net.Bits;
+
+public class Value implements Bitable
 {
 	public static enum Type
 	{
@@ -169,17 +172,17 @@ public class Value
 				case String:
 					return object != null ? (String) object : "";
 				case Int:
-					return ((Integer) object).toString();
+					return String.valueOf(toInt());
+				case Long:
+					return String.valueOf(toLong());
 				case Double:
-					return ((Double) object).toString();
+					return String.valueOf(toDouble());
 				case Null:
 					return "";
 			}
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace(); // TODO Remove this line after thorough
-									// testing.
 			return "";
 		}
 		return "";
@@ -215,6 +218,52 @@ public class Value
 		object = (Double) value;
 		onChange();
 		return this;
+	}
+	
+	public Bits toBits()
+	{
+		Bits bits = new Bits();
+		switch (type)
+		{
+			case Double:
+				bits.writeSmallByte(1, 2);
+				bits.writeDouble(toDouble());
+				break;
+			case Long:
+				bits.writeSmallByte(2, 2);
+				bits.writeLong(toLong());
+				break;
+			case String:
+				bits.writeSmallByte(3, 2);
+				bits.writeString(toString());
+				break;
+			case Int:
+			default:
+				bits.writeSmallByte(0, 2);
+				bits.writeInt(toInt());
+				break;
+		}
+		return bits;
+	}
+	
+	public void loadBits(Bits bits)
+	{
+		byte small = bits.readSmallByte(2);
+		switch (small)
+		{
+			case 0:
+				setInt(bits.readInt());
+				break;
+			case 1:
+				setDouble(bits.readDouble());
+				break;
+			case 2:
+				setLong(bits.readLong());
+				break;
+			case 3:
+				setString(bits.readString());
+				break;
+		}
 	}
 	
 	public Value setFloat(float value)

@@ -1,8 +1,13 @@
 package com.evanreidland.e.action;
 
 import java.util.Vector;
+import java.util.logging.Level;
 
-public class ActionList
+import com.evanreidland.e.engine;
+import com.evanreidland.e.net.Bitable;
+import com.evanreidland.e.net.Bits;
+
+public class ActionList implements Bitable
 {
 	private String name;
 	public boolean ordered;
@@ -116,12 +121,47 @@ public class ActionList
 		actions.add(action);
 	}
 	
+	public Bits toBits()
+	{
+		Bits bits = new Bits();
+		bits.writeBit(ordered);
+		bits.writeSize(actions.size());
+		for (int i = 0; i < actions.size(); i++)
+		{
+			Action action = actions.get(i);
+			bits.writeString(action.getName());
+			bits.write(action.toBits());
+		}
+		return bits;
+	}
+	
+	public void loadBits(Bits bits)
+	{
+		int size = (int) bits.readSize();
+		for (int i = 0; i < size; i++)
+		{
+			String name = bits.readString();
+			Action action = act.Create(name);
+			if (action != null)
+			{
+				action.loadBits(bits);
+				actor.add(action);
+			}
+			else
+			{
+				engine.logger.log(Level.WARNING, "Missing action type \""
+						+ name + "\"!");
+				break;
+			}
+		}
+	}
+	
 	public ActionList(String name, Actor actor)
 	{
 		this.name = name;
 		this.actor = actor;
-		ordered = false;
 		
+		ordered = false;
 		actions = new Vector<Action>();
 	}
 }

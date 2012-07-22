@@ -160,10 +160,13 @@ public abstract class TCPServer extends Aquireable
 					}
 				}
 				
-				aquire();
-				packets.add(new TCPPacket(id, TCPEvent.DISCONNECT));
-				release();
-				clients.remove(this);
+				if (socket == null)
+				{
+					aquire();
+					packets.add(new TCPPacket(id, TCPEvent.DISCONNECT));
+					release();
+					clients.remove(this);
+				}
 			}
 			
 			public ReceiveThread()

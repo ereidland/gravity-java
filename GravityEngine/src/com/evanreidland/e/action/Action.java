@@ -36,11 +36,12 @@ public abstract class Action implements Bitable
 	
 	public Bits toBits()
 	{
-		return new Bits();
+		return new Bits().writeBit(isOrdered);
 	}
 	
 	public void loadBits(Bits bits)
 	{
+		isOrdered = bits.readBit();
 	}
 	
 	public abstract boolean Update();

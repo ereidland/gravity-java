@@ -4,9 +4,12 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import com.evanreidland.e.Flags;
+import com.evanreidland.e.ent.eflags;
+import com.evanreidland.e.net.Bitable;
+import com.evanreidland.e.net.Bits;
 import com.evanreidland.e.script.Stack;
 
-public class Actor
+public class Actor implements Bitable
 {
 	
 	private Vector<ActionList> actionTypes;
@@ -102,6 +105,33 @@ public class Actor
 			ActionList list = toRemove.get(i);
 			actionTypes.remove(list);
 			actionTypesMap.remove(list.getName());
+		}
+	}
+	
+	public Bits toBits()
+	{
+		Bits bits = new Bits();
+		
+		bits.write(vars.toBits());
+		bits.write(flags.toBits(eflags.table, false));
+		
+		bits.writeSize(actionTypes.size());
+		for (int i = 0; i < actionTypes.size(); i++)
+		{
+			bits.write(actionTypes.get(i).toBits());
+		}
+		return bits;
+	}
+	
+	public void loadBits(Bits bits)
+	{
+		vars.loadBits(bits);
+		flags.loadBits(bits, eflags.table);
+		
+		int size = (int) bits.readSize();
+		for (int i = 0; i < size; i++)
+		{
+			new ActionList("", this).loadBits(bits);
 		}
 	}
 	

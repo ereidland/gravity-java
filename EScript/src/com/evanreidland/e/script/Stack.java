@@ -4,7 +4,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Vector;
 
-public class Stack
+import com.evanreidland.e.net.Bitable;
+import com.evanreidland.e.net.Bits;
+import com.evanreidland.e.net.StringTable;
+
+public class Stack implements Bitable
 {
 	private Vector<Variable> vars;
 	private Vector<Function> funcs;
@@ -76,22 +80,17 @@ public class Stack
 	
 	public Variable add(Variable var)
 	{
-		if (!hasVar(var.getName()))
+		for (int i = 0; i < vars.size(); i++)
 		{
-			vars.add(var);
-		}
-		else
-		{
-			for (int i = 0; i < vars.size(); i++)
+			Variable lvar = vars.get(i);
+			if (lvar.getName().equals(var.getName()))
 			{
-				Variable lvar = vars.get(i);
-				if (lvar.getName().equals(var.getName()))
-				{
-					lvar.set(var);
-					break;
-				}
+				lvar.set(var);
+				return var;
 			}
 		}
+		
+		vars.add(var);
 		
 		return var;
 	}
@@ -134,6 +133,55 @@ public class Stack
 	public int numFunctions()
 	{
 		return funcs.size();
+	}
+	
+	// Note: only exports variables at the present.
+	public Bits toBits()
+	{
+		Bits bits = new Bits();
+		bits.writeSize(vars.size());
+		for (int i = 0; i < vars.size(); i++)
+		{
+			Variable var = vars.get(i);
+			bits.writeString(var.getName());
+			bits.write(var.toBits());
+		}
+		return bits;
+	}
+	
+	public Bits toBits(StringTable table, boolean create)
+	{
+		Bits bits = new Bits();
+		bits.writeSize(vars.size());
+		for (int i = 0; i < vars.size(); i++)
+		{
+			Variable var = vars.get(i);
+			bits.write(table.getBits(var.getName(), create));
+			bits.write(var.toBits());
+		}
+		return bits;
+	}
+	
+	public void loadBits(Bits bits)
+	{
+		int size = (int) bits.readSize();
+		for (int i = 0; i < size; i++)
+		{
+			Variable var = new Variable(bits.readString());
+			var.loadBits(bits);
+			add(var);
+		}
+	}
+	
+	public void loadBits(Bits bits, StringTable table)
+	{
+		int size = (int) bits.readSize();
+		for (int i = 0; i < size; i++)
+		{
+			Variable var = new Variable(table.getString(bits));
+			var.loadBits(bits);
+			add(var);
+		}
 	}
 	
 	public Stack()

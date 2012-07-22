@@ -24,6 +24,7 @@ import com.evanreidland.e.graphics.Sprite;
 import com.evanreidland.e.graphics.font;
 import com.evanreidland.e.graphics.generate;
 import com.evanreidland.e.graphics.graphics;
+import com.evanreidland.e.net.network;
 import com.evanreidland.e.phys.Ray;
 import com.evanreidland.e.script.basefunctions;
 import com.evanreidland.e.script.text.Script;
@@ -348,7 +349,7 @@ public class GravityGame extends GameClientBase
 		sharedactions.registerAll();
 		
 		// Note: creates a static reference, GravityClient.global.
-		new GravityClient(this);
+		network.setClient(new GravityClient(this));
 		
 		registerEntities();
 		loadGraphics();

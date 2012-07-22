@@ -10,7 +10,7 @@ EFTP:
 ENet:
   Independant.
 EScript:
-  Independant.
+  ENet.
 Gravity:
   ENet, EScript, GravityEngine.
 GravityClient:

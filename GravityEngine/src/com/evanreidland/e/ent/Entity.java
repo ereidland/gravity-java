@@ -8,10 +8,9 @@ import com.evanreidland.e.action.Actor;
 import com.evanreidland.e.event.Event;
 import com.evanreidland.e.event.ent.EntitySpawnedEvent;
 import com.evanreidland.e.graphics.graphics;
-import com.evanreidland.e.net.Bitable;
 import com.evanreidland.e.net.Bits;
 
-public class Entity extends Actor implements Bitable
+public class Entity extends Actor
 {
 	public static boolean debug = false;
 	public Vector3 pos, vel, angle, angleVel;
@@ -240,7 +239,11 @@ public class Entity extends Actor implements Bitable
 	
 	public Bits toBits()
 	{
-		Bits bits = new Bits();
+		boolean tSpawned = bSpawned;
+		bSpawned = false;
+		Bits bits = super.toBits();
+		bSpawned = tSpawned;
+		
 		bits.writeBit(bStatic);
 		bits.write(pos.toBits());
 		bits.write(angle.toBits());
@@ -251,10 +254,6 @@ public class Entity extends Actor implements Bitable
 		}
 		bits.writeDouble(mass);
 		bits.writeDouble(radius);
-		boolean tSpawned = bSpawned;
-		bSpawned = false;
-		bits.write(flags.toBits(eflags.table, false));
-		bSpawned = tSpawned;
 		
 		return bits;
 	}
@@ -283,6 +282,7 @@ public class Entity extends Actor implements Bitable
 	
 	public void loadBits(Bits bits)
 	{
+		super.loadBits(bits);
 		bStatic = bits.readBit();
 		pos.setAs(Vector3.fromBits(bits));
 		angle.setAs(Vector3.fromBits(bits));
@@ -293,8 +293,6 @@ public class Entity extends Actor implements Bitable
 		}
 		mass = bits.readDouble();
 		radius = bits.readDouble();
-		
-		flags.setFromBits(bits, eflags.table);
 	}
 	
 	public Entity(String className, long id)

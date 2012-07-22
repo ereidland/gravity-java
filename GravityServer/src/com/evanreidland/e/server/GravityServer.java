@@ -15,10 +15,10 @@ import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.event.ent.EntityDestroyedEvent;
 import com.evanreidland.e.event.ent.EntitySpawnedEvent;
 import com.evanreidland.e.net.Bits;
+import com.evanreidland.e.net.MessageCode;
 import com.evanreidland.e.net.TCPPacket;
 import com.evanreidland.e.net.TCPServer;
 import com.evanreidland.e.shared.Player;
-import com.evanreidland.e.shared.enums.MessageCode;
 
 public class GravityServer extends TCPServer implements ActionListener
 {

@@ -306,7 +306,7 @@ public class Flags implements Bitable
 		}
 	}
 	
-	public void setFromBits(Bits bits, StringTable ref)
+	public void loadBits(Bits bits, StringTable ref)
 	{
 		short count = bits.readShort();
 		for (int i = 0; i < count; i++)

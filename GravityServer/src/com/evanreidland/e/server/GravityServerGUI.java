@@ -20,6 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 
 import com.evanreidland.e.commands.enginescript;
+import com.evanreidland.e.net.network;
 import com.evanreidland.e.script.basefunctions;
 import com.evanreidland.e.script.text.Script;
 
@@ -103,7 +104,7 @@ public class GravityServerGUI extends JPanel implements Runnable,
 		enginescript.registerAll(script.env);
 		basefunctions.registerAll(script.env);
 		
-		new GravityServer();
+		network.setServer(new GravityServer());
 		
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

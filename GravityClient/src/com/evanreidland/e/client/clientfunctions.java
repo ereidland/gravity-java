@@ -1,10 +1,10 @@
 package com.evanreidland.e.client;
 
 import com.evanreidland.e.net.Bits;
+import com.evanreidland.e.net.MessageCode;
 import com.evanreidland.e.script.Function;
 import com.evanreidland.e.script.Stack;
 import com.evanreidland.e.script.Value;
-import com.evanreidland.e.shared.enums.MessageCode;
 
 public class clientfunctions
 {

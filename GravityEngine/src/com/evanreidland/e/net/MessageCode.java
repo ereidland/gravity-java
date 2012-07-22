@@ -1,4 +1,4 @@
-package com.evanreidland.e.shared.enums;
+package com.evanreidland.e.net;
 
 public enum MessageCode
 {
@@ -7,6 +7,8 @@ public enum MessageCode
 	ENT_UPDATE(), // Update entity position and velocity.
 	ENT_UPDATETHRUST(), // Update entity thrust.
 	ENT_TARGET(), // Sent bits directly to an entity. Currently unimplemented.
+	ENT_SET_VAR(), // Set a networked variable for an entity.
+	ENT_SET_STACK(), // Set a stack for an entity. Does not clear before adding.
 	SELECT_SHIP(), // Select a player's ship.
 	MESSAGE(), // Chat message.
 	ACT_START(), // Started action.

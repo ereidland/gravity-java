@@ -11,11 +11,11 @@ import com.evanreidland.e.client.ent.ClientShip;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.net.Bits;
+import com.evanreidland.e.net.MessageCode;
 import com.evanreidland.e.net.StringTable;
 import com.evanreidland.e.net.TCPClient;
 import com.evanreidland.e.net.TCPEvent;
 import com.evanreidland.e.net.TCPPacket;
-import com.evanreidland.e.shared.enums.MessageCode;
 
 public class GravityClient extends TCPClient
 {
@@ -124,7 +124,6 @@ public class GravityClient extends TCPClient
 						if (ent != null && action != null)
 						{
 							action.loadBits(data);
-							engine.Log("Started action: " + action.getName());
 							act.Start(ent, action);
 						}
 						break;
