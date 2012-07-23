@@ -2,6 +2,8 @@ package com.evanreidland.e.server.ent;
 
 import com.evanreidland.e.Flags;
 import com.evanreidland.e.Game;
+import com.evanreidland.e.ent.SearchData;
+import com.evanreidland.e.ent.ents;
 
 public class ServerLaser extends ServerEntity
 {
@@ -14,13 +16,22 @@ public class ServerLaser extends ServerEntity
 		{
 			Kill();
 		}
+		else
+		{
+			SearchData data = ents.list.findNearest(pos, radius, new Flags(
+					"player targetable"));
+			if (data.isPositive)
+			{
+				Kill();
+			}
+		}
 	}
 	
 	public ServerLaser(long id)
 	{
 		super("laser", id);
 		deathTime = Game.getTime() + 2000;
-		radius = 0.005;
+		radius = 0.05;
 		flags.add(new Flags("enemy laser"));
 	}
 }
