@@ -166,8 +166,15 @@ public class Script
 							f = env.getFunction(newSplit[0].toLowerCase());
 							stack = fromArgs(newSplit);
 						}
+						else
+						{
+							return new Value();
+						}
 					}
-					return new Value();
+					else
+					{
+						return new Value();
+					}
 				}
 				else
 				{
