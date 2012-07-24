@@ -147,13 +147,16 @@ public class Script
 			
 			Stack stack;
 			Function f;
-			if (split[0].charAt(0) == '?')
+			
+			if (split[0].charAt(0) == '?' || split[0].charAt(0) == '!')
 			{
 				if (split[0].length() > 1)
 				{
+					char c = split[0].charAt(0);
 					split[0] = split[0].substring(1, split.length);
 					Variable var = env.get(split[0]);
-					if (var.toBool())
+					if ((c == '?' && var.toBool())
+							|| (c == '!' && !var.toBool()))
 					{
 						if (split.length > 1)
 						{
