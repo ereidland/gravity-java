@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -39,6 +40,43 @@ public class Downloader
 	}
 	
 	public DownloadInfo Download()
+	{
+		DownloadInfo info = new DownloadInfo();
+		try
+		{
+			try
+			{
+				new File(to.substring(0, to.lastIndexOf('/'))).mkdir();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			
+			InputStream fis = new URL(from).openStream();
+			FileOutputStream dest = new FileOutputStream(to);
+			int count = 0;
+			byte[] bytes = new byte[1024];
+			while ((count = fis.read(bytes)) > 0)
+			{
+				info.totalSize += count;
+				dest.write(bytes, 0, count);
+			}
+			
+			fis.close();
+			dest.close();
+			
+			info.success = true;
+			info.entryNames.add(to);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return info;
+	}
+	
+	public DownloadInfo downloadZip()
 	{
 		DownloadInfo info = new DownloadInfo();
 		try

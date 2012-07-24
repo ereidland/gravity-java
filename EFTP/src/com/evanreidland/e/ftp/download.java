@@ -24,7 +24,7 @@ public class download
 			for (int i = 0; i < items.length; i++)
 			{
 				Downloader d = download.newDownloader(items[i], baseOutput);
-				d.Download();
+				d.downloadZip();
 				d.onFinish(((float) i + 1) / (float) (items.length));
 			}
 		}
@@ -108,6 +108,17 @@ public class download
 	}
 	
 	public static DownloadInfo Extract(String address, String output)
+	{
+		DownloadInfo info = new DownloadInfo();
+		Downloader d = newDownloader(address, output);
+		if (d != null)
+		{
+			info = d.downloadZip();
+		}
+		return info;
+	}
+	
+	public static DownloadInfo File(String address, String output)
 	{
 		DownloadInfo info = new DownloadInfo();
 		Downloader d = newDownloader(address, output);

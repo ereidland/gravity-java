@@ -36,22 +36,52 @@ public class launcherfunctions
 	private static class DownloadThread implements Runnable
 	{
 		private String addr, to;
+		private boolean isZip;
 		
 		public void run()
 		{
-			DownloadInfo info = lastDownload = download.Extract(addr, to);
+			DownloadInfo info = lastDownload = isZip ? download.Extract(addr,
+					to) : download.File(addr, to);
 			GravityLauncherGUI.logger.log(info.success ? Level.INFO
 					: Level.WARNING, info.success ? "Success! " : "Failure.");
 			GravityLauncherGUI.Log(info.totalSize + " bytes extracted with "
 					+ info.entryNames.size() + " entries.");
 		}
 		
-		public DownloadThread(String addr, String to)
+		public DownloadThread(String addr, String to, boolean isZip)
 		{
 			this.addr = addr;
 			this.to = to;
+			this.isZip = isZip;
 		}
 		
+	}
+	
+	public static class DownloadZip extends Function
+	{
+		public Value Call(Stack args)
+		{
+			if (args.size() > 0)
+			{
+				String to = args.context.get("path").toString();
+				if (to.isEmpty())
+					to = "./downloads/";
+				String addr = args.at(0).toString();
+				new Thread(new DownloadThread(addr, to, true)).start();
+				return new Value("Downloading from \"" + addr + "\" to \"" + to
+						+ "\"...");
+			}
+			else
+			{
+				return new Value(
+						"Not enough arguments. Format: download <source (zip)>");
+			}
+		}
+		
+		public DownloadZip()
+		{
+			super("dl.zip");
+		}
 	}
 	
 	public static class Download extends Function
@@ -63,21 +93,24 @@ public class launcherfunctions
 				String to = args.context.get("path").toString();
 				if (to.isEmpty())
 					to = "./downloads/";
+				else if (!to.endsWith("/"))
+					to += "/";
 				String addr = args.at(0).toString();
-				new Thread(new DownloadThread(addr, to)).start();
+				to += addr.substring(addr.lastIndexOf('/') + 1, addr.length());
+				new Thread(new DownloadThread(addr, to, false)).start();
 				return new Value("Downloading from \"" + addr + "\" to \"" + to
 						+ "\"...");
 			}
 			else
 			{
 				return new Value(
-						"Not enough arguments. Format: download <source (zip)>");
+						"Not enough arguments. Format: download <source>");
 			}
 		}
 		
 		public Download()
 		{
-			super("dl.zip");
+			super("dl");
 		}
 	}
 	

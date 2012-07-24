@@ -1,0 +1,18 @@
+set reqbase http://dl.evtr.net/gravity/
+set binzip @reqbase
+?windows + @binzip windows
+?mac + @binzip mac
+?linux + @binzip linux
++ @binzip _bin.zip
+dl.zip @binzip
+
+set target @reqbase
++ @target lwjgl.jar
+dl @target
+
+set target @reqbase
++ @target lwjgl_util.jar
+dl @target
+
+dl.zip https://github.com/ereidland/gravity/zipball/development
+dl.build
