@@ -144,8 +144,42 @@ public class Script
 		String[] split = Split(line);
 		if (split.length > 0)
 		{
-			Stack stack = fromArgs(split);
-			Function f = env.getFunction(split[0].toLowerCase());
+			
+			Stack stack;
+			Function f;
+			if (split[0].charAt(0) == '?')
+			{
+				if (split[0].length() > 1)
+				{
+					split[0] = split[0].substring(1, split.length);
+					Variable var = env.get(split[0]);
+					if (var.toBool())
+					{
+						if (split.length > 1)
+						{
+							String[] newSplit = new String[split.length - 1];
+							for (int i = 0; i < newSplit.length; i++)
+							{
+								newSplit[i] = split[i + 1];
+							}
+							
+							f = env.getFunction(newSplit[0].toLowerCase());
+							stack = fromArgs(newSplit);
+						}
+					}
+					return new Value();
+				}
+				else
+				{
+					return new Value(
+							"Error: boolean check did not contain a variable.");
+				}
+			}
+			else
+			{
+				f = env.getFunction(split[0].toLowerCase());
+				stack = fromArgs(split);
+			}
 			
 			if (f.getName() != "_null")
 			{

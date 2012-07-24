@@ -124,8 +124,8 @@ public class Value implements Bitable
 			return def;
 		String str = toString().toLowerCase();
 		int in = toInt(-1);
-		return (in == 1 || in == 0)
-				|| (str.equals("true") || str.equals("false")) || def;
+		return (in == 1 || str.equals("true")) ? true : (in == 0 || str
+				.equals("false")) ? false : def;
 	}
 	
 	public boolean toBool()
