@@ -14,5 +14,19 @@ set target @reqbase
 + @target lwjgl_util.jar
 dl @target
 
-dl.zip https://github.com/ereidland/gravity/zipball/development
-dl.build
+dl.zip https://github.com/ereidland/gravity/zipball/launcher
+
+project.new Gravity
+project.+dl
+
+set target @path
++ @target /lwjgl.jar
+project.+lib @target
+
+set target @path
++ @target /lwjgl_util.jar
+project.+lib @target
+
+project.-src GravityLauncher
+
+project.build

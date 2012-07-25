@@ -2,7 +2,6 @@ package com.evanreidland.e.launcher;
 
 import java.util.logging.Level;
 
-import com.evanreidland.e.builder.Project;
 import com.evanreidland.e.ftp.DownloadInfo;
 import com.evanreidland.e.ftp.download;
 import com.evanreidland.e.script.Function;
@@ -24,7 +23,8 @@ public class launcherfunctions
 				if (tstr.length() > 0)
 					str += tstr + " ";
 			}
-			return new Value(str);
+			GravityLauncherGUI.Log(str);
+			return new Value();
 		}
 		
 		public Print()
@@ -33,7 +33,7 @@ public class launcherfunctions
 		}
 	}
 	
-	private static class DownloadThread implements Runnable
+	private static class DownloadAction implements Runnable
 	{
 		private String addr, to;
 		private boolean isZip;
@@ -48,7 +48,7 @@ public class launcherfunctions
 					+ info.entryNames.size() + " entries.");
 		}
 		
-		public DownloadThread(String addr, String to, boolean isZip)
+		public DownloadAction(String addr, String to, boolean isZip)
 		{
 			this.addr = addr;
 			this.to = to;
@@ -67,7 +67,7 @@ public class launcherfunctions
 				if (to.isEmpty())
 					to = "./downloads/";
 				String addr = args.at(0).toString();
-				new Thread(new DownloadThread(addr, to, true)).start();
+				new DownloadAction(addr, to, true).run();
 				return new Value("Downloading from \"" + addr + "\" to \"" + to
 						+ "\"...");
 			}
@@ -97,7 +97,7 @@ public class launcherfunctions
 					to += "/";
 				String addr = args.at(0).toString();
 				to += addr.substring(addr.lastIndexOf('/') + 1, addr.length());
-				new Thread(new DownloadThread(addr, to, false)).start();
+				new DownloadAction(addr, to, false).run();
 				return new Value("Downloading from \"" + addr + "\" to \"" + to
 						+ "\"...");
 			}
@@ -114,50 +114,4 @@ public class launcherfunctions
 		}
 	}
 	
-	public static class BuildDownload extends Function
-	{
-		public Value Call(Stack args)
-		{
-			if (lastDownload.success && !lastDownload.entryNames.isEmpty())
-			{
-				GravityLauncherGUI.Log("Setting up to build last download ("
-						+ lastDownload.entryNames.size() + " entries).");
-				
-				Project project = new Project(lastDownload.entryNames.get(0));
-				
-				String to = args.context.get("path").toString();
-				if (to.isEmpty())
-					to = "./build/bin/";
-				
-				if (!to.endsWith("/"))
-					to += "/";
-				
-				GravityLauncherGUI.Log("Output directory: " + to);
-				
-				for (int i = 0; i < lastDownload.entryNames.size(); i++)
-				{
-					String entry = lastDownload.entryNames.get(i);
-					if (entry.endsWith(".java"))
-					{
-						GravityLauncherGUI.Log("Added " + entry);
-						project.add(to + entry);
-					}
-				}
-				
-				project.buildClasses(to);
-				
-				return new Value("Done!");
-			}
-			else
-			{
-				return new Value(
-						"Error: Could not build because the last download was unsuccessful.");
-			}
-		}
-		
-		public BuildDownload()
-		{
-			super("dl.build");
-		}
-	}
 }

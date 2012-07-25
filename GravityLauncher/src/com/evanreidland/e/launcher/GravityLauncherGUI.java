@@ -68,16 +68,31 @@ public class GravityLauncherGUI extends JPanel implements ActionListener
 	private JScrollPane logScroll;
 	private JTextField consoleLine;
 	
+	private class ExecuteScript implements Runnable
+	{
+		private String line;
+		
+		public void run()
+		{
+			String res = script.Execute(line).toString();
+			if (res.length() > 0)
+				Log("<-" + res);
+			
+			logArea.setCaretPosition(logArea.getDocument().getLength());
+		}
+		
+		public ExecuteScript(String line)
+		{
+			this.line = line;
+		}
+	}
+	
 	public void actionPerformed(ActionEvent evt)
 	{
 		String text = consoleLine.getText();
 		consoleLine.setText("");
 		Log("->" + text);
-		String res = script.Execute(text).toString();
-		if (res.length() > 0)
-			Log("<-" + res);
-		
-		logArea.setCaretPosition(logArea.getDocument().getLength());
+		new Thread(new ExecuteScript(text)).start();
 	}
 	
 	public void startup()
@@ -89,6 +104,7 @@ public class GravityLauncherGUI extends JPanel implements ActionListener
 		basefunctions.printFunction = new launcherfunctions.Print();
 		basefunctions.registerAll(script.env);
 		script.env.registerFunctions(launcherfunctions.class, true);
+		script.env.registerFunctions(Project.class, true);
 		script.env.add(new Variable("path", Project.defaultDirectory()
 				+ "/.egravity/downloads"));
 		
