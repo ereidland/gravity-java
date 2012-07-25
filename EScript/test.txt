@@ -1,0 +1,4 @@
+print Hello, world.
+set var 1
++ @var 1
+print Bye.
