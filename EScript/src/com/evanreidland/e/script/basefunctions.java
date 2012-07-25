@@ -1,13 +1,19 @@
 package com.evanreidland.e.script;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Vector;
 
 import com.evanreidland.e.script.Value.Type;
+import com.evanreidland.e.script.text.Script;
 
 public class basefunctions
 {
 	public static Function printFunction = new Print();
-
+	
 	public static class Add extends Function
 	{
 		public Value Call(Stack args)
@@ -46,13 +52,13 @@ public class basefunctions
 			}
 			return new Value();
 		}
-
+		
 		public Add()
 		{
 			super("+");
 		}
 	}
-
+	
 	public static class Subtract extends Function
 	{
 		public Value Call(Stack args)
@@ -91,13 +97,13 @@ public class basefunctions
 			}
 			return new Value();
 		}
-
+		
 		public Subtract()
 		{
 			super("-");
 		}
 	}
-
+	
 	public static class Divide extends Function
 	{
 		public Value Call(Stack args)
@@ -161,13 +167,13 @@ public class basefunctions
 			}
 			return new Value();
 		}
-
+		
 		public Divide()
 		{
 			super("/");
 		}
 	}
-
+	
 	public static class Multiply extends Function
 	{
 		public Value Call(Stack args)
@@ -206,13 +212,13 @@ public class basefunctions
 			}
 			return new Value();
 		}
-
+		
 		public Multiply()
 		{
 			super("*");
 		}
 	}
-
+	
 	public static class Pow extends Function
 	{
 		public Value Call(Stack args)
@@ -252,13 +258,13 @@ public class basefunctions
 			}
 			return new Value();
 		}
-
+		
 		public Pow()
 		{
 			super("^");
 		}
 	}
-
+	
 	public static class Print extends Function
 	{
 		public Value Call(Stack args)
@@ -270,13 +276,13 @@ public class basefunctions
 			System.out.println();
 			return new Value();
 		}
-
+		
 		public Print()
 		{
 			super("print");
 		}
 	}
-
+	
 	public static class Set extends Function
 	{
 		public Value Call(Stack args)
@@ -309,29 +315,29 @@ public class basefunctions
 			}
 			return new Value();
 		}
-
+		
 		public Set()
 		{
 			super("set");
 		}
 	}
-
+	
 	public static class CallOther extends Function
 	{
 		public Function func;
-
+		
 		public Value Call(Stack args)
 		{
 			return func.Call(args);
 		}
-
+		
 		public CallOther(String name, Function func)
 		{
 			super(name);
 			this.func = func;
 		}
 	}
-
+	
 	public static class Help extends Function
 	{
 		public Value Call(Stack args)
@@ -344,13 +350,13 @@ public class basefunctions
 			}
 			return new Value();
 		}
-
+		
 		public Help()
 		{
 			super("help");
 		}
 	}
-
+	
 	public static class New extends Function
 	{
 		public Value Call(Stack args)
@@ -366,16 +372,146 @@ public class basefunctions
 			}
 			return new Value();
 		}
-
+		
 		public New()
 		{
 			super("new");
 		}
 	}
-
+	
+	public static class RunFile extends Function
+	{
+		public Value Call(Stack args)
+		{
+			if (args.size() > 0)
+			{
+				try
+				{
+					
+					BufferedReader in = new BufferedReader(new FileReader(args
+							.at(0).toString()));
+					
+					Vector<String> lines = new Vector<String>();
+					String str = "";
+					while ((str = in.readLine()) != null)
+					{
+						if (!str.isEmpty())
+						{
+							lines.add(str);
+						}
+					}
+					
+					for (int i = 0; i < lines.size(); i++)
+					{
+						Stack s = new Stack();
+						s.context = args.context;
+						str = new Script(s.context).Execute(lines.get(i))
+								.toString();
+						if (str.length() > 0)
+						{
+							s.addValue(new Value("f " + str));
+							printFunction.Call(s);
+						}
+					}
+					
+					return new Value("Done executing \""
+							+ args.at(0).toString() + "\"");
+				}
+				catch (FileNotFoundException e)
+				{
+					return new Value("Error: Could not open \""
+							+ args.at(0).toString() + "\"");
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+					return new Value("Error running \"" + args.at(0).toString()
+							+ "\": " + e.getMessage());
+				}
+			}
+			else
+			{
+				return new Value(
+						"Not enough arguments! Format: run.file <file>");
+			}
+		}
+		
+		public RunFile()
+		{
+			super("run.file");
+		}
+	}
+	
+	public static class RunRemote extends Function
+	{
+		public Value Call(Stack args)
+		{
+			if (args.size() > 0)
+			{
+				try
+				{
+					String addr = args.at(0).toString();
+					if (!addr.startsWith("http://")
+							&& !addr.startsWith("https://"))
+						addr = "http://" + addr;
+					
+					BufferedReader in = new BufferedReader(
+							new InputStreamReader(new URL(addr).openStream()));
+					
+					Vector<String> lines = new Vector<String>();
+					String str = "";
+					
+					while ((str = in.readLine()) != null)
+					{
+						if (!str.isEmpty())
+						{
+							lines.add(str);
+						}
+					}
+					
+					for (int i = 0; i < lines.size(); i++)
+					{
+						Stack s = new Stack();
+						s.context = args.context;
+						str = new Script(s.context).Execute(lines.get(i))
+								.toString();
+						if (str.length() > 0)
+						{
+							s.addValue(new Value("f " + str));
+							printFunction.Call(s);
+						}
+					}
+					
+					return new Value("Done executing \"" + addr + "\"");
+				}
+				catch (FileNotFoundException e)
+				{
+					return new Value("Error: Could not open \""
+							+ args.at(0).toString() + "\"");
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+					return new Value("Error running \"" + args.at(0).toString()
+							+ "\": " + e.getMessage());
+				}
+			}
+			else
+			{
+				return new Value(
+						"Not enough arguments! Format: run.remote <url>");
+			}
+		}
+		
+		public RunRemote()
+		{
+			super("run.remote");
+		}
+	}
+	
 	private static Vector<String> functionLines = new Vector<String>();
 	private static String functionName = "";
-
+	
 	public static class Begin extends Function
 	{
 		public Value Call(Stack args)
@@ -383,13 +519,13 @@ public class basefunctions
 			functionName = args.at(0).toString();
 			return new Value();
 		}
-
+		
 		public Begin()
 		{
 			super("begin");
 		}
 	}
-
+	
 	public static class Write extends Function
 	{
 		public Value Call(Stack args)
@@ -405,13 +541,13 @@ public class basefunctions
 			}
 			return new Value("Line: " + str);
 		}
-
+		
 		public Write()
 		{
 			super("write");
 		}
 	}
-
+	
 	public static class End extends Function
 	{
 		public Value Call(Stack args)
@@ -427,13 +563,13 @@ public class basefunctions
 			functionName = "";
 			return new Value(str);
 		}
-
+		
 		public End()
 		{
 			super("end");
 		}
 	}
-
+	
 	public static void registerAll(Stack env)
 	{
 		env.addFunction(new Multiply());
@@ -441,27 +577,27 @@ public class basefunctions
 		env.addFunction(new Add());
 		env.addFunction(new Subtract());
 		env.addFunction(new Pow());
-
+		
 		env.addFunction(new CallOther("multiply", new Multiply()));
 		env.addFunction(new CallOther("divide", new Divide()));
 		env.addFunction(new CallOther("add", new Add()));
 		env.addFunction(new CallOther("subtract", new Subtract()));
 		env.addFunction(new CallOther("^", new Pow()));
-
+		
 		env.addFunction(new Set());
 		env.addFunction(new New());
 		env.addFunction(printFunction);
-
+		
 		env.addFunction(new CallOther("=", new Set()));
 		env.addFunction(new CallOther(">>", new Set()));
 		env.addFunction(new CallOther("<<", printFunction));
-
+		
 		env.addFunction(new Begin());
 		env.addFunction(new Write());
 		env.addFunction(new End());
-
+		
 		env.addFunction(new Help());
-
+		
 		env.add(new Variable.Constant("pi", new Value((double) Math.PI)));
 		env.add(new Variable("", 0d)); // Referenced by "@".
 	}
