@@ -592,6 +592,9 @@ public class basefunctions
 		env.addFunction(new CallOther(">>", new Set()));
 		env.addFunction(new CallOther("<<", printFunction));
 		
+		env.addFunction(new RunFile());
+		env.addFunction(new RunRemote());
+		
 		env.addFunction(new Begin());
 		env.addFunction(new Write());
 		env.addFunction(new End());
