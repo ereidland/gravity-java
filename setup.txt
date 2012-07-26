@@ -1,5 +1,7 @@
 set reqbase http://dl.evtr.net/gravity/
 set binzip @reqbase
+
+print OS: @os
 ?windows + @binzip windows
 ?mac + @binzip mac
 ?linux + @binzip linux
@@ -26,6 +28,7 @@ project.+lib @target
 set target @path
 + @target /lwjgl_util.jar
 project.+lib @target
+
 
 project.-src GravityLauncher
 

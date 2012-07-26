@@ -6,6 +6,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -21,6 +24,7 @@ import javax.swing.border.BevelBorder;
 
 import com.evanreidland.e.builder.Project;
 import com.evanreidland.e.ftp.download;
+import com.evanreidland.e.script.Value;
 import com.evanreidland.e.script.Variable;
 import com.evanreidland.e.script.basefunctions;
 import com.evanreidland.e.script.text.Script;
@@ -30,6 +34,18 @@ public class GravityLauncherGUI extends JPanel implements ActionListener
 	public static Logger logger = Logger.getLogger("com.evanreidland.e");
 	
 	public Script script;
+	
+	private class OutputStreamLogger extends ByteArrayOutputStream
+	{
+		public void flush() throws IOException
+		{
+			super.flush();
+			String item = this.toString();
+			super.reset();
+			if (!item.isEmpty())
+				logger.log(Level.INFO, item);
+		}
+	}
 	
 	private class LogManager extends Handler
 	{
@@ -43,9 +59,6 @@ public class GravityLauncherGUI extends JPanel implements ActionListener
 		
 		public void publish(LogRecord record)
 		{
-			String str = "[" + record.getLevel().toString() + "]: "
-					+ record.getMessage();
-			System.out.println(str);
 			logArea.append((record.getLevel() != Level.INFO ? "["
 					+ record.getLevel().toString() + "]: " : "")
 					+ (record.getMessage() + "\n"));
@@ -98,7 +111,7 @@ public class GravityLauncherGUI extends JPanel implements ActionListener
 	public void startup()
 	{
 		logger.addHandler(new LogManager());
-		
+		System.setOut(new PrintStream(new OutputStreamLogger(), true));
 		script = new Script();
 		
 		basefunctions.printFunction = new launcherfunctions.Print();
@@ -155,10 +168,27 @@ public class GravityLauncherGUI extends JPanel implements ActionListener
 		c.weightx = c.weighty = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		
+		String OS = System.getProperty("os.name").toUpperCase();
+		script.env.add(new Variable.Constant("os", new Value(OS)));
+		if (OS.contains("WIN"))
+		{
+			script.env.add(new Variable.Constant("windows", new Value(1)));
+			Log("Set OS to Windows.");
+		}
+		else if (OS.contains("MAC"))
+		{
+			script.env.add(new Variable.Constant("mac", new Value(1)));
+			Log("Set OS to Mac.");
+		}
+		else if (OS.contains("NUX"))
+		{
+			script.env.add(new Variable.Constant("linux", new Value(1)));
+			Log("Set OS to Linux.");
+		}
+		
 		frame.setVisible(true);
 		
 		consoleLine.requestFocus();
-		
 		frame.pack();
 	}
 	

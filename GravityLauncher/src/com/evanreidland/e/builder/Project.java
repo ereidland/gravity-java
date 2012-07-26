@@ -1,10 +1,12 @@
 package com.evanreidland.e.builder;
 
-import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 
 import com.evanreidland.e.ftp.DownloadInfo;
 import com.evanreidland.e.launcher.GravityLauncherGUI;
@@ -115,17 +117,27 @@ public class Project
 		// classpath, it causes the builder to just not run.
 		for (int i = 0; i < classPaths.size(); i++)
 		{
-			args[p] += classPaths.get(i)
-					+ (i < classPaths.size() - 1 ? ";" : "");
+			args[p] += classPaths.get(i);
 		}
 		
-		GravityLauncherGUI.Log(args[p]);
+		// args[p] += ".";
+		
+		GravityLauncherGUI.Log("Args:");
+		
+		for (int i = 0; i < args.length; i++)
+		{
+			GravityLauncherGUI.Log("\\" + args[i]);
+		}
 		try
 		{
 			GravityLauncherGUI.Log("Building " + args.length + " files.");
-			com.sun.tools.javac.Main.compile(args, new PrintWriter(
-					new FileWriter(outputFolder + "/buildlog.txt")));
-			return true;
+			JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
+			
+			return javac.run(System.in, System.out, System.out, args) == 0;
+			
+			// com.sun.tools.javac.Main.compile(args, new PrintWriter(
+			// new FileWriter(outputFolder + "/buildlog.txt")));
+			// return true.
 		}
 		catch (Exception e)
 		{
@@ -332,8 +344,9 @@ public class Project
 				if (!to.endsWith("/"))
 					to += "/";
 				
-				selectedProject.buildClasses(to);
-				return new Value("Built project \"" + selectedProject.getName()
+				boolean built = selectedProject.buildClasses(to);
+				return new Value((built ? "Built" : "Failed to build")
+						+ " project \"" + selectedProject.getName()
 						+ "\" to \"" + to + "\".");
 			}
 			else
