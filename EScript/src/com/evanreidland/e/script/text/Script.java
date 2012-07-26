@@ -148,12 +148,14 @@ public class Script
 			Stack stack;
 			Function f;
 			
+			String targetfname = split[0];
+			
 			if (split[0].charAt(0) == '?' || split[0].charAt(0) == '!')
 			{
 				if (split[0].length() > 1)
 				{
 					char c = split[0].charAt(0);
-					split[0] = split[0].substring(1, split.length);
+					split[0] = split[0].substring(1, split[0].length());
 					Variable var = env.get(split[0]);
 					if ((c == '?' && var.toBool())
 							|| (c == '!' && !var.toBool()))
@@ -166,7 +168,9 @@ public class Script
 								newSplit[i] = split[i + 1];
 							}
 							
-							f = env.getFunction(newSplit[0].toLowerCase());
+							targetfname = newSplit[0].toLowerCase();
+							
+							f = env.getFunction(targetfname);
 							stack = fromArgs(newSplit);
 						}
 						else
@@ -187,7 +191,7 @@ public class Script
 			}
 			else
 			{
-				f = env.getFunction(split[0].toLowerCase());
+				f = env.getFunction(targetfname);
 				stack = fromArgs(split);
 			}
 			
@@ -197,8 +201,8 @@ public class Script
 			}
 			else
 			{
-				return new Value("Error: Function not found, \""
-						+ split[0].toLowerCase() + "\".");
+				return new Value("Error: Function not found, \"" + targetfname
+						+ "\".");
 			}
 		}
 		return new Value();
