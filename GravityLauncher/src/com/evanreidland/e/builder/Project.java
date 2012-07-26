@@ -117,7 +117,7 @@ public class Project
 		// classpath, it causes the builder to just not run.
 		for (int i = 0; i < classPaths.size(); i++)
 		{
-			args[p] += classPaths.get(i);
+			args[p] += classPaths.get(i) + ";";
 		}
 		
 		// args[p] += ".";
