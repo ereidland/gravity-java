@@ -114,4 +114,32 @@ public class launcherfunctions
 		}
 	}
 	
+	public static class DownloadKeep extends Function
+	{
+		public Value Call(Stack args)
+		{
+			download.deleteOnExit = false;
+			return new Value("Keeping downloads.");
+		}
+		
+		public DownloadKeep()
+		{
+			super("dl.keep");
+		}
+	}
+	
+	public static class DownloadTemp extends Function
+	{
+		public Value Call(Stack args)
+		{
+			download.deleteOnExit = true;
+			return new Value("Deleting downloads after exit.");
+		}
+		
+		public DownloadTemp()
+		{
+			super("dl.temp");
+		}
+	}
+	
 }

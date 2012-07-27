@@ -1,9 +1,14 @@
 package com.evanreidland.e.builder;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.Vector;
+import java.util.jar.JarOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -145,6 +150,62 @@ public class Project
 		}
 		
 		return false;
+	}
+	
+	// Note: This assumes the class files were put into a src/ folder.
+	public static boolean buildJar(String dir, String outputFile)
+	{
+		try
+		{
+			dir = dir.replace('\\', '/');
+			if (!dir.endsWith("/"))
+				dir += "/";
+			JarOutputStream jar = new JarOutputStream(new FileOutputStream(
+					outputFile));
+			writeToJar(jar, new File(dir).listFiles());
+			jar.close();
+			return true;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+	
+	private static void writeToJar(JarOutputStream jar, File[] dir)
+			throws Exception
+	{
+		byte[] buff = new byte[1024];
+		for (int i = 0; i < dir.length; i++)
+		{
+			if (dir[i].isFile() && dir[i].getName().endsWith(".class"))
+			{
+				dir[i].deleteOnExit();
+				String item = dir[i].getCanonicalPath().replace('\\', '/');
+				int end = item.lastIndexOf("src/");
+				if (end >= 0)
+				{
+					item = item.substring(end + 4, item.length());
+					System.out.println("Class: " + item);
+					jar.putNextEntry(new ZipEntry(item));
+					FileInputStream in = new FileInputStream(dir[i]);
+					while ((end = in.read(buff)) > 0)
+					{
+						jar.write(buff, 0, end);
+					}
+				}
+			}
+			else if (dir[i].isDirectory())
+			{
+				if (!dir[i].getName().equals("bin"))
+				{
+					dir[i].deleteOnExit();
+				}
+				writeToJar(jar, dir[i].listFiles());
+			}
+		}
 	}
 	
 	public Project(String name)
@@ -359,6 +420,43 @@ public class Project
 		public ProjectBuild()
 		{
 			super("project.build");
+		}
+	}
+	
+	public static class ProjectJar extends Function
+	{
+		public Value Call(Stack args)
+		{
+			if (args.size() > 0)
+			{
+				String to = "";
+				if (args.size() > 1)
+				{
+					to = args.at(1).toString();
+				}
+				else
+				{
+					to = args.context.get("path").toString();
+				}
+				if (to.isEmpty())
+					to = "./build/bin/";
+				
+				if (!to.endsWith("/"))
+					to += "/";
+				
+				System.out.println("Jar file: " + args.at(0).toString());
+				System.out.println("Jar path: " + to);
+				
+				boolean built = Project.buildJar(to, args.at(0).toString());
+				return new Value("Jarred: " + built);
+			}
+			return new Value("Not enough arguments. Format: " + getName()
+					+ " <jar file> " + "<|path to build>");
+		}
+		
+		public ProjectJar()
+		{
+			super("jar");
 		}
 	}
 	

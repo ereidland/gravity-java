@@ -6,6 +6,7 @@ print OS: @os
 ?mac + @binzip mac
 ?linux + @binzip linux
 + @binzip _bin.zip
+dl.keep
 dl.zip @binzip
 
 set target @reqbase
@@ -16,7 +17,9 @@ set target @reqbase
 + @target lwjgl_util.jar
 dl @target
 
+dl.temp
 dl.zip https://github.com/ereidland/gravity/zipball/launcher
+dl.keep
 
 project.new Gravity
 project.+dl
@@ -29,7 +32,10 @@ set target @path
 + @target /lwjgl_util.jar
 project.+lib @target
 
-
 project.-src GravityLauncher
 
 project.build
+
+set target @path
++ @target /gravity.jar
+jar @target @path

@@ -46,15 +46,21 @@ public class Downloader
 		{
 			try
 			{
-				new File(to.substring(0, to.lastIndexOf('/'))).mkdir();
+				File f = new File(to.substring(0, to.lastIndexOf('/')));
+				f.mkdir();
+				if (download.deleteOnExit)
+				{
+					f.deleteOnExit();
+				}
 			}
 			catch (Exception e)
 			{
 				e.printStackTrace();
 			}
 			
+			File out = new File(to);
 			InputStream fis = new URL(from).openStream();
-			FileOutputStream dest = new FileOutputStream(to);
+			FileOutputStream dest = new FileOutputStream(out);
 			int count = 0;
 			byte[] bytes = new byte[1024];
 			while ((count = fis.read(bytes)) > 0)
@@ -68,6 +74,11 @@ public class Downloader
 			
 			info.success = true;
 			info.entryNames.add(to);
+			
+			if (download.deleteOnExit)
+			{
+				out.deleteOnExit();
+			}
 		}
 		catch (Exception e)
 		{
@@ -103,7 +114,10 @@ public class Downloader
 							+ "/"
 							+ entry.getName().substring(0,
 									entry.getName().lastIndexOf('/'));
-					new File(tfname).mkdir();
+					File f = new File(tfname);
+					f.mkdir();
+					if (download.deleteOnExit)
+						f.deleteOnExit();
 				}
 				catch (Exception e)
 				{
@@ -114,8 +128,8 @@ public class Downloader
 				info.totalSize += entry.getSize();
 				if (entry.getSize() > 0)
 				{
-					FileOutputStream fos = new FileOutputStream(to + "/"
-							+ entry.getName());
+					File out = new File(to + "/" + entry.getName());
+					FileOutputStream fos = new FileOutputStream(out);
 					dest = new BufferedOutputStream(fos, BUFFER);
 					while ((count = zis.read(data, 0, BUFFER)) != -1)
 					{
@@ -123,6 +137,9 @@ public class Downloader
 					}
 					dest.flush();
 					dest.close();
+					
+					if (download.deleteOnExit)
+						out.deleteOnExit();
 				}
 			}
 			zis.close();

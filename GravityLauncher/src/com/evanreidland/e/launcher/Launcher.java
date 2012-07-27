@@ -48,6 +48,18 @@ public class Launcher
 		}
 	}
 	
+	public void addDirectoryJars(String dir)
+	{
+		try
+		{
+			addDirectoryJars(new File(dir));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	public void addDirectory(String dir)
 	{
 		try
@@ -71,8 +83,7 @@ public class Launcher
 			for (int i = 0; i < files.length; i++)
 			{
 				if (files[i].isFile()
-						&& (files[i].getName().toLowerCase().endsWith(".class") || files[i]
-								.getName().toLowerCase().endsWith(".jar")))
+						&& (files[i].getName().toLowerCase().endsWith(".class")))
 				{
 					add(files[i].getCanonicalPath());
 				}
@@ -88,9 +99,61 @@ public class Launcher
 		}
 	}
 	
+	public void addDirectoryJars(File file)
+	{
+		try
+		{
+			if (!file.isDirectory())
+				return;
+			
+			File[] files = file.listFiles();
+			for (int i = 0; i < files.length; i++)
+			{
+				if (files[i].isFile()
+						&& (files[i].getName().toLowerCase().endsWith(".jar")))
+				{
+					add(files[i].getCanonicalPath());
+				}
+				else if (files[i].isDirectory())
+				{
+					addDirectoryJars(files[i]);
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	public void addLocalDirectory(String dir)
 	{
 		addDirectory(baseDir + dir);
+	}
+	
+	public void addLocalDirectoryJars(String dir)
+	{
+		addDirectoryJars(baseDir + dir);
+	}
+	
+	private class LaunchThread implements Runnable
+	{
+		public String[] args;
+		
+		public void run()
+		{
+			Launch(args);
+		}
+		
+		public LaunchThread(String[] args)
+		{
+			this.args = args;
+		}
+	}
+	
+	public void launchNewThread(String[] args)
+	{
+		new Thread(new LaunchThread(args)).start();
 	}
 	
 	public void Launch(String[] args)
@@ -102,8 +165,9 @@ public class Launcher
 			for (int i = 0; i < items.size(); i++)
 			{
 				String item = items.get(i);
-				url[i] = new URL("file:" + (item.startsWith("/") ? "/" : "//")
+				url[i] = new URL("file:" + (item.startsWith("/") ? "" : "/")
 						+ item);
+				System.out.println("URL: " + url[i]);
 			}
 			ClassLoader loader = new URLClassLoader(url);
 			
@@ -181,7 +245,7 @@ public class Launcher
 				else
 				{
 					return new Value("Not enough arguments. Format: "
-							+ getName() + " <absolute dir>");
+							+ getName() + " <dir>");
 				}
 			}
 			else
@@ -194,6 +258,37 @@ public class Launcher
 		public LauncherAdd()
 		{
 			super("launcher.+dir");
+		}
+	}
+	
+	public static class LauncherAddJars extends Function
+	{
+		public Value Call(Stack args)
+		{
+			if (selected != null)
+			{
+				if (args.size() > 0)
+				{
+					selected.addDirectoryJars(args.at(0).toString());
+					return new Value("Added jars in directory: "
+							+ args.at(0).toString());
+				}
+				else
+				{
+					return new Value("Not enough arguments. Format: "
+							+ getName() + " <dir>");
+				}
+			}
+			else
+			{
+				return new Value(
+						"Launcher not initialized. Use launcher.new <base directory>");
+			}
+		}
+		
+		public LauncherAddJars()
+		{
+			super("launcher.+jar");
 		}
 	}
 	
@@ -241,7 +336,11 @@ public class Launcher
 					sargs[i] = args.at(i).toString();
 					System.out.println("\\" + sargs[i]);
 				}
-				selected.Launch(sargs);
+				if (args.at(0).toBool())
+					selected.launchNewThread(sargs);
+				else
+					selected.Launch(sargs);
+				GravityLauncherGUI.removeFrame();
 				return new Value("Launched.");
 			}
 			else

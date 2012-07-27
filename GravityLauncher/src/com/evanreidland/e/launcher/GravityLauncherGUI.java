@@ -78,10 +78,16 @@ public class GravityLauncherGUI extends JPanel implements ActionListener
 		logger.log(Level.INFO, str);
 	}
 	
-	private JFrame frame;
+	private static JFrame frame;
 	private JTextArea logArea;
 	private JScrollPane logScroll;
 	private JTextField consoleLine;
+	
+	public static void removeFrame()
+	{
+		// frame.setEnabled(false);
+		frame.setVisible(false);
+	}
 	
 	private class ExecuteScript implements Runnable
 	{

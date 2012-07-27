@@ -8,6 +8,8 @@ public class download
 {
 	private static Class<? extends Downloader> downloaderClass = Downloader.class;
 	
+	public static boolean deleteOnExit = false;
+	
 	public static void setDownloaderClass(
 			Class<? extends Downloader> downloadClass)
 	{
