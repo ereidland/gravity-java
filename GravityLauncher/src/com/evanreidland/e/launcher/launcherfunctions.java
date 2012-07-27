@@ -1,5 +1,8 @@
 package com.evanreidland.e.launcher;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.logging.Level;
 
 import com.evanreidland.e.ftp.DownloadInfo;
@@ -142,4 +145,83 @@ public class launcherfunctions
 		}
 	}
 	
+	private static void Copy(String to, String local, File[] files)
+	{
+		if (files == null)
+			return;
+		byte[] buff = new byte[1024];
+		for (int i = 0; i < files.length; i++)
+		{
+			if (files[i].isFile())
+			{
+				try
+				{
+					String outName = to + files[i].getName(), inName = local
+							+ files[i].getName();
+					new File(outName.substring(0, outName.lastIndexOf('/')))
+							.mkdir();
+					FileOutputStream out = new FileOutputStream(outName);
+					FileInputStream in = new FileInputStream(inName);
+					int len;
+					while ((len = in.read(buff)) > 0)
+					{
+						out.write(buff, 0, len);
+					}
+					in.close();
+					out.close();
+					System.out.println("Copied \"" + inName + "\" to \"" + to
+							+ "\"");
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+					
+					System.out.println("Exception: " + e.toString());
+				}
+			}
+			else if (files[i].isDirectory())
+			{
+				Copy(to + files[i].getName() + "/", local + files[i].getName()
+						+ "/", files[i].listFiles());
+			}
+		}
+	}
+	
+	public static class Copy extends Function
+	{
+		public Value Call(Stack args)
+		{
+			if (args.size() > 0)
+			{
+				String from = args.at(0).toString(), to;
+				if (args.size() > 1)
+					to = args.at(1).toString();
+				else
+					to = args.context.get("path").toString();
+				
+				to = to.replace('\\', '/');
+				if (!to.endsWith("/"))
+					to += "/";
+				
+				from = from.replace('\\', '/');
+				if (!from.endsWith("/"))
+					from += "/";
+				
+				Copy(to, from, new File(from).listFiles());
+				
+				return new Value("Copied from \"" + from + "\" to \"" + to
+						+ "\"");
+			}
+			else
+			{
+				return new Value("Not enough arguments! Format: " + getName()
+						+ " <from> <|to>");
+			}
+		}
+		
+		public Copy()
+		{
+			super("cp");
+		}
+	}
 }

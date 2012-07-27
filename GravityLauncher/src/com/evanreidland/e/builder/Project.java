@@ -19,6 +19,7 @@ import com.evanreidland.e.launcher.launcherfunctions;
 import com.evanreidland.e.script.Function;
 import com.evanreidland.e.script.Stack;
 import com.evanreidland.e.script.Value;
+import com.evanreidland.e.script.Variable;
 
 public class Project
 {
@@ -295,6 +296,15 @@ public class Project
 						to += "/";
 					
 					GravityLauncherGUI.Log("Base directory: " + to);
+					
+					if (lastDownload.entryNames.size() > 0)
+					{
+						System.out.println("Head entry: "
+								+ lastDownload.entryNames.firstElement());
+						
+						args.context.add(new Variable("dl.hentry",
+								lastDownload.entryNames.firstElement()));
+					}
 					
 					for (int i = 0; i < lastDownload.entryNames.size(); i++)
 					{

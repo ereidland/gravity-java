@@ -39,3 +39,9 @@ project.build
 set target @path
 + @target /gravity.jar
 jar @target @path
+
+set target @path
+set target2 @path
++ @target2 /sprites/
++ @target / @dl.hentry sprites/
+cp @target @target2
