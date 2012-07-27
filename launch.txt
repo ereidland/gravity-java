@@ -1,0 +1,4 @@
+launcher.new
+launcher.+dir @path
+launcher.main com.evanreidland.e.client.GravityGame
+launcher.launch

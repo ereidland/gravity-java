@@ -37,12 +37,14 @@ public class GravityLauncherGUI extends JPanel implements ActionListener
 	
 	private class OutputStreamLogger extends ByteArrayOutputStream
 	{
+		public String ls = System.getProperty("line.separator");
+		
 		public void flush() throws IOException
 		{
 			super.flush();
 			String item = this.toString();
 			super.reset();
-			if (!item.isEmpty())
+			if (!item.isEmpty() && !item.equals(ls))
 				logger.log(Level.INFO, item);
 		}
 	}
@@ -118,6 +120,7 @@ public class GravityLauncherGUI extends JPanel implements ActionListener
 		basefunctions.registerAll(script.env);
 		script.env.registerFunctions(launcherfunctions.class, true);
 		script.env.registerFunctions(Project.class, true);
+		script.env.registerFunctions(Launcher.class, true);
 		script.env.add(new Variable("path", Project.defaultDirectory()
 				+ "/.egravity/downloads"));
 		
