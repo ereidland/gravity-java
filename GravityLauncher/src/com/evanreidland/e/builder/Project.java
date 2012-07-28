@@ -10,9 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
-
 import com.evanreidland.e.ftp.DownloadInfo;
 import com.evanreidland.e.launcher.GravityLauncherGUI;
 import com.evanreidland.e.launcher.launcherfunctions;
@@ -137,13 +134,7 @@ public class Project
 		try
 		{
 			GravityLauncherGUI.Log("Building " + args.length + " files.");
-			JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
-			
-			return javac.run(System.in, System.out, System.out, args) == 0;
-			
-			// com.sun.tools.javac.Main.compile(args, new PrintWriter(
-			// new FileWriter(outputFolder + "/buildlog.txt")));
-			// return true.
+			return com.sun.tools.javac.Main.compile(args) == 0;
 		}
 		catch (Exception e)
 		{
