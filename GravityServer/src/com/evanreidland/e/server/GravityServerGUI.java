@@ -6,6 +6,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -31,6 +34,20 @@ public class GravityServerGUI extends JPanel implements Runnable,
 	
 	public Script script;
 	
+	private class OutputStreamLogger extends ByteArrayOutputStream
+	{
+		public String ls = System.getProperty("line.separator");
+		
+		public void flush() throws IOException
+		{
+			super.flush();
+			String item = this.toString();
+			super.reset();
+			if (!item.isEmpty() && !item.equals(ls))
+				logger.log(Level.INFO, item);
+		}
+	}
+	
 	private class LogManager extends Handler
 	{
 		public void close() throws SecurityException
@@ -43,9 +60,6 @@ public class GravityServerGUI extends JPanel implements Runnable,
 		
 		public void publish(LogRecord record)
 		{
-			String str = "[" + record.getLevel().toString() + "]: "
-					+ record.getMessage();
-			System.out.println(str);
 			logArea.append((record.getLevel() != Level.INFO ? "["
 					+ record.getLevel().toString() + "]: " : "")
 					+ (record.getMessage() + "\n"));
@@ -99,6 +113,8 @@ public class GravityServerGUI extends JPanel implements Runnable,
 		logger.addHandler(new LogManager());
 		
 		script = new Script();
+		
+		System.setOut(new PrintStream(new OutputStreamLogger(), true));
 		
 		serverfunctions.registerAll(script.env);
 		enginescript.registerAll(script.env);
