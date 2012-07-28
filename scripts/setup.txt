@@ -21,7 +21,7 @@ dl @target
 
 dl.temp
 set target https://github.com/ereidland/gravity/zipball/
-+ target @branch
++ @target @branch
 dl.zip target
 dl.keep
 
