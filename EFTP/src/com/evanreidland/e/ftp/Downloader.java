@@ -47,7 +47,7 @@ public class Downloader
 			try
 			{
 				File f = new File(to.substring(0, to.lastIndexOf('/')));
-				f.mkdir();
+				f.mkdirs();
 				if (download.deleteOnExit)
 				{
 					f.deleteOnExit();
@@ -96,7 +96,7 @@ public class Downloader
 			BufferedInputStream fis = new BufferedInputStream(
 					new URL(from).openStream());
 			
-			new File(to).mkdir();
+			new File(to).mkdirs();
 			
 			BufferedOutputStream dest = null;
 			ZipInputStream zis = new ZipInputStream(
@@ -115,7 +115,7 @@ public class Downloader
 							+ entry.getName().substring(0,
 									entry.getName().lastIndexOf('/'));
 					File f = new File(tfname);
-					f.mkdir();
+					f.mkdirs();
 					if (download.deleteOnExit)
 						f.deleteOnExit();
 				}

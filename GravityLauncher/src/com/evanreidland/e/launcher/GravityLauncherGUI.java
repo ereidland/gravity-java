@@ -129,6 +129,7 @@ public class GravityLauncherGUI extends JPanel implements ActionListener
 		script.env.registerFunctions(Launcher.class, true);
 		script.env.add(new Variable("path", Project.defaultDirectory()
 				+ "/.egravity"));
+		script.env.add(new Variable("branch", "master"));
 		
 		download.setDownloaderClass(LauncherDownloader.class);
 		

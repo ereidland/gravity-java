@@ -2,4 +2,3 @@ launcher.new
 launcher.+jar @path
 launcher.main com.evanreidland.e.client.GravityGame
 launcher.launch
-

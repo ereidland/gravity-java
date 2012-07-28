@@ -10,6 +10,7 @@ import com.evanreidland.e.ftp.download;
 import com.evanreidland.e.script.Function;
 import com.evanreidland.e.script.Stack;
 import com.evanreidland.e.script.Value;
+import com.evanreidland.e.script.text.Script;
 
 public class launcherfunctions
 {
@@ -159,7 +160,7 @@ public class launcherfunctions
 					String outName = to + files[i].getName(), inName = local
 							+ files[i].getName();
 					new File(outName.substring(0, outName.lastIndexOf('/')))
-							.mkdir();
+							.mkdirs();
 					FileOutputStream out = new FileOutputStream(outName);
 					FileInputStream in = new FileInputStream(inName);
 					int len;
@@ -222,6 +223,89 @@ public class launcherfunctions
 		public Copy()
 		{
 			super("cp");
+		}
+	}
+	
+	public static class MakeGamePath extends Function
+	{
+		public Value Call(Stack args)
+		{
+			String path = args.context.get("path").toString();
+			path = path.replace('\\', '/');
+			new File(path + "/sprites/font/").mkdirs();
+			
+			return new Value("Created directory: " + path);
+		}
+		
+		public MakeGamePath()
+		{
+			super("mkdir-game");
+		}
+	}
+	
+	public static class EasyLaunch extends Function
+	{
+		public Value Call(Stack args)
+		{
+			Script script = new Script(args.context);
+			String[] lines = new String[]
+			{
+					"set temptarget https://raw.github.com/ereidland/gravity/",
+					"+ @temptarget @branch /scripts/setup.txt",
+					"run.remote @temptarget",
+					"set temptarget https://raw.github.com/ereidland/gravity/",
+					"+ @temptarget @branch /scripts/launch.txt",
+					"run.remote @temptarget",
+			};
+			for (int i = 0; i < lines.length; i++)
+			{
+				String str = script.Execute(lines[i].toString()).toString();
+				if (!str.isEmpty())
+					System.out.println(str);
+			}
+			
+			return new Value(":D");
+		}
+		
+		public EasyLaunch()
+		{
+			super("halp");
+		}
+	}
+	
+	public static class RunScript extends Function
+	{
+		public Value Call(Stack args)
+		{
+			if (args.size() > 0)
+			{
+				return new Script(args.context).Execute("run.file "
+						+ args.context.get("path").toString() + "/scripts/"
+						+ args.at(0).toString());
+			}
+			else
+			{
+				return new Value("Not enough arguments. Format: " + getName()
+						+ " <file>");
+			}
+		}
+		
+		public RunScript()
+		{
+			super("run");
+		}
+	}
+	
+	public static class Launch extends Function
+	{
+		public Value Call(Stack args)
+		{
+			return new Script(args.context).Execute("run launch.txt");
+		}
+		
+		public Launch()
+		{
+			super("launch");
 		}
 	}
 }

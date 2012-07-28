@@ -1,3 +1,5 @@
+mkdir-game
+
 set reqbase http://dl.evtr.net/gravity/
 set binzip @reqbase
 
@@ -18,7 +20,9 @@ set target @reqbase
 dl @target
 
 dl.temp
-dl.zip https://github.com/ereidland/gravity/zipball/launcher
+set target https://github.com/ereidland/gravity/zipball/
++ target @branch
+dl.zip target
 dl.keep
 
 project.new Gravity
@@ -44,4 +48,10 @@ set target @path
 set target2 @path
 + @target2 /sprites/
 + @target / @dl.hentry sprites/
+cp @target @target2
+
+set target @path
+set target2 @path
++ @target2 /scripts/
++ @target / @dl.hentry scripts/
 cp @target @target2
