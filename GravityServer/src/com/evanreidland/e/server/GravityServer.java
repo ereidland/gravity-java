@@ -19,6 +19,7 @@ import com.evanreidland.e.net.Bits;
 import com.evanreidland.e.net.MessageCode;
 import com.evanreidland.e.net.TCPPacket;
 import com.evanreidland.e.net.TCPServer;
+import com.evanreidland.e.script.Variable;
 import com.evanreidland.e.shared.Player;
 
 public class GravityServer extends TCPServer implements ActionListener
@@ -233,6 +234,7 @@ public class GravityServer extends TCPServer implements ActionListener
 					return;
 				}
 				Player player = getPlayer(id);
+				Entity ent;
 				switch (code)
 				{
 					case MESSAGE:
@@ -241,9 +243,101 @@ public class GravityServer extends TCPServer implements ActionListener
 						Log(message);
 						broadcastMessage(id, message);
 						break;
+					case ENT_SET_VAR:
+						ent = ents.get(data.readLong());
+						if (ent != null)
+						{
+							Permissions perm = player.permissions.get(
+									ent.getID(), false);
+							if (perm != null)
+							{
+								String varName = data.readString();
+								Variable var = new Variable(varName);
+								var.loadBits(data);
+								
+								if (perm.has("ent_set_allvars")
+										|| perm.has("ent_set_var:"
+												+ var.getName()))
+								{
+									ent.vars.add(var);
+								}
+								else
+								{
+									engine.logger
+											.log(Level.WARNING,
+													"During ENT_SET_VAR: Player "
+															+ id
+															+ " does not have permissions for variable "
+															+ var.getName());
+								}
+							}
+							else
+							{
+								engine.logger
+										.log(Level.WARNING,
+												"During ENT_SET_VAR: Player "
+														+ id
+														+ " does not have permissions for "
+														+ ent.toString());
+							}
+						}
+						else
+						{
+							engine.logger
+									.log(Level.WARNING,
+											"Player "
+													+ id
+													+ " tried to set var for an entity that did not exist!");
+						}
+						break;
+					case ENT_SET_FLAG:
+						ent = ents.get(data.readLong());
+						if (ent != null)
+						{
+							Permissions perm = player.permissions.get(
+									ent.getID(), false);
+							if (perm != null)
+							{
+								String flagName = data.readString();
+								boolean state = data.readBit();
+								
+								if (perm.has("ent_set_allflags")
+										|| perm.has("ent_set_flag:" + flagName))
+								{
+									ent.flags.set(flagName, state);
+								}
+								else
+								{
+									engine.logger
+											.log(Level.WARNING,
+													"During ENT_SET_FLAG: Player "
+															+ id
+															+ " does not have permissions for flag "
+															+ flagName);
+								}
+							}
+							else
+							{
+								engine.logger
+										.log(Level.WARNING,
+												"During ENT_SET_FLAG: Player "
+														+ id
+														+ " does not have permissions for "
+														+ ent.toString());
+							}
+						}
+						else
+						{
+							engine.logger
+									.log(Level.WARNING,
+											"Player "
+													+ id
+													+ " tried to set flag for an entity that did not exist!");
+						}
+						break;
 					case ACT_REQ:
 						long actorID = data.readLong();
-						Entity ent = ents.get(actorID);
+						ent = ents.get(actorID);
 						if (ent != null)
 						{
 							String type = player.getTable().getString(data);

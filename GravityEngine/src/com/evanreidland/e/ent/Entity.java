@@ -310,10 +310,16 @@ public class Entity extends Actor
 		bSpawned = false;
 		bSent = false;
 		
+		vars.addFields(this);
+		vars.addFields(pos, "pos.");
+		vars.addFields(vel, "vel.");
+		vars.addFields(angle, "angle.");
+		
 		flags.addFromObject(this, "bStatic", "static");
 		flags.addFromObject(this, "bDead", "dead");
 		flags.addFromObject(this, "bSpawned", "spawned");
 		flags.addFromObject(this, "bSent", "sent");
+		
 	}
 	
 	public Entity(String className)

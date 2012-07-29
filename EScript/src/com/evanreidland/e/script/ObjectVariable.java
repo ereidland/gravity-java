@@ -273,6 +273,30 @@ public class ObjectVariable extends Variable
 		return this;
 	}
 	
+	public int toInt(int def)
+	{
+		updateObject();
+		return super.toInt(def);
+	}
+	
+	public long toLong(long def)
+	{
+		updateObject();
+		return super.toLong(def);
+	}
+	
+	public double toDouble(double def)
+	{
+		updateObject();
+		return super.toDouble(def);
+	}
+	
+	public String toString()
+	{
+		updateObject();
+		return super.toString();
+	}
+	
 	private ObjectVariable(Object object, Field field, String prefix)
 			throws Exception
 	{
@@ -340,9 +364,9 @@ public class ObjectVariable extends Variable
 			throw new Exception();
 		}
 		
-		System.out.println("Added " + getName() + "/" + getType().toString()
-				+ (altType != AltType.None ? "." + altType.toString() : "")
-				+ "/" + toString());
+		// System.out.println("Added " + getName() + "/" + getType().toString()
+		// + (altType != AltType.None ? "." + altType.toString() : "")
+		// + "/" + toString());
 	}
 	
 	public static ObjectVariable Create(Object object, String name,

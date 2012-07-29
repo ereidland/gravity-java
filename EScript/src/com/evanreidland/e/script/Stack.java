@@ -95,6 +95,19 @@ public class Stack implements Bitable
 		return var;
 	}
 	
+	public Variable remove(String name)
+	{
+		for (int i = 0; i < vars.size(); i++)
+		{
+			Variable lvar = vars.get(i);
+			if (lvar.getName().equals(name))
+			{
+				return vars.remove(i);
+			}
+		}
+		return null;
+	}
+	
 	public Variable addValue(Value v)
 	{
 		Variable var = new Variable("_i" + vars.size(), v);
@@ -255,7 +268,8 @@ public class Stack implements Bitable
 				Variable var = ObjectVariable.Create(object, fields[i], prefix);
 				if (var != null)
 				{
-					add(var);
+					remove(var.getName());
+					vars.add(var);
 				}
 			}
 		}
