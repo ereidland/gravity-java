@@ -116,11 +116,10 @@ public class Project
 		p++;
 		args[p] = "";
 		
-		// TODO fix. Something about this is broken. If there is more than one
-		// classpath, it causes the builder to just not run.
+		String separator = File.separator.charAt(0) == '\\' ? ";" : ":";
 		for (int i = 0; i < classPaths.size(); i++)
 		{
-			args[p] += classPaths.get(i) + ";";
+			args[p] += classPaths.get(i) + separator;
 		}
 		
 		// args[p] += ".";
