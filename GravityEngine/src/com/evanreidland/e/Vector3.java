@@ -527,7 +527,7 @@ public class Vector3 implements Bitable
 	public static double angleDifference(double origin, double other)
 	{
 		double diff = other - origin;
-		if (diff > Math.PI)
+		if (Math.abs(diff) > Math.PI)
 		{
 			if (origin < other)
 			{
