@@ -39,34 +39,6 @@ public class Permissions implements Bitable
 		return set(permission, false);
 	}
 	
-	public void addID(String permission, long id)
-	{
-		Permission perm = permissionsMap.get(permission);
-		if (perm != null)
-		{
-			perm.addID(id);
-		}
-	}
-	
-	public boolean hasID(String permission, long id)
-	{
-		Permission perm = permissionsMap.get(permission);
-		if (perm != null)
-		{
-			return perm.hasID(id);
-		}
-		return false;
-	}
-	
-	public void removeID(String permission, long id)
-	{
-		Permission perm = permissionsMap.get(permission);
-		if (perm != null)
-		{
-			perm.addID(id);
-		}
-	}
-	
 	public Permission get(String permission, boolean create, boolean state)
 	{
 		Permission perm = permissionsMap.get(permission);
@@ -170,5 +142,15 @@ public class Permissions implements Bitable
 		hasIfUndefined = false;
 		permissionsMap = new HashMap<String, Permission>();
 		permissions = new Vector<Permission>();
+	}
+	
+	public Permissions(Permissions other)
+	{
+		this();
+		for (int i = 0; i < other.permissions.size(); i++)
+		{
+			Permission perm = other.permissions.get(i);
+			set(perm.getName(), perm.state);
+		}
 	}
 }

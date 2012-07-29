@@ -1,6 +1,6 @@
 package com.evanreidland.e.shared;
 
-import com.evanreidland.e.action.Permissions;
+import com.evanreidland.e.action.PermissionsList;
 import com.evanreidland.e.net.StringTable;
 
 public class Player
@@ -9,7 +9,7 @@ public class Player
 	private long id;
 	private long shipID;
 	
-	public Permissions permissions;
+	public PermissionsList permissions;
 	
 	public StringTable getTable()
 	{
@@ -21,7 +21,7 @@ public class Player
 		this.id = id;
 		this.shipID = 0;
 		this.table = new StringTable(bServer);
-		permissions = new Permissions();
+		permissions = new PermissionsList();
 	}
 	
 	public long getID()

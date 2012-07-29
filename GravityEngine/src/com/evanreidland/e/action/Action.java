@@ -50,7 +50,7 @@ public abstract class Action implements Bitable
 	
 	public abstract void onEnd(boolean forced);
 	
-	public boolean validate(Permissions perms)
+	public boolean validate(PermissionsList perms)
 	{
 		return true;
 	}

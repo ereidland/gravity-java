@@ -9,6 +9,7 @@ import com.evanreidland.e.engine;
 import com.evanreidland.e.roll;
 import com.evanreidland.e.action.Action;
 import com.evanreidland.e.action.ActionListener;
+import com.evanreidland.e.action.Permissions;
 import com.evanreidland.e.action.act;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
@@ -90,7 +91,9 @@ public class GravityServer extends TCPServer implements ActionListener
 					roll.randomDouble(1, 2)));
 			ent.flags.add("player targetable");
 			
-			player.permissions.grant("ent_move").addID(ent.getID());
+			Permissions perms = player.permissions.get(ent.getID());
+			perms.grant("ent_move");
+			perms.grant("weapons");
 			
 			sendEntitySpawn(ent);
 			
