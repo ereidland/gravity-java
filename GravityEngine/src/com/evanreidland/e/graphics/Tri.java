@@ -3,13 +3,14 @@ package com.evanreidland.e.graphics;
 public class Tri
 {
 	public Vertex[] vert;
-
-	public void pass()
+	
+	public Tri pass()
 	{
 		graphics.passTriangle(vert[0], vert[1], vert[2]);
+		return this;
 	}
-
-	public void setColor(double r, double g, double b, double a)
+	
+	public Tri setColor(double r, double g, double b, double a)
 	{
 		for (int i = 0; i < vert.length; i++)
 		{
@@ -18,8 +19,9 @@ public class Tri
 			vert[i].b = b;
 			vert[i].a = a;
 		}
+		return this;
 	}
-
+	
 	public Tri(Vertex a, Vertex b, Vertex c)
 	{
 		vert = new Vertex[3];
@@ -27,7 +29,7 @@ public class Tri
 		vert[1] = new Vertex(b);
 		vert[2] = new Vertex(c);
 	}
-
+	
 	public Tri()
 	{
 		vert = new Vertex[3];
@@ -35,7 +37,7 @@ public class Tri
 		{
 			vert[i] = new Vertex();
 		}
-
+		
 		vert[0].tx = 1;
 		vert[0].ty = 0;
 		vert[1].tx = 0;

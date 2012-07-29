@@ -11,5 +11,6 @@ public class hud
 	
 	public static void removeObject(GUI object)
 	{
+		gui.remove(object);
 	}
 }

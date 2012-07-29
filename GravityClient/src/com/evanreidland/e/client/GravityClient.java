@@ -41,7 +41,9 @@ public class GravityClient extends TCPClient
 				switch (code)
 				{
 					case MESSAGE:
-						engine.Log("Message: " + data.readString());
+						String str = data.readString();
+						engine.Log("Message: " + str);
+						GravityGame.active.messageArea.addItem(str);
 						break;
 					case ENT_NEW:
 						time = data.readLong();
