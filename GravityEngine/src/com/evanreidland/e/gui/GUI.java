@@ -16,6 +16,8 @@ public class GUI
 	
 	private String name;
 	
+	public GUI gui;
+	
 	public String getName()
 	{
 		return name;
@@ -26,6 +28,7 @@ public class GUI
 	
 	public void add(GUI object)
 	{
+		object.gui = this;
 		if (!objects.contains(object))
 		{
 			objects.add(object);
@@ -141,10 +144,11 @@ public class GUI
 		objectMap = new HashMap<String, GUI>();
 		rect = new Rect3(Vector3.Zero(), Vector3.Zero());
 		flags = new Flags();
-		bVisible = false;
+		bVisible = true;
 		bActive = true;
 		
 		flags.addFromObject(this, "bVisible", "visible");
 		flags.addFromObject(this, "bActive", "active");
+		gui = null;
 	}
 }

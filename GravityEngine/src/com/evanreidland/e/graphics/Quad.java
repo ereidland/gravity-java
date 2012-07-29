@@ -5,13 +5,14 @@ import com.evanreidland.e.Vector3;
 public class Quad
 {
 	public Vertex[] vert;
-
-	public void pass()
+	
+	public Quad pass()
 	{
 		graphics.passQuad(vert[0], vert[1], vert[2], vert[3]);
+		return this;
 	}
-
-	public void setColor(double r, double g, double b, double a)
+	
+	public Quad setColor(double r, double g, double b, double a)
 	{
 		for (int i = 0; i < vert.length; i++)
 		{
@@ -20,25 +21,28 @@ public class Quad
 			vert[i].b = b;
 			vert[i].a = a;
 		}
+		return this;
 	}
-
-	public void applyToProjection(Vector3 origin, Vector3 right, Vector3 up)
+	
+	public Quad applyToProjection(Vector3 origin, Vector3 right, Vector3 up)
 	{
 		for (int i = 0; i < vert.length; i++)
 		{
 			vert[i].pos.setAs(origin.plus(right.multipliedBy(vert[i].pos.x)
 					.plus(up.multipliedBy(vert[i].pos.y))));
 		}
+		return this;
 	}
-
-	public void Shift(Vector3 howMuch)
+	
+	public Quad Shift(Vector3 howMuch)
 	{
 		for (int i = 0; i < vert.length; i++)
 		{
 			vert[i].pos.add(howMuch);
 		}
+		return this;
 	}
-
+	
 	public Quad()
 	{
 		vert = new Vertex[4];
@@ -46,7 +50,7 @@ public class Quad
 		{
 			vert[i] = new Vertex();
 		}
-
+		
 		vert[0].tx = 0;
 		vert[0].ty = 0;
 		vert[1].tx = 1;

@@ -27,7 +27,7 @@ public class GravityGUIObject extends GUI
 		font.a = 1;
 		font.Render2d(fnt, text, rect.getCenter(),
 				(rect.getWidth() * 0.75 / font.getWidth(fnt, text, fontSize))
-						* fontSize, true);;
+						* fontSize, true);
 	}
 	
 	public boolean onClick(double x, double y, boolean down)
@@ -35,7 +35,7 @@ public class GravityGUIObject extends GUI
 		return true;
 	}
 	
-	public GravityGUIObject(double width, double height, String name)
+	public GravityGUIObject(String name, double width, double height)
 	{
 		super(name);
 		rect.b.x = width;

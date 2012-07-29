@@ -12,6 +12,8 @@ import com.evanreidland.e.client.control.key;
 import com.evanreidland.e.client.ent.ClientEnemy;
 import com.evanreidland.e.client.ent.ClientLaser;
 import com.evanreidland.e.client.ent.ClientShip;
+import com.evanreidland.e.client.gui.ChatTextField;
+import com.evanreidland.e.client.gui.MessageArea;
 import com.evanreidland.e.commands.enginescript;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.EntityList;
@@ -24,6 +26,7 @@ import com.evanreidland.e.graphics.Sprite;
 import com.evanreidland.e.graphics.font;
 import com.evanreidland.e.graphics.generate;
 import com.evanreidland.e.graphics.graphics;
+import com.evanreidland.e.gui.hud;
 import com.evanreidland.e.net.network;
 import com.evanreidland.e.phys.Ray;
 import com.evanreidland.e.script.basefunctions;
@@ -55,8 +58,19 @@ public class GravityGame extends GameClientBase
 	
 	Vector3 lastViewSize, targetPoint;
 	
+	ChatTextField textField;
+	public MessageArea messageArea;
+	
+	public static GravityGame active;
+	
 	public void onResize()
 	{
+		textField.rect.moveTo(graphics.camera.bottomLeft().plus(
+				textField.rect.getSize().multipliedBy(0.5).plus(0, 64, 0)));
+		messageArea.rect.moveTo(textField.rect.getCenter().plus(
+				0,
+				textField.rect.getHeight() * 0.5 + messageArea.rect.getHeight()
+						* 0.5, 0));
 	}
 	
 	public void updateConsole()
@@ -180,8 +194,11 @@ public class GravityGame extends GameClientBase
 		{
 			showConsole = !showConsole;
 		}
+		textField.bActive = !showConsole;
 		if (showConsole)
 		{
+			textField.text = "";
+			textField.bFocused = false;
 			updateConsole();
 		}
 		else
@@ -231,6 +248,7 @@ public class GravityGame extends GameClientBase
 	{
 		super.onRenderHUD();
 		double ypos = 16;
+		font.r = font.g = font.b = font.a = 1;
 		if (ship != null)
 		{
 			font.Render2d(font1, "Pos: " + ship.pos.toRoundedString(),
@@ -316,16 +334,17 @@ public class GravityGame extends GameClientBase
 	
 	public void buildGUI()
 	{
+		messageArea = new MessageArea("messages", 256, 256, 18);
+		textField = new ChatTextField("chatfield", 256, 18, messageArea);
+		
+		hud.addObject(messageArea);
+		hud.addObject(textField);
 		onResize();
-		// Button button = new Button(128, 64, "button");
-		// button.tex = engine.loadTexture("button1.png");
-		// button.Position(graphics.camera.topLeft().minus(0,
-		// button.rect.getHeight(), 0));
-		// hud.addObject(button);
 	}
 	
 	public void onInit()
 	{
+		active = this;
 		lastViewSize = new Vector3(graphics.camera.width,
 				graphics.camera.height, 0);
 		engine.maxLogs = 40;
