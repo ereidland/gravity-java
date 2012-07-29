@@ -51,8 +51,6 @@ public class enginescript
 			}
 			else
 			{
-				// TODO If server, send off this event. The event system could
-				// be useful here, but I want your input first.
 				ent.pos.setAs(pos);
 				return new Value("Spawned " + ent.getClassName() + "/"
 						+ ent.getID() + " @ " + ent.pos.toRoundedString());
@@ -108,6 +106,132 @@ public class enginescript
 		}
 	}
 	
+	public static class EntSetVar extends Function
+	{
+		public Value Call(Stack args)
+		{
+			if (args.size() > 2)
+			{
+				long id = args.at(0).toLong();
+				String name = args.at(1).toString();
+				String value = args.at(2).toString();
+				
+				Entity ent = ents.get(id);
+				if (ent != null)
+				{
+					ent.setNWVar(name, args.at(2));
+					return new Value("Set " + ent.toString() + "/vars/" + name
+							+ "/" + " to " + value);
+				}
+				else
+				{
+					return new Value("Entity " + id + " does not exist.");
+				}
+			}
+			else
+			{
+				return new Value("Not enough arguments. Format: " + getName()
+						+ " <id> <var> <value>");
+			}
+		}
+		
+		public EntSetVar()
+		{
+			super("ent.set");
+		}
+	}
+	
+	public static class EntGetVar extends Function
+	{
+		public Value Call(Stack args)
+		{
+			if (args.size() > 1)
+			{
+				long id = args.at(0).toLong();
+				String name = args.at(1).toString();
+				
+				Entity ent = ents.get(id);
+				if (ent != null)
+					return ent.vars.get(name);
+				else
+					return new Value("Entity " + id + " does not exist.");
+			}
+			else
+			{
+				return new Value("Not enough arguments. Format: " + getName()
+						+ " <id> <var>");
+			}
+		}
+		
+		public EntGetVar()
+		{
+			super("ent.get");
+		}
+	}
+	
+	public static class EntSetFlag extends Function
+	{
+		public Value Call(Stack args)
+		{
+			if (args.size() > 2)
+			{
+				long id = args.at(0).toLong();
+				String name = args.at(1).toString();
+				String value = args.at(2).toString();
+				
+				Entity ent = ents.get(id);
+				if (ent != null)
+				{
+					ent.setNWFlag(name, args.at(2).toBool());
+					return new Value("Set " + ent.toString() + "/flags/" + name
+							+ "/" + " to " + value);
+				}
+				else
+				{
+					return new Value("Entity " + id + " does not exist.");
+				}
+			}
+			else
+			{
+				return new Value("Not enough arguments. Format: " + getName()
+						+ " <id> <flag>");
+			}
+		}
+		
+		public EntSetFlag()
+		{
+			super("ent.flag");
+		}
+	}
+	
+	public static class EntGetFlag extends Function
+	{
+		public Value Call(Stack args)
+		{
+			if (args.size() > 1)
+			{
+				long id = args.at(0).toLong();
+				String name = args.at(1).toString();
+				
+				Entity ent = ents.get(id);
+				if (ent != null)
+					return new Value(ent.flags.get(name).toString());
+				else
+					return new Value("Entity " + id + " does not exist.");
+			}
+			else
+			{
+				return new Value("Not enough arguments. Format: " + getName()
+						+ " <id> <flag>");
+			}
+		}
+		
+		public EntGetFlag()
+		{
+			super("ent.getflag");
+		}
+	}
+	
 	public static class LogThreads extends Function
 	{
 		public Value Call(Stack args)
@@ -132,11 +256,7 @@ public class enginescript
 	public static void registerAll(Stack env)
 	{
 		basefunctions.printFunction = new Print();
-		env.addFunction(new Spawn());
+		env.registerFunctions(enginescript.class, true);
 		env.addFunction(new basefunctions.CallOther("ent_create", new Spawn()));
-		
-		env.addFunction(new BuildFont());
-		
-		env.addFunction(new LogThreads());
 	}
 }

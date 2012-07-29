@@ -16,6 +16,7 @@ import com.evanreidland.e.net.StringTable;
 import com.evanreidland.e.net.TCPClient;
 import com.evanreidland.e.net.TCPEvent;
 import com.evanreidland.e.net.TCPPacket;
+import com.evanreidland.e.script.Variable;
 
 public class GravityClient extends TCPClient
 {
@@ -84,8 +85,40 @@ public class GravityClient extends TCPClient
 								Vector3.fromBits(data);
 							}
 							engine.logger
-									.log(Level.SEVERE,
-											"Tried to update entity that didn't exist!");
+									.log(Level.WARNING,
+											"Tried to update entity that did not exist!");
+						}
+						break;
+					case ENT_SET_VAR:
+						id = data.readLong();
+						ent = ents.get(id);
+						if (ent != null)
+						{
+							String varName = data.readString();
+							Variable var = new Variable(varName);
+							var.loadBits(data);
+							ent.vars.add(var);
+						}
+						else
+						{
+							engine.logger
+									.log(Level.WARNING,
+											"Tried to set var for an entity that did not exist!");
+						}
+						break;
+					case ENT_SET_FLAG:
+						id = data.readLong();
+						ent = ents.get(id);
+						if (ent != null)
+						{
+							String flagName = data.readString();
+							ent.flags.set(flagName, data.readBit());
+						}
+						else
+						{
+							engine.logger
+									.log(Level.WARNING,
+											"Tried to set flag for an entity that did not exist!");
 						}
 						break;
 					case SELECT_SHIP:

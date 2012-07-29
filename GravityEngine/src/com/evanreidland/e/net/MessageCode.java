@@ -9,6 +9,7 @@ public enum MessageCode
 	ENT_TARGET(), // Sent bits directly to an entity. Currently unimplemented.
 	ENT_SET_VAR(), // Set a networked variable for an entity.
 	ENT_SET_STACK(), // Set a stack for an entity. Does not clear before adding.
+	ENT_SET_FLAG(), // Set a flag for an entity.
 	SELECT_SHIP(), // Select a player's ship.
 	MESSAGE(), // Chat message.
 	ACT_START(), // Started action.

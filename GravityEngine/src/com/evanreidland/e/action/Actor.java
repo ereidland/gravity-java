@@ -7,7 +7,11 @@ import com.evanreidland.e.Flags;
 import com.evanreidland.e.ent.eflags;
 import com.evanreidland.e.net.Bitable;
 import com.evanreidland.e.net.Bits;
+import com.evanreidland.e.net.MessageCode;
+import com.evanreidland.e.net.network;
 import com.evanreidland.e.script.Stack;
+import com.evanreidland.e.script.Value;
+import com.evanreidland.e.script.Variable;
 
 public class Actor implements Bitable
 {
@@ -19,6 +23,32 @@ public class Actor implements Bitable
 	public Stack vars; // Potentially usable with networking.
 	
 	private long id;
+	
+	public void setNWVar(String name, Value value)
+	{
+		Bits bits = new Bits();
+		bits.writeByte(MessageCode.ENT_SET_VAR.toByte());
+		bits.writeLong(id);
+		bits.writeString(name);
+		bits.write(value.toBits());
+		
+		network.Send(bits);
+		if (network.isServer())
+			vars.add(new Variable(name, value));
+	}
+	
+	public void setNWFlag(String name, boolean state)
+	{
+		Bits bits = new Bits();
+		bits.writeByte(MessageCode.ENT_SET_FLAG.toByte());
+		bits.writeLong(id);
+		bits.writeString(name);
+		bits.writeBit(state);
+		
+		network.Send(bits);
+		if (network.isServer())
+			flags.set(name, state);
+	}
 	
 	public long getID()
 	{
