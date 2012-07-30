@@ -43,7 +43,21 @@ public class Entity extends Actor
 				.multipliedBy(targetSpeed);
 		Vector3 diff = targetVel.minus(vel);
 		vel.add(diff.getNormal().multipliedBy(
-				Math.min(diff.getLength(), maxThrust) * delta));
+				Math.min(diff.getLength(), maxThrust * delta)));
+	}
+	
+	public void thrustToStop(double maxThrust, double delta)
+	{
+		Vector3 diff = vel.multipliedBy(-1);
+		vel.add(diff.getNormal().multipliedBy(
+				Math.min(diff.getLength(), maxThrust * delta)));
+	}
+	
+	public void thrustToAngularStop(double maxThrust, double delta)
+	{
+		Vector3 diff = angleVel.multipliedBy(-1);
+		angleVel.add(diff.getNormal().multipliedBy(
+				Math.min(diff.getLength(), maxThrust * delta)));
 	}
 	
 	public void thrustTowardsAngle(Vector3 angle, double targetAngleSpeed,
@@ -53,7 +67,33 @@ public class Entity extends Actor
 				.Normalize().multipliedBy(targetAngleSpeed);
 		Vector3 diff = targetVel.minus(angleVel);
 		angleVel.add(diff.getNormal().multipliedBy(
-				Math.min(diff.getLength(), maxAngleThrust) * delta));
+				Math.min(diff.getLength(), maxAngleThrust * delta)));
+	}
+	
+	public double getETA(Vector3 point)
+	{
+		double speed = vel.getLength();
+		if (speed > 0)
+		{
+			double dist = pos.getDistance(point);
+			if (dist > speed)
+			{
+				double diff = (dist - pos.plus(vel).getDistance(point));
+				return diff != 0 ? dist / diff : 0;
+			}
+			else
+			{
+				double diff = point.minus(pos).getNormal()
+						.multipliedBy(vel.getNormal()).getLength()
+						* speed;
+				
+				return diff != 0 ? dist / diff : 0;
+			}
+		}
+		else
+		{
+			return 0;
+		}
 	}
 	
 	public void Kill()

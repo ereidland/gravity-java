@@ -161,6 +161,18 @@ public class GravityClient extends TCPClient
 							action.loadBits(data);
 							act.Start(ent, action);
 						}
+						else
+						{
+							if (action != null)
+							{
+								engine.Log("DAYUM, " + name
+										+ " must not exist.");
+							}
+							else
+							{
+								engine.Log("ID " + actorID + " must not exist.");
+							}
+						}
 						break;
 					default:
 						engine.Log("Unused code: " + code.toString());

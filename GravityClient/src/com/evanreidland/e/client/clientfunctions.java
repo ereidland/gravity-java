@@ -5,6 +5,7 @@ import com.evanreidland.e.net.MessageCode;
 import com.evanreidland.e.script.Function;
 import com.evanreidland.e.script.Stack;
 import com.evanreidland.e.script.Value;
+import com.evanreidland.e.script.text.Script;
 
 public class clientfunctions
 {
@@ -55,9 +56,21 @@ public class clientfunctions
 		}
 	}
 	
+	public static class FastStart extends Function
+	{
+		public Value Call(Stack args)
+		{
+			return new Script(args.context).Execute("connect localhost 27016");
+		}
+		
+		public FastStart()
+		{
+			super("go");
+		}
+	}
+	
 	public static void registerAll(Stack env)
 	{
-		env.addFunction(new Connect());
-		env.addFunction(new Send());
+		env.registerFunctions(clientfunctions.class, true);
 	}
 }

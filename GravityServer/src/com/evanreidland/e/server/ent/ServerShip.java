@@ -11,7 +11,7 @@ public class ServerShip extends ServerEntity
 	public ServerShip(long id)
 	{
 		super("ship", id);
-		radius = 0.2;
+		radius = 0.05;
 	}
 	
 }

@@ -7,12 +7,11 @@ import com.evanreidland.e.net.Bits;
 
 public class EntityMoveAction extends EntityAction
 {
-	public Vector3 targetPos;
+	public Vector3 targetPos, targetAngle;
 	public double targetSpeed, closingDistance, targetAngleSpeed;
 	
 	public boolean onStart()
 	{
-		getActor().killOthers(getName());
 		return false;
 	}
 	
@@ -23,9 +22,11 @@ public class EntityMoveAction extends EntityAction
 		
 		// TODO: Entities knowing their thrust capabilities for specific
 		// actions.
-		ent.thrustTowards(targetPos, targetSpeed, 1, Game.getDelta());
-		ent.thrustTowardsAngle(targetPos.minus(ent.pos).getAngle(),
-				targetAngleSpeed, 1, Game.getDelta());
+		double transThrust = 1, angleThrust = 2;
+		
+		ent.thrustTowards(targetPos, targetSpeed, transThrust, Game.getDelta());
+		ent.thrustTowardsAngle(targetAngle, targetAngleSpeed, angleThrust,
+				Game.getDelta());
 		
 		return false;
 	}
@@ -35,6 +36,7 @@ public class EntityMoveAction extends EntityAction
 		Bits bits = super.toBits();
 		bits.write(ent.getPosBits());
 		bits.write(targetPos.toBits());
+		bits.write(targetAngle.toBits());
 		bits.writeDouble(closingDistance);
 		return bits;
 	}
@@ -44,6 +46,7 @@ public class EntityMoveAction extends EntityAction
 		super.loadBits(bits);
 		ent.loadPosBits(bits);
 		targetPos = Vector3.fromBits(bits);
+		targetAngle = Vector3.fromBits(bits);
 		closingDistance = bits.readDouble();
 	}
 	
@@ -52,16 +55,19 @@ public class EntityMoveAction extends EntityAction
 		super("ent_move", "ent_move");
 		isOrdered = true;
 		
-		closingDistance = 0.1;
+		targetPos = Vector3.Zero();
+		targetAngle = Vector3.Zero();
+		
+		closingDistance = 0.005;
 		targetSpeed = 1;
 		targetAngleSpeed = 1;
 	}
 	
-	public EntityMoveAction(Entity ent, Vector3 targetPos)
+	public EntityMoveAction(Entity ent, Vector3 targetPos, Vector3 targetAngle)
 	{
 		this();
 		this.ent = ent;
 		this.targetPos = targetPos.cloned();
-		
+		this.targetAngle = targetAngle.cloned();
 	}
 }

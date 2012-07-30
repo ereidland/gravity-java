@@ -29,14 +29,12 @@ public class ClientShip extends ClientEntity
 	
 	public void setupGraphics()
 	{
-		Model model = generate.Sphere(Vector3.Zero(), new Vector3(0.1, 0.1,
-				0.25), Vector3.Zero(), 8, 8);
+		Model model = generate.Sphere(Vector3.Zero(),
+				new Vector3(0.1, 0.1, 0.1), Vector3.Zero(), 8, 8);
 		
 		model.tex = engine.loadTexture("sun1.png");
 		graphics.scene.addObject(new ModelSceneObject(model), this);
 		
-		model = generate.Sphere(Vector3.Zero(), new Vector3(0.05, 0.05, 0.05),
-				Vector3.Zero(), 8, 8);
 		model.tex = engine.loadTexture("planet1.png");
 		graphics.scene.addObject(new ClientShipSceneObject(), this,
 				AnchorType.NONE);

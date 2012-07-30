@@ -56,7 +56,7 @@ public class GravityGame extends GameClientBase
 	
 	int currentMenu = 0;
 	
-	Vector3 lastViewSize, targetPoint;
+	Vector3 lastViewSize, targetPoint, targetAngle;
 	
 	ChatTextField textField;
 	public MessageArea messageArea;
@@ -211,16 +211,26 @@ public class GravityGame extends GameClientBase
 				targetPoint = ray.getPlaneIntersection(Vector3.Zero(),
 						new Vector3(0, 0, 1));
 			}
+			if (input.getKeyState(key.MOUSE_RBUTTON))
+			{
+				Ray ray = new Ray(graphics.camera.pos,
+						graphics.toWorld(new Vector3(Game.mousePos.x,
+								Game.mousePos.y, 0)));
+				Vector3 facePoint = ray.getPlaneIntersection(Vector3.Zero(),
+						new Vector3(0, 0, 1));
+				targetAngle = facePoint.minus(targetPoint).getAngle();
+			}
 			if (input.isKeyDown(key.MOUSE_LBUTTON))
 			{
 				targetPoint = Vector3.Zero();
 			}
 			if (currentMenu == 0 && ship != null)
 			{
-				if (input.isKeyDown(key.MOUSE_RBUTTON))
+				if (input.isKeyUp(key.MOUSE_RBUTTON))
 				{
-					GravityClient.global.requestAction(ship,
-							new EntityMoveAction(ship, targetPoint));
+					EntityMoveAction action = new EntityMoveAction(ship,
+							targetPoint, targetAngle);
+					GravityClient.global.requestAction(ship, action);
 				}
 			}
 		}
@@ -302,6 +312,32 @@ public class GravityGame extends GameClientBase
 		graphics.drawLine(p.plus(new Vector3(0, s, 0)),
 				p.plus(new Vector3(-s, 0, 0)), 2, 1, 1, 0.5, 0.5);
 		
+		Vector3 lineOrigin = graphics.toScreen(targetPoint);
+		Vector3 lineAngle = graphics
+				.toScreen(targetPoint.plus(targetAngle.getForward()))
+				.minus(lineOrigin).getAngle();
+		double lineLength = 32;
+		
+		Vector3 lineEnd = lineOrigin.plus(lineAngle.getForward().multipliedBy(
+				lineLength));
+		
+		graphics.drawLine(lineOrigin, lineEnd, 2, 1, 1, 1, 0.5);
+		
+		graphics.drawLine(
+				lineEnd,
+				lineOrigin.plus(lineAngle
+						.getForward()
+						.multipliedBy(lineLength * 0.5)
+						.plus(lineAngle.getRight().multipliedBy(
+								lineLength * 0.25))), 2, 1, 1, 1, 0.5);
+		graphics.drawLine(
+				lineEnd,
+				lineOrigin.plus(lineAngle
+						.getForward()
+						.multipliedBy(lineLength * 0.5)
+						.plus(lineAngle.getRight().multipliedBy(
+								lineLength * -0.25))), 2, 1, 1, 1, 0.5);
+		
 		if (showConsole)
 		{
 			renderConsole(ypos);
@@ -361,6 +397,7 @@ public class GravityGame extends GameClientBase
 		flashing = false;
 		
 		targetPoint = Vector3.Zero();
+		targetAngle = Vector3.Zero();
 		
 		basefunctions.registerAll(script.env);
 		enginescript.registerAll(script.env);
