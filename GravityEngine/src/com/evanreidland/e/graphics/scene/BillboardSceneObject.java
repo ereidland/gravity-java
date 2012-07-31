@@ -1,4 +1,7 @@
-package com.evanreidland.e.graphics;
+package com.evanreidland.e.graphics.scene;
+
+import com.evanreidland.e.graphics.SceneObject;
+import com.evanreidland.e.graphics.Sprite;
 
 public class BillboardSceneObject extends SceneObject
 {

@@ -26,8 +26,10 @@ import com.evanreidland.e.graphics.Sprite;
 import com.evanreidland.e.graphics.font;
 import com.evanreidland.e.graphics.generate;
 import com.evanreidland.e.graphics.graphics;
+import com.evanreidland.e.graphics.scene.BezierSceneObject;
 import com.evanreidland.e.gui.hud;
 import com.evanreidland.e.net.network;
+import com.evanreidland.e.phys.Bezier;
 import com.evanreidland.e.phys.Ray;
 import com.evanreidland.e.script.basefunctions;
 import com.evanreidland.e.script.text.Script;
@@ -45,18 +47,18 @@ public class GravityGame extends GameClientBase
 	
 	ClientShip ship;
 	
-	long nextShot;
-	
 	double viewHeight = 10, idleAngle = 0;
 	
 	Script script;
 	String consoleText;
-	long nextBackspace, nextFlash;
+	long nextBackspace, nextFlash, nextShot;
 	boolean showConsole, flashing;
 	
 	int currentMenu = 0;
 	
 	Vector3 lastViewSize, targetPoint, targetAngle;
+	
+	Bezier bezier;
 	
 	ChatTextField textField;
 	public MessageArea messageArea;
@@ -222,7 +224,20 @@ public class GravityGame extends GameClientBase
 			}
 			if (input.isKeyDown(key.MOUSE_LBUTTON))
 			{
-				targetPoint = Vector3.Zero();
+				if (input.getKeyState(key.KEY_SPACE))
+				{
+					bezier.clear();
+				}
+				else
+				{
+					Ray ray = new Ray(graphics.camera.pos,
+							graphics.toWorld(new Vector3(Game.mousePos.x,
+									Game.mousePos.y, 0)));
+					Vector3 facePoint = ray.getPlaneIntersection(
+							Vector3.Zero(), new Vector3(0, 0, 1));
+					
+					bezier.add(facePoint);
+				}
 			}
 			if (currentMenu == 0 && ship != null)
 			{
@@ -361,6 +376,8 @@ public class GravityGame extends GameClientBase
 		
 		skybox = engine.loadTexture("skybox1.png");
 		targetableTex = engine.loadTexture("targetable.png");
+		
+		graphics.scene.addObject(new BezierSceneObject(bezier, 1 / 20d));
 	}
 	
 	public void loadSound()
@@ -398,6 +415,8 @@ public class GravityGame extends GameClientBase
 		
 		targetPoint = Vector3.Zero();
 		targetAngle = Vector3.Zero();
+		
+		bezier = new Bezier();
 		
 		basefunctions.registerAll(script.env);
 		enginescript.registerAll(script.env);
