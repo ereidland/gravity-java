@@ -15,6 +15,7 @@ public class BezierSceneObject extends SceneObject
 	{
 		if (increment > 0 && bezier.size() >= 2)
 		{
+			graphics.unbindTexture();
 			Vector3 lastp = bezier.get(0);
 			for (int i = 1; i < bezier.size(); i++)
 			{

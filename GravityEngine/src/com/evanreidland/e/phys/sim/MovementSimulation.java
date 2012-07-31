@@ -1,4 +1,4 @@
-package com.evanreidland.e.phys;
+package com.evanreidland.e.phys.sim;
 
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.ent.Entity;
@@ -38,13 +38,14 @@ public abstract class MovementSimulation extends Simulation
 		ent.vel.setAs(vel);
 	}
 	
-	public void calc()
+	public boolean calc()
 	{
 		ent.pos.setAs(pos.plus(vel.multipliedBy(getTime())));
 		ent.vel.setAs(vel);
 		ent.angle.setAs(angle.plus(angleVel.multipliedBy(getTime()))
 				.clipAngle());
 		ent.angleVel.setAs(angleVel);
+		return false;
 	}
 	
 	public MovementSimulation(Entity ent)

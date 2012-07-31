@@ -1,4 +1,4 @@
-package com.evanreidland.e.phys;
+package com.evanreidland.e.phys.sim;
 
 import com.evanreidland.e.net.Bitable;
 import com.evanreidland.e.net.Bits;
@@ -32,11 +32,11 @@ public abstract class Simulation implements Bitable
 		time = 0;
 	}
 	
-	public void increment(double time)
+	public boolean increment(double time)
 	{
-		time += time;
-		calc();
+		this.time += time;
+		return calc();
 	}
 	
-	public abstract void calc();
+	public abstract boolean calc();
 }
