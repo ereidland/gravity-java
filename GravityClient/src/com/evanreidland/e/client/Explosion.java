@@ -4,10 +4,10 @@ import com.evanreidland.e.Game;
 import com.evanreidland.e.engine;
 import com.evanreidland.e.roll;
 import com.evanreidland.e.ent.Entity;
-import com.evanreidland.e.graphics.BillboardSceneObject;
 import com.evanreidland.e.graphics.SceneObject;
 import com.evanreidland.e.graphics.Sprite;
 import com.evanreidland.e.graphics.graphics;
+import com.evanreidland.e.graphics.scene.BillboardSceneObject;
 
 public class Explosion extends Entity {
 	public double startSize, endSize;
