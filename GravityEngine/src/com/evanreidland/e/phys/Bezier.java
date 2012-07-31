@@ -3,8 +3,10 @@ package com.evanreidland.e.phys;
 import java.util.Vector;
 
 import com.evanreidland.e.Vector3;
+import com.evanreidland.e.net.Bitable;
+import com.evanreidland.e.net.Bits;
 
-public class Bezier
+public class Bezier implements Bitable
 {
 	public static class Point
 	{
@@ -116,6 +118,27 @@ public class Bezier
 			lastp = newp;
 		}
 		return len;
+	}
+	
+	public Bits toBits()
+	{
+		Bits bits = new Bits();
+		bits.writeSize(points.size());
+		for (int i = 0; i < points.size(); i++)
+		{
+			bits.write(points.get(i).pos.toBits());
+		}
+		return bits;
+	}
+	
+	public void loadBits(Bits bits)
+	{
+		clear();
+		int size = (int) bits.readSize();
+		for (int i = 0; i < size; i++)
+		{
+			add(Vector3.fromBits(bits));
+		}
 	}
 	
 	public Bezier()

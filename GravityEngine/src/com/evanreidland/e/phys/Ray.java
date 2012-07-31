@@ -1,8 +1,10 @@
 package com.evanreidland.e.phys;
 
 import com.evanreidland.e.Vector3;
+import com.evanreidland.e.net.Bitable;
+import com.evanreidland.e.net.Bits;
 
-public class Ray
+public class Ray implements Bitable
 {
 	public Vector3 origin, normal;
 	
@@ -23,6 +25,17 @@ public class Ray
 		ratio = Math.max(0, ratio);
 		
 		return origin.plus(ab.multipliedBy(ratio));
+	}
+	
+	public Bits toBits()
+	{
+		return new Bits().write(origin.toBits()).write(normal.toBits());
+	}
+	
+	public void loadBits(Bits bits)
+	{
+		origin.setAs(Vector3.fromBits(bits));
+		normal.setAs(Vector3.fromBits(bits));
 	}
 	
 	public Ray()
