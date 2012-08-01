@@ -98,7 +98,7 @@ public class engine
 	
 	public static String getPath()
 	{
-		if (dataPath == "")
+		if (dataPath.isEmpty())
 		{
 			dataPath = defaultDirectory() + "/.egravity/";
 		}

@@ -36,6 +36,7 @@ import com.evanreidland.e.script.text.Script;
 import com.evanreidland.e.shared.action.EntityManualMoveAction;
 import com.evanreidland.e.shared.action.sharedactions;
 import com.evanreidland.e.shared.config.ServerConfig;
+import com.evanreidland.e.shared.console.sharedfunctions;
 
 public class GravityGame extends GameClientBase
 {
@@ -414,6 +415,8 @@ public class GravityGame extends GameClientBase
 		basefunctions.registerAll(script.env);
 		enginescript.registerAll(script.env);
 		clientfunctions.registerAll(script.env);
+		sharedfunctions.registerAll(script.env);
+		
 		sharedactions.registerAll();
 		
 		// Note: creates a static reference, GravityClient.global.

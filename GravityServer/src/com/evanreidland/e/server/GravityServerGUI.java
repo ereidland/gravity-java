@@ -26,6 +26,7 @@ import com.evanreidland.e.commands.enginescript;
 import com.evanreidland.e.net.network;
 import com.evanreidland.e.script.basefunctions;
 import com.evanreidland.e.script.text.Script;
+import com.evanreidland.e.shared.console.sharedfunctions;
 
 public class GravityServerGUI extends JPanel implements Runnable,
 		ActionListener
@@ -119,6 +120,7 @@ public class GravityServerGUI extends JPanel implements Runnable,
 		serverfunctions.registerAll(script.env);
 		enginescript.registerAll(script.env);
 		basefunctions.registerAll(script.env);
+		sharedfunctions.registerAll(script.env);
 		
 		network.setServer(new GravityServer());
 		

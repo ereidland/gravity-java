@@ -10,6 +10,7 @@ import com.evanreidland.e.graphics.font;
 import com.evanreidland.e.script.Function;
 import com.evanreidland.e.script.Stack;
 import com.evanreidland.e.script.Value;
+import com.evanreidland.e.script.Variable;
 import com.evanreidland.e.script.basefunctions;
 
 public class enginescript
@@ -258,5 +259,7 @@ public class enginescript
 		basefunctions.printFunction = new Print();
 		env.registerFunctions(enginescript.class, true);
 		env.addFunction(new basefunctions.CallOther("ent_create", new Spawn()));
+		
+		env.add(new Variable("path", engine.getPath()));
 	}
 }
