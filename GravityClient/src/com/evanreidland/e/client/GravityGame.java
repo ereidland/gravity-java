@@ -56,7 +56,7 @@ public class GravityGame extends GameClientBase
 	
 	int currentMenu = 0;
 	
-	Vector3 lastViewSize, targetPoint, targetAngle;
+	Vector3 lastViewSize, targetPoint, targetAngle, lastDragPos;
 	
 	ChatTextField textField;
 	public MessageArea messageArea;
@@ -203,7 +203,22 @@ public class GravityGame extends GameClientBase
 		}
 		if (ship != null)
 		{
-			if (input.isKeyDown(key.MOUSE_RBUTTON))
+			if (input.isKeyDown(key.MOUSE_LBUTTON))
+			{
+				lastDragPos = Game.mousePos.cloned();
+			}
+			if (input.getKeyState(key.MOUSE_LBUTTON))
+			{
+				Vector3 newDragPos = Game.mousePos.cloned();
+				Vector3 off = newDragPos.minus(lastDragPos);
+				off.z = off.x;
+				off.x = off.y;
+				off.y = 0;
+				graphics.camera.angle.add(off.multipliedBy(0.01));
+				
+				lastDragPos = Game.mousePos.cloned();
+			}
+			if (input.getKeyState(key.MOUSE_RBUTTON))
 			{
 				Ray ray = new Ray(graphics.camera.pos,
 						graphics.toWorld(new Vector3(Game.mousePos.x,
@@ -212,6 +227,7 @@ public class GravityGame extends GameClientBase
 						new Vector3(0, 0, 1));
 				
 				targetAngle = targetPoint.minus(ship.pos).getAngle();
+				
 			}
 			if (input.isKeyUp(key.MOUSE_RBUTTON))
 			{
@@ -305,10 +321,11 @@ public class GravityGame extends GameClientBase
 					p.plus(new Vector3(-s, 0, 0)), 2, 1, 1, 0.5, 0.5);
 			
 			Vector3 lineOrigin = p;
+			double lineLength = 32;
+			
 			Vector3 lineAngle = graphics
 					.toScreen(ship.pos.plus(targetAngle.getForward()))
 					.minus(lineOrigin).getAngle();
-			double lineLength = 32;
 			
 			Vector3 lineEnd = lineOrigin.plus(lineAngle.getForward()
 					.multipliedBy(lineLength));
@@ -392,6 +409,7 @@ public class GravityGame extends GameClientBase
 		
 		targetPoint = Vector3.Zero();
 		targetAngle = Vector3.Zero();
+		lastDragPos = Vector3.Zero();
 		
 		basefunctions.registerAll(script.env);
 		enginescript.registerAll(script.env);
