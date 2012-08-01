@@ -95,6 +95,7 @@ public class GravityServer extends TCPServer implements ActionListener
 			Permissions perms = player.permissions.get(ent.getID());
 			perms.grant("ent_move");
 			perms.grant("ent_bezmove");
+			perms.grant("ent_manmove");
 			perms.grant("ent_stop");
 			perms.grant("weapons");
 			

@@ -7,6 +7,7 @@ import com.evanreidland.e.Game;
 import com.evanreidland.e.Resource;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
+import com.evanreidland.e.action.Action;
 import com.evanreidland.e.client.action.clientactions;
 import com.evanreidland.e.client.control.input;
 import com.evanreidland.e.client.control.key;
@@ -32,7 +33,7 @@ import com.evanreidland.e.net.network;
 import com.evanreidland.e.phys.Ray;
 import com.evanreidland.e.script.basefunctions;
 import com.evanreidland.e.script.text.Script;
-import com.evanreidland.e.shared.action.EntityBezierMoveAction;
+import com.evanreidland.e.shared.action.EntityManualMoveAction;
 import com.evanreidland.e.shared.action.sharedactions;
 import com.evanreidland.e.shared.config.ServerConfig;
 
@@ -200,7 +201,7 @@ public class GravityGame extends GameClientBase
 			textField.bFocused = false;
 			updateConsole();
 		}
-		else
+		if (ship != null)
 		{
 			if (input.isKeyDown(key.MOUSE_RBUTTON))
 			{
@@ -209,36 +210,26 @@ public class GravityGame extends GameClientBase
 								Game.mousePos.y, 0)));
 				targetPoint = ray.getPlaneIntersection(Vector3.Zero(),
 						new Vector3(0, 0, 1));
+				
+				targetAngle = targetPoint.minus(ship.pos).getAngle();
 			}
-			if (input.getKeyState(key.MOUSE_RBUTTON))
+			if (input.isKeyUp(key.MOUSE_RBUTTON))
 			{
-				Ray ray = new Ray(graphics.camera.pos,
-						graphics.toWorld(new Vector3(Game.mousePos.x,
-								Game.mousePos.y, 0)));
-				Vector3 facePoint = ray.getPlaneIntersection(Vector3.Zero(),
-						new Vector3(0, 0, 1));
-				targetAngle = facePoint.minus(targetPoint).getAngle();
+				Action action = new EntityManualMoveAction(ship, targetPoint
+						.minus(ship.pos).getAngle(), 1);
+				GravityClient.global.requestAction(ship, action);
 			}
-			if (input.isKeyDown(key.MOUSE_LBUTTON))
-			{
-				// Something?
-			}
-			if (currentMenu == 0 && ship != null)
-			{
-				if (input.isKeyUp(key.MOUSE_RBUTTON))
-				{
-					EntityBezierMoveAction action = new EntityBezierMoveAction(
-							ship, targetPoint, targetAngle);
-					GravityClient.global.requestAction(ship, action);
-				}
-			}
+			
+			graphics.camera.pos.setAs(ship.pos.minus(graphics.camera.angle
+					.getForward().multipliedBy(viewHeight)));
 		}
-		
+		else
+		{
+			graphics.camera.pos.setAs(new Vector3(0, 0, viewHeight));
+			graphics.camera.angle.setAs(Vector3.Zero()
+					.minus(graphics.camera.pos).getAngle());
+		}
 		ents.list.onThink();
-		
-		graphics.camera.pos.setAs(new Vector3(0, 0, viewHeight));
-		graphics.camera.angle.setAs(Vector3.Zero().minus(graphics.camera.pos)
-				.getAngle());
 		
 		idleAngle += Game.getDelta();
 	}
@@ -301,42 +292,44 @@ public class GravityGame extends GameClientBase
 		graphics.drawLine(p.plus(new Vector3(0, s, 0)),
 				p.plus(new Vector3(-s, 0, 0)), 2, 1, 1, 1, 0.5);
 		
-		p = graphics.toScreen(targetPoint);
-		graphics.drawLine(p.plus(new Vector3(-s, 0, 0)),
-				p.plus(new Vector3(0, -s, 0)), 2, 1, 1, 0.5, 0.5);
-		graphics.drawLine(p.plus(new Vector3(0, -s, 0)),
-				p.plus(new Vector3(s, 0, 0)), 2, 1, 1, 0.5, 0.5);
-		graphics.drawLine(p.plus(new Vector3(s, 0, 0)),
-				p.plus(new Vector3(0, s, 0)), 2, 1, 1, 0.5, 0.5);
-		graphics.drawLine(p.plus(new Vector3(0, s, 0)),
-				p.plus(new Vector3(-s, 0, 0)), 2, 1, 1, 0.5, 0.5);
-		
-		Vector3 lineOrigin = graphics.toScreen(targetPoint);
-		Vector3 lineAngle = graphics
-				.toScreen(targetPoint.plus(targetAngle.getForward()))
-				.minus(lineOrigin).getAngle();
-		double lineLength = 32;
-		
-		Vector3 lineEnd = lineOrigin.plus(lineAngle.getForward().multipliedBy(
-				lineLength));
-		
-		graphics.drawLine(lineOrigin, lineEnd, 2, 1, 1, 1, 0.5);
-		
-		graphics.drawLine(
-				lineEnd,
-				lineOrigin.plus(lineAngle
-						.getForward()
-						.multipliedBy(lineLength * 0.5)
-						.plus(lineAngle.getRight().multipliedBy(
-								lineLength * 0.25))), 2, 1, 1, 1, 0.5);
-		graphics.drawLine(
-				lineEnd,
-				lineOrigin.plus(lineAngle
-						.getForward()
-						.multipliedBy(lineLength * 0.5)
-						.plus(lineAngle.getRight().multipliedBy(
-								lineLength * -0.25))), 2, 1, 1, 1, 0.5);
-		
+		if (ship != null)
+		{
+			p = graphics.toScreen(ship.pos);
+			graphics.drawLine(p.plus(new Vector3(-s, 0, 0)),
+					p.plus(new Vector3(0, -s, 0)), 2, 1, 1, 0.5, 0.5);
+			graphics.drawLine(p.plus(new Vector3(0, -s, 0)),
+					p.plus(new Vector3(s, 0, 0)), 2, 1, 1, 0.5, 0.5);
+			graphics.drawLine(p.plus(new Vector3(s, 0, 0)),
+					p.plus(new Vector3(0, s, 0)), 2, 1, 1, 0.5, 0.5);
+			graphics.drawLine(p.plus(new Vector3(0, s, 0)),
+					p.plus(new Vector3(-s, 0, 0)), 2, 1, 1, 0.5, 0.5);
+			
+			Vector3 lineOrigin = p;
+			Vector3 lineAngle = graphics
+					.toScreen(ship.pos.plus(targetAngle.getForward()))
+					.minus(lineOrigin).getAngle();
+			double lineLength = 32;
+			
+			Vector3 lineEnd = lineOrigin.plus(lineAngle.getForward()
+					.multipliedBy(lineLength));
+			
+			graphics.drawLine(lineOrigin, lineEnd, 2, 1, 1, 1, 0.5);
+			
+			graphics.drawLine(
+					lineEnd,
+					lineOrigin.plus(lineAngle
+							.getForward()
+							.multipliedBy(lineLength * 0.5)
+							.plus(lineAngle.getRight().multipliedBy(
+									lineLength * 0.25))), 2, 1, 1, 1, 0.5);
+			graphics.drawLine(
+					lineEnd,
+					lineOrigin.plus(lineAngle
+							.getForward()
+							.multipliedBy(lineLength * 0.5)
+							.plus(lineAngle.getRight().multipliedBy(
+									lineLength * -0.25))), 2, 1, 1, 1, 0.5);
+		}
 		if (showConsole)
 		{
 			renderConsole(ypos);

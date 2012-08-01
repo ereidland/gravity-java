@@ -165,12 +165,13 @@ public class GravityClient extends TCPClient
 						{
 							if (action != null)
 							{
-								engine.Log("DAYUM, " + name
-										+ " must not exist.");
+								engine.Log("Action named " + name
+										+ " does not exist.");
 							}
 							else
 							{
-								engine.Log("ID " + actorID + " must not exist.");
+								engine.Log("Actor ID " + actorID
+										+ " does not exist.");
 							}
 						}
 						break;
