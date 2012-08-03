@@ -63,10 +63,16 @@ public class GravityClient extends TCPClient
 						}
 						break;
 					case ENT_REM:
-						ent = ents.get(data.readLong());
+						id = data.readLong();
+						ent = ents.get(id);
 						if (ent != null)
 						{
-							ent.bDead = true;
+							ent.Kill();
+						}
+						else
+						{
+							engine.logger.log(Level.WARNING, "Entity " + id
+									+ " is already dead.");
 						}
 						break;
 					case ENT_UPDATE:
