@@ -9,6 +9,7 @@ import com.evanreidland.e.event.Event;
 import com.evanreidland.e.event.ent.EntitySpawnedEvent;
 import com.evanreidland.e.graphics.graphics;
 import com.evanreidland.e.net.Bits;
+import com.evanreidland.e.script.Value;
 
 public class Entity extends Actor
 {
@@ -293,6 +294,7 @@ public class Entity extends Actor
 	public boolean takeDamage(Entity source, double damage)
 	{
 		hp -= damage;
+		setNWVar("hp", new Value(hp));
 		if (hp <= 0)
 		{
 			Kill();
