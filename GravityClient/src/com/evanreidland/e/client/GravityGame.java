@@ -202,6 +202,10 @@ public class GravityGame extends GameClientBase
 			textField.bFocused = false;
 			updateConsole();
 		}
+		if (ship != null && ship.isDead())
+		{
+			ship = null;
+		}
 		if (ship != null)
 		{
 			if (input.isKeyDown(key.MOUSE_LBUTTON))
@@ -247,6 +251,7 @@ public class GravityGame extends GameClientBase
 					.minus(graphics.camera.pos).getAngle());
 		}
 		ents.list.onThink();
+		ents.list.checkCollision();
 		
 		idleAngle += Game.getDelta();
 	}

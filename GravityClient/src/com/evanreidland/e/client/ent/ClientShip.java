@@ -5,9 +5,9 @@ import com.evanreidland.e.engine;
 import com.evanreidland.e.graphics.Model;
 import com.evanreidland.e.graphics.SceneObject;
 import com.evanreidland.e.graphics.SceneObject.AnchorType;
-import com.evanreidland.e.graphics.scene.ModelSceneObject;
 import com.evanreidland.e.graphics.generate;
 import com.evanreidland.e.graphics.graphics;
+import com.evanreidland.e.graphics.scene.ModelSceneObject;
 
 public class ClientShip extends ClientEntity
 {

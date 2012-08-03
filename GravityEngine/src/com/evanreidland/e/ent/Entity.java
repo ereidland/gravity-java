@@ -15,7 +15,7 @@ public class Entity extends Actor
 	public static boolean debug = false;
 	public Vector3 pos, vel, angle, angleVel;
 	
-	public double radius, mass;
+	public double radius, mass, hp, maxHP;
 	
 	public boolean bStatic, bSpawned, bDead, bSent;
 	
@@ -165,6 +165,11 @@ public class Entity extends Actor
 		}
 	}
 	
+	public void checkCollision()
+	{
+		
+	}
+	
 	public void onDie()
 	{
 		killActions();
@@ -212,11 +217,18 @@ public class Entity extends Actor
 	public void shiftByDelta(double delta)
 	{
 		pos.add(vel.multipliedBy(delta));
+		angle.add(angleVel.multipliedBy(delta));
 	}
 	
 	public void shiftByDeltaMS(long delta)
 	{
 		shiftByDelta(delta / 1000d);
+	}
+	
+	public EntityList checkCollision(Flags other)
+	{
+		return ents.list.getWithFlags(other).getWithinBounds(pos, radius,
+				getID());
 	}
 	
 	public void shiftByTimeOffset(long timeReference)
@@ -275,6 +287,18 @@ public class Entity extends Actor
 	protected Object getArg(Object[] args, int index, Object def)
 	{
 		return index >= 0 && index < args.length ? args[index] : def;
+	}
+	
+	// Can/Should be overridden.
+	public boolean takeDamage(Entity source, double damage)
+	{
+		hp -= damage;
+		if (hp <= 0)
+		{
+			Kill();
+			return true;
+		}
+		return false;
 	}
 	
 	public Bits toBits()
@@ -339,6 +363,8 @@ public class Entity extends Actor
 	{
 		super(id);
 		this.className = className;
+		
+		radius = mass = hp = maxHP = 1;
 		
 		pos = Vector3.Zero();
 		vel = Vector3.Zero();

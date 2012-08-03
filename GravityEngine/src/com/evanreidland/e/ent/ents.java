@@ -9,7 +9,7 @@ import com.evanreidland.e.engine;
 
 public class ents
 {
-	public static EntityList list = new EntityList();
+	public static EntityList list = new EntityList(true);
 	private static long lastID = 1;
 	
 	public static long getLastID()

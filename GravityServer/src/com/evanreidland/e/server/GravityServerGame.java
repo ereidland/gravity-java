@@ -22,6 +22,7 @@ public class GravityServerGame extends Game
 			}
 		}
 		ents.list.onThink();
+		ents.list.checkCollision();
 	}
 	
 	public void onInit()
