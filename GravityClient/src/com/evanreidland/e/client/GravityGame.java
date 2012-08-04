@@ -377,7 +377,7 @@ public class GravityGame extends GameClientBase
 	
 	public void loadSound()
 	{
-		// I'm going to have something here eventually.
+		engine.loadSound("laser1.wav");
 	}
 	
 	public void buildGUI()
