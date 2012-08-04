@@ -2,6 +2,7 @@ package com.evanreidland.e.client.ent;
 
 import com.evanreidland.e.Resource;
 import com.evanreidland.e.engine;
+import com.evanreidland.e.roll;
 import com.evanreidland.e.audio.sound;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
@@ -63,7 +64,7 @@ public class ClientLaser extends Entity
 				AnchorType.POS);
 		
 		shoot1 = sound.Load("laser1.wav");
-		sound.Play(shoot1, pos, 1);
+		sound.Play(shoot1, pos, roll.randomDouble(1, 1.25));
 		
 		engine.Log("BAM.");
 	}
