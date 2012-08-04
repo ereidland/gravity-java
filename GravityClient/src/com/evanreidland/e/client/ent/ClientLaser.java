@@ -44,10 +44,18 @@ public class ClientLaser extends Entity
 	public void onSpawn()
 	{
 		Sprite sprite = new Sprite(0.05, 0.05, engine.loadTexture("laser1.png"));
-		sprite.cr = 0.5;
-		sprite.cg = 1;
-		sprite.cb = 0.5;
-		sprite.ca = 1.0;
+		if (flags.getBoolState("enemy"))
+		{
+			sprite.cr = 1;
+			sprite.cg = 0.25;
+			sprite.cb = 0.25;
+		}
+		else
+		{
+			sprite.cr = 0.5;
+			sprite.cg = 1;
+			sprite.cb = 0.5;
+		}
 		billboard = new LongBillboardSceneObject(sprite, pos.cloned(),
 				pos.plus(vel), 0.1, 0.4, 0.5, true);
 		graphics.scene.addObject(billboard, this, AnchorType.POS);
