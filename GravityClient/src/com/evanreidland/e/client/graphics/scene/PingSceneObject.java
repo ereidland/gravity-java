@@ -16,10 +16,11 @@ public class PingSceneObject extends SceneObject
 		timeLeft -= Game.getDelta();
 		if (timeLeft > 0)
 		{
-			double scale = (timeLeft / maxTime) * maxScale;
+			double scale = (Math.abs(Math.sin(timeLeft * 4)) * 0.5 + 0.5)
+					* maxScale * (timeLeft / maxTime);
 			Sprite sprite = new Sprite(scale, scale, res);
 			sprite.pos.setAs(pos);
-			sprite.angle.y = timeLeft;
+			sprite.angle.y = timeLeft * 2;
 			sprite.renderBillboard(true);
 		}
 		else

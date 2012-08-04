@@ -266,7 +266,8 @@ public class GravityGame extends GameClientBase
 		super.onRender();
 		graphics.drawSkybox(skybox, graphics.camera.farDist - 1);
 		graphics.drawPlane(grid, 0.25,
-				ship != null ? ship.pos : Vector3.Zero(), 4);
+				ship != null ? ship.pos.multipliedBy(1, 1, 0) : Vector3.Zero(),
+				4);
 		graphics.unbindTexture();
 		
 		graphics.scene.Render();
