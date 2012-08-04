@@ -14,6 +14,8 @@ import com.evanreidland.e.client.control.key;
 import com.evanreidland.e.client.ent.ClientEnemy;
 import com.evanreidland.e.client.ent.ClientLaser;
 import com.evanreidland.e.client.ent.ClientShip;
+import com.evanreidland.e.client.graphics.scene.PingSceneObject;
+import com.evanreidland.e.client.graphics.scene.RadarSceneObject;
 import com.evanreidland.e.client.gui.ChatTextField;
 import com.evanreidland.e.client.gui.MessageArea;
 import com.evanreidland.e.commands.enginescript;
@@ -44,7 +46,7 @@ public class GravityGame extends GameClientBase
 	
 	Model shipModel;
 	
-	Resource skybox;
+	Resource skybox, grid;
 	
 	ClientShip ship;
 	
@@ -239,6 +241,9 @@ public class GravityGame extends GameClientBase
 				Action action = new EntityManualMoveAction(ship, targetPoint
 						.minus(ship.pos).getAngle(), 1);
 				GravityClient.global.requestAction(ship, action);
+				
+				graphics.scene
+						.addObject(new PingSceneObject(targetPoint, 2, 1));
 			}
 			
 			graphics.camera.pos.setAs(ship.pos.minus(graphics.camera.angle
@@ -260,7 +265,8 @@ public class GravityGame extends GameClientBase
 	{
 		super.onRender();
 		graphics.drawSkybox(skybox, graphics.camera.farDist - 1);
-		
+		graphics.drawPlane(grid, 0.25,
+				ship != null ? ship.pos : Vector3.Zero(), 4);
 		graphics.unbindTexture();
 		
 		graphics.scene.Render();
@@ -378,6 +384,10 @@ public class GravityGame extends GameClientBase
 		
 		skybox = engine.loadTexture("skybox1.png");
 		targetableTex = engine.loadTexture("targetable.png");
+		grid = engine.loadTexture("grid2.png");
+		
+		RadarSceneObject.zarrows = engine.loadTexture("zarrows.png");
+		PingSceneObject.res = engine.loadTexture("ping1.png");
 	}
 	
 	public void loadSound()

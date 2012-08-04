@@ -95,6 +95,26 @@ public class graphics
 		q.pass();
 	}
 	
+	public static void drawPlane(Resource res, double texperlen,
+			Vector3 origin, double radius)
+	{
+		setTexture(res);
+		
+		Quad q = new Quad();
+		q.vert[0].pos = origin.plus(-radius, -radius, 0);
+		q.vert[1].pos = origin.plus(radius, -radius, 0);
+		q.vert[2].pos = origin.plus(radius, radius, 0);
+		q.vert[3].pos = origin.plus(-radius, radius, 0);
+		
+		for (int i = 0; i < 4; i++)
+		{
+			q.vert[i].tx = q.vert[i].pos.x * texperlen;
+			q.vert[i].ty = q.vert[i].pos.y * texperlen;
+		}
+		
+		q.pass();
+	}
+	
 	public static GraphicsData newData()
 	{
 		try
