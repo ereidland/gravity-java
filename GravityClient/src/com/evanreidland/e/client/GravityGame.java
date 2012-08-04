@@ -7,11 +7,15 @@ import com.evanreidland.e.Game;
 import com.evanreidland.e.Resource;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
+import com.evanreidland.e.action.Action;
+import com.evanreidland.e.client.action.clientactions;
 import com.evanreidland.e.client.control.input;
 import com.evanreidland.e.client.control.key;
 import com.evanreidland.e.client.ent.ClientEnemy;
 import com.evanreidland.e.client.ent.ClientLaser;
 import com.evanreidland.e.client.ent.ClientShip;
+import com.evanreidland.e.client.graphics.scene.PingSceneObject;
+import com.evanreidland.e.client.graphics.scene.RadarSceneObject;
 import com.evanreidland.e.client.gui.ChatTextField;
 import com.evanreidland.e.client.gui.MessageArea;
 import com.evanreidland.e.commands.enginescript;
@@ -31,9 +35,10 @@ import com.evanreidland.e.net.network;
 import com.evanreidland.e.phys.Ray;
 import com.evanreidland.e.script.basefunctions;
 import com.evanreidland.e.script.text.Script;
-import com.evanreidland.e.shared.action.EntityMoveAction;
+import com.evanreidland.e.shared.action.EntityManualMoveAction;
 import com.evanreidland.e.shared.action.sharedactions;
 import com.evanreidland.e.shared.config.ServerConfig;
+import com.evanreidland.e.shared.console.sharedfunctions;
 
 public class GravityGame extends GameClientBase
 {
@@ -41,22 +46,20 @@ public class GravityGame extends GameClientBase
 	
 	Model shipModel;
 	
-	Resource skybox;
+	Resource skybox, grid;
 	
 	ClientShip ship;
-	
-	long nextShot;
 	
 	double viewHeight = 10, idleAngle = 0;
 	
 	Script script;
 	String consoleText;
-	long nextBackspace, nextFlash;
+	long nextBackspace, nextFlash, nextShot;
 	boolean showConsole, flashing;
 	
 	int currentMenu = 0;
 	
-	Vector3 lastViewSize, targetPoint;
+	Vector3 lastViewSize, targetPoint, targetAngle, lastDragPos;
 	
 	ChatTextField textField;
 	public MessageArea messageArea;
@@ -201,35 +204,59 @@ public class GravityGame extends GameClientBase
 			textField.bFocused = false;
 			updateConsole();
 		}
-		else
+		if (ship != null && ship.isDead())
 		{
-			if (input.isKeyDown(key.MOUSE_RBUTTON))
+			ship = null;
+		}
+		if (ship != null)
+		{
+			if (input.isKeyDown(key.MOUSE_LBUTTON))
+			{
+				lastDragPos = Game.mousePos.cloned();
+			}
+			if (input.getKeyState(key.MOUSE_LBUTTON))
+			{
+				Vector3 newDragPos = Game.mousePos.cloned();
+				Vector3 off = newDragPos.minus(lastDragPos);
+				off.z = off.x;
+				off.x = off.y;
+				off.y = 0;
+				graphics.camera.angle.add(off.multipliedBy(0.01));
+				
+				lastDragPos = Game.mousePos.cloned();
+			}
+			if (input.getKeyState(key.MOUSE_RBUTTON))
 			{
 				Ray ray = new Ray(graphics.camera.pos,
 						graphics.toWorld(new Vector3(Game.mousePos.x,
 								Game.mousePos.y, 0)));
 				targetPoint = ray.getPlaneIntersection(Vector3.Zero(),
 						new Vector3(0, 0, 1));
+				
+				targetAngle = targetPoint.minus(ship.pos).getAngle();
+				
 			}
-			if (input.isKeyDown(key.MOUSE_LBUTTON))
+			if (input.isKeyUp(key.MOUSE_RBUTTON))
 			{
-				targetPoint = Vector3.Zero();
+				Action action = new EntityManualMoveAction(ship, targetPoint
+						.minus(ship.pos).getAngle(), 1);
+				GravityClient.global.requestAction(ship, action);
+				
+				graphics.scene
+						.addObject(new PingSceneObject(targetPoint, 2, 1));
 			}
-			if (currentMenu == 0 && ship != null)
-			{
-				if (input.isKeyDown(key.MOUSE_RBUTTON))
-				{
-					GravityClient.global.requestAction(ship,
-							new EntityMoveAction(ship, targetPoint));
-				}
-			}
+			
+			graphics.camera.pos.setAs(ship.pos.minus(graphics.camera.angle
+					.getForward().multipliedBy(viewHeight)));
 		}
-		
+		else
+		{
+			graphics.camera.pos.setAs(new Vector3(0, 0, viewHeight));
+			graphics.camera.angle.setAs(Vector3.Zero()
+					.minus(graphics.camera.pos).getAngle());
+		}
 		ents.list.onThink();
-		
-		graphics.camera.pos.setAs(new Vector3(0, 0, viewHeight));
-		graphics.camera.angle.setAs(Vector3.Zero().minus(graphics.camera.pos)
-				.getAngle());
+		ents.list.checkCollision();
 		
 		idleAngle += Game.getDelta();
 	}
@@ -238,7 +265,8 @@ public class GravityGame extends GameClientBase
 	{
 		super.onRender();
 		graphics.drawSkybox(skybox, graphics.camera.farDist - 1);
-		
+		graphics.drawPlane(grid, 0.25,
+				ship != null ? ship.pos : Vector3.Zero(), 4);
 		graphics.unbindTexture();
 		
 		graphics.scene.Render();
@@ -292,16 +320,45 @@ public class GravityGame extends GameClientBase
 		graphics.drawLine(p.plus(new Vector3(0, s, 0)),
 				p.plus(new Vector3(-s, 0, 0)), 2, 1, 1, 1, 0.5);
 		
-		p = graphics.toScreen(targetPoint);
-		graphics.drawLine(p.plus(new Vector3(-s, 0, 0)),
-				p.plus(new Vector3(0, -s, 0)), 2, 1, 1, 0.5, 0.5);
-		graphics.drawLine(p.plus(new Vector3(0, -s, 0)),
-				p.plus(new Vector3(s, 0, 0)), 2, 1, 1, 0.5, 0.5);
-		graphics.drawLine(p.plus(new Vector3(s, 0, 0)),
-				p.plus(new Vector3(0, s, 0)), 2, 1, 1, 0.5, 0.5);
-		graphics.drawLine(p.plus(new Vector3(0, s, 0)),
-				p.plus(new Vector3(-s, 0, 0)), 2, 1, 1, 0.5, 0.5);
-		
+		if (ship != null)
+		{
+			p = graphics.toScreen(ship.pos);
+			graphics.drawLine(p.plus(new Vector3(-s, 0, 0)),
+					p.plus(new Vector3(0, -s, 0)), 2, 1, 1, 0.5, 0.5);
+			graphics.drawLine(p.plus(new Vector3(0, -s, 0)),
+					p.plus(new Vector3(s, 0, 0)), 2, 1, 1, 0.5, 0.5);
+			graphics.drawLine(p.plus(new Vector3(s, 0, 0)),
+					p.plus(new Vector3(0, s, 0)), 2, 1, 1, 0.5, 0.5);
+			graphics.drawLine(p.plus(new Vector3(0, s, 0)),
+					p.plus(new Vector3(-s, 0, 0)), 2, 1, 1, 0.5, 0.5);
+			
+			Vector3 lineOrigin = p;
+			double lineLength = 32;
+			
+			Vector3 lineAngle = graphics
+					.toScreen(ship.pos.plus(targetAngle.getForward()))
+					.minus(lineOrigin).getAngle();
+			
+			Vector3 lineEnd = lineOrigin.plus(lineAngle.getForward()
+					.multipliedBy(lineLength));
+			
+			graphics.drawLine(lineOrigin, lineEnd, 2, 1, 1, 1, 0.5);
+			
+			graphics.drawLine(
+					lineEnd,
+					lineOrigin.plus(lineAngle
+							.getForward()
+							.multipliedBy(lineLength * 0.5)
+							.plus(lineAngle.getRight().multipliedBy(
+									lineLength * 0.25))), 2, 1, 1, 1, 0.5);
+			graphics.drawLine(
+					lineEnd,
+					lineOrigin.plus(lineAngle
+							.getForward()
+							.multipliedBy(lineLength * 0.5)
+							.plus(lineAngle.getRight().multipliedBy(
+									lineLength * -0.25))), 2, 1, 1, 1, 0.5);
+		}
 		if (showConsole)
 		{
 			renderConsole(ypos);
@@ -314,6 +371,8 @@ public class GravityGame extends GameClientBase
 		ents.Register("laser", ClientLaser.class);
 		ents.Register("enemy", ClientEnemy.class);
 		ents.Register("ship", ClientShip.class);
+		
+		clientactions.registerAll();
 	}
 	
 	public void loadGraphics()
@@ -325,6 +384,10 @@ public class GravityGame extends GameClientBase
 		
 		skybox = engine.loadTexture("skybox1.png");
 		targetableTex = engine.loadTexture("targetable.png");
+		grid = engine.loadTexture("grid2.png");
+		
+		RadarSceneObject.zarrows = engine.loadTexture("zarrows.png");
+		PingSceneObject.res = engine.loadTexture("ping1.png");
 	}
 	
 	public void loadSound()
@@ -361,10 +424,14 @@ public class GravityGame extends GameClientBase
 		flashing = false;
 		
 		targetPoint = Vector3.Zero();
+		targetAngle = Vector3.Zero();
+		lastDragPos = Vector3.Zero();
 		
 		basefunctions.registerAll(script.env);
 		enginescript.registerAll(script.env);
 		clientfunctions.registerAll(script.env);
+		sharedfunctions.registerAll(script.env);
+		
 		sharedactions.registerAll();
 		
 		// Note: creates a static reference, GravityClient.global.

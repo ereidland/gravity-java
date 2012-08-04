@@ -12,6 +12,8 @@ public enum MessageCode
 	ENT_SET_FLAG(), // Set a flag for an entity.
 	SELECT_SHIP(), // Select a player's ship.
 	MESSAGE(), // Chat message.
+	VERSION(), // For sending and receiving version information.
+	KICK(), // For letting clients know why they were kicked.
 	ACT_START(), // Started action.
 	ACT_REQ(); // Request action for unit.
 	

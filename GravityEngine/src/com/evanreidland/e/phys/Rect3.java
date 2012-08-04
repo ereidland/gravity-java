@@ -1,8 +1,10 @@
 package com.evanreidland.e.phys;
 
 import com.evanreidland.e.Vector3;
+import com.evanreidland.e.net.Bitable;
+import com.evanreidland.e.net.Bits;
 
-public class Rect3
+public class Rect3 implements Bitable
 {
 	public Vector3 a, b;
 	
@@ -117,6 +119,17 @@ public class Rect3
 	public double getDepth()
 	{
 		return Math.abs(b.z - a.z);
+	}
+	
+	public Bits toBits()
+	{
+		return new Bits().write(a.toBits()).write(b.toBits());
+	}
+	
+	public void loadBits(Bits bits)
+	{
+		a.setAs(Vector3.fromBits(bits));
+		b.setAs(Vector3.fromBits(bits));
 	}
 	
 	public Rect3(Vector3 a, Vector3 b)

@@ -1,0 +1,29 @@
+spawn @entclass -4 0 0
+spawn @entclass -3 0 0
+spawn @entclass -2 0 0
+spawn @entclass -1 0 0
+spawn @entclass 0 0 0
+spawn @entclass 1 0 0
+spawn @entclass 2 0 0
+spawn @entclass 3 0 0
+spawn @entclass 4 0 0
+
+spawn @entclass 0 -4 0
+spawn @entclass 0 -3 0
+spawn @entclass 0 -2 0
+spawn @entclass 0 -1 0
+spawn @entclass 0 0 0
+spawn @entclass 0 1 0
+spawn @entclass 0 2 0
+spawn @entclass 0 3 0
+spawn @entclass 0 4 0
+
+spawn @entclass 0 0 -4
+spawn @entclass 0 0 -3
+spawn @entclass 0 0 -2
+spawn @entclass 0 0 -1
+spawn @entclass 0 0 0
+spawn @entclass 0 0 1
+spawn @entclass 0 0 2
+spawn @entclass 0 0 3
+spawn @entclass 0 0 4

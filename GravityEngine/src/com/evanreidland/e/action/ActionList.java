@@ -36,7 +36,7 @@ public class ActionList implements Bitable
 		{
 			if (ordered)
 			{
-				Action action = actions.firstElement();
+				Action action = actions.get(0);
 				if (!action.isStarted)
 				{
 					boolean rem = action.onStart();
@@ -44,15 +44,26 @@ public class ActionList implements Bitable
 					if (rem)
 					{
 						action.onEnd(false);
-						actions.remove(0);
-						return Update();
+						if (!actions.isEmpty())
+						{
+							actions.remove(0);
+							return Update();
+						}
+						else
+							return true;
+						
 					}
 				}
 				else if (action.Update())
 				{
 					action.onEnd(false);
-					actions.remove(0);
-					return Update();
+					if (!actions.isEmpty())
+					{
+						actions.remove(0);
+						return Update();
+					}
+					else
+						return true;
 				}
 			}
 			else
@@ -76,7 +87,10 @@ public class ActionList implements Bitable
 					}
 					
 					if (rem)
+					{
+						actions.get(i).onEnd(false);
 						actions.remove(i);
+					}
 					else
 						i++;
 				}
@@ -88,13 +102,26 @@ public class ActionList implements Bitable
 		return true;
 	}
 	
+	public void addAfterAction(Action action, Action newAction)
+	{
+		for (int i = 0; i < actions.size(); i++)
+		{
+			if (actions.get(i).equals(action))
+			{
+				actions.insertElementAt(newAction, i + 1);
+				break;
+			}
+		}
+	}
+	
 	public void add(Action action)
 	{
 		action.setActor(actor);
-		if (!actions.contains(action))
+		if (actions.isEmpty())
 		{
-			actions.add(action);
+			ordered = action.isOrdered;
 		}
+		actions.add(action);
 	}
 	
 	public void killAll()

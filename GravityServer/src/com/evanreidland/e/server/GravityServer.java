@@ -94,6 +94,9 @@ public class GravityServer extends TCPServer implements ActionListener
 			
 			Permissions perms = player.permissions.get(ent.getID());
 			perms.grant("ent_move");
+			perms.grant("ent_bezmove");
+			perms.grant("ent_manmove");
+			perms.grant("ent_stop");
 			perms.grant("weapons");
 			
 			sendEntitySpawn(ent);
@@ -367,6 +370,22 @@ public class GravityServer extends TCPServer implements ActionListener
 									+ actorID);
 						}
 						break;
+					case VERSION:
+						String version = data.readString();
+						if (!version.equals(engine.getVersion()))
+						{
+							engine.Log("Mismatched version with "
+									+ getFullAddress(id) + ": " + version
+									+ " != " + engine.getVersion());
+							Kick(id, "Mismatched version. Yours: " + version
+									+ " Mine: " + engine.getVersion());
+						}
+						else
+						{
+							engine.Log("Confirmed version with "
+									+ getFullAddress(id) + ": " + version);
+						}
+						break;
 					default:
 						engine.Log("Unused code: " + code.toString());
 						break;
@@ -405,6 +424,8 @@ public class GravityServer extends TCPServer implements ActionListener
 		
 		engine.game = gravityGame;
 		engine.Initialize();
+		GravityServerGUI.global
+				.setTitle("Gravity Server" + engine.getVersion());
 	}
 	
 	public void Update()

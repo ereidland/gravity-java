@@ -3,6 +3,7 @@ package com.evanreidland.e.builder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Vector;
 import java.util.jar.JarOutputStream;
@@ -294,6 +295,22 @@ public class Project
 						
 						args.context.add(new Variable("dl.hentry",
 								lastDownload.entryNames.firstElement()));
+						
+						try
+						{
+							String version = lastDownload.entryNames
+									.firstElement();
+							version = version
+									.substring(0, version.length() - 1);
+							new PrintStream(
+									new FileOutputStream(to + "version"))
+									.print(version);
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+							System.out.println("Could not write version file.");
+						}
 					}
 					
 					for (int i = 0; i < lastDownload.entryNames.size(); i++)

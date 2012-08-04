@@ -168,6 +168,57 @@ public class Sprite
 		graphics.passQuad(a, b, c, d);
 	}
 	
+	public void renderLong2d(Vector3 v1, Vector3 v2, double height,
+			double tx1, double tx2)
+	{
+		
+		double angle = v2.minus(v1).getAngle2d() + engine.Pi_2;
+		
+		Vector3 up = Vector3.fromAngle2d(angle).multipliedBy(height * 0.5);
+		
+		Vertex a = new Vertex(), b = new Vertex(), c = new Vertex(), d = new Vertex();
+		
+		a.tx = tx1;
+		a.ty = 0;
+		
+		b.tx = tx2;
+		b.ty = 0;
+		
+		c.tx = tx2;
+		c.ty = 1;
+		
+		d.tx = tx1;
+		d.ty = 1;
+		
+		a.pos.setAs(v1.plus(up.multipliedBy(0.5)));
+		b.pos.setAs(v2.plus(up.multipliedBy(0.5)));
+		c.pos.setAs(v2.plus(up.multipliedBy(-0.5)));
+		d.pos.setAs(v1.plus(up.multipliedBy(-0.5)));
+		
+		a.r = cr;
+		a.g = cg;
+		a.b = cb;
+		a.a = ca;
+		
+		b.r = cr;
+		b.g = cg;
+		b.b = cb;
+		b.a = ca;
+		
+		c.r = cr;
+		c.g = cg;
+		c.b = cb;
+		c.a = ca;
+		
+		d.r = cr;
+		d.g = cg;
+		d.b = cb;
+		d.a = ca;
+		
+		graphics.setTexture(tex);
+		graphics.passQuad(a, b, c, d);
+	}
+	
 	public Sprite(double width, double height, Resource tex)
 	{
 		this.width = width;

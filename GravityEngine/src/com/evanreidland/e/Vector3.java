@@ -490,6 +490,29 @@ public class Vector3 implements Bitable
 		return cloned().Round(decimals);
 	}
 	
+	public Vector3 Pow(Vector3 other)
+	{
+		x = Math.pow(x, other.x);
+		x = Math.pow(y, other.y);
+		x = Math.pow(z, other.z);
+		return this;
+	}
+	
+	public Vector3 Pow(double pow)
+	{
+		return Pow(new Vector3(pow, pow, pow));
+	}
+	
+	public Vector3 toPowerOf(Vector3 other)
+	{
+		return cloned().Pow(other);
+	}
+	
+	public Vector3 toPowerOf(double pow)
+	{
+		return cloned().Pow(pow);
+	}
+	
 	public Vector3 Abs()
 	{
 		x = Math.abs(x);

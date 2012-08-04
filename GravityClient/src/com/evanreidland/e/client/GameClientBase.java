@@ -56,6 +56,7 @@ public abstract class GameClientBase extends Game
 		{
 			hud.gui.onType(typed.charAt(i));
 		}
+		sound.goToCamera();
 	}
 	
 	public void onRenderHUD()

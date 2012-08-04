@@ -9,86 +9,86 @@ public abstract class SceneObject
 	{
 		NONE, POS, POS_ANGLE,
 	}
-
-	public boolean zOrder = false;
+	
+	public boolean zOrder, isDead;
 	public Vector3 pos, angle, offset, angleOffset;
 	private double roughDistance;
-
+	
 	private Entity parentEntity;
 	private SceneObject parentObject;
-
+	
 	public AnchorType anchorType;
-
+	
 	public Scene child;
-
+	
 	public void setParentEntity(Entity ent)
 	{
 		parentEntity = ent;
 		parentObject = null;
 	}
-
+	
 	public void setParentObject(SceneObject object)
 	{
 		parentObject = object;
 		parentEntity = null;
 	}
-
+	
 	public SceneObject getParentObject()
 	{
 		return parentObject;
 	}
-
+	
 	public Entity getParentEntity()
 	{
 		return parentEntity;
 	}
-
+	
 	public Vector3 getParentPos()
 	{
 		return parentEntity != null ? parentEntity.pos
 				: parentObject != null ? parentObject.pos : Vector3.Zero();
 	}
-
+	
 	public Vector3 getParentAngle()
 	{
 		return parentEntity != null ? parentEntity.angle
 				: parentObject != null ? parentObject.angle : Vector3.Zero();
 	}
-
+	
 	public void Position()
 	{
 		switch (anchorType)
 		{
-		case NONE:
-			break;
-		case POS_ANGLE:
-			angle.setAs(getParentAngle());
-		case POS:
-			pos.setAs(getParentPos());
-			break;
+			case NONE:
+				break;
+			case POS_ANGLE:
+				angle.setAs(getParentAngle());
+			case POS:
+				pos.setAs(getParentPos());
+				break;
 		}
-
+		
 		if (child != null)
 			child.Position();
 	}
-
+	
 	public final double getRoughDistance()
 	{
 		return roughDistance;
 	}
-
+	
 	public final double getRoughDistance(Vector3 point)
 	{
 		return point.minus(pos).getRoughLength();
 	}
-
+	
 	public final double calcRoughDistance()
 	{
 		return (roughDistance = getRoughDistance(graphics.camera.pos));
 	}
-
+	
 	public abstract void Render();
-
+	
 	public void Order()
 	{
 		if (child != null)
@@ -96,7 +96,7 @@ public abstract class SceneObject
 			child.Order();
 		}
 	}
-
+	
 	public SceneObject()
 	{
 		pos = Vector3.Zero();
@@ -107,9 +107,10 @@ public abstract class SceneObject
 		anchorType = AnchorType.NONE;
 		child = new Scene();
 		child.setParentObject(this);
-		zOrder = true;
+		zOrder = false;
+		isDead = false;
 	}
-
+	
 	public SceneObject(boolean initChild)
 	{
 		pos = Vector3.Zero();
@@ -117,6 +118,7 @@ public abstract class SceneObject
 		roughDistance = -1;
 		anchorType = AnchorType.NONE;
 		zOrder = false;
+		isDead = false;
 		if (initChild)
 		{
 			child = new Scene();

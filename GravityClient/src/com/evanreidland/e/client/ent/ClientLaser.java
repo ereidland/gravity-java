@@ -1,17 +1,21 @@
 package com.evanreidland.e.client.ent;
 
+import com.evanreidland.e.Resource;
 import com.evanreidland.e.engine;
+import com.evanreidland.e.audio.sound;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
-import com.evanreidland.e.graphics.BillboardSceneObject;
-import com.evanreidland.e.graphics.LongBillboardSceneObject;
 import com.evanreidland.e.graphics.SceneObject.AnchorType;
 import com.evanreidland.e.graphics.Sprite;
 import com.evanreidland.e.graphics.graphics;
+import com.evanreidland.e.graphics.scene.BillboardSceneObject;
+import com.evanreidland.e.graphics.scene.LongBillboardSceneObject;
 
 public class ClientLaser extends Entity
 {
 	public LongBillboardSceneObject billboard;
+	
+	public Resource shoot1;
 	
 	public void onThink()
 	{
@@ -49,6 +53,11 @@ public class ClientLaser extends Entity
 		graphics.scene.addObject(billboard, this, AnchorType.POS);
 		graphics.scene.addObject(new BillboardSceneObject(sprite, true), this,
 				AnchorType.POS);
+		
+		shoot1 = sound.Load("laser1.wav");
+		sound.Play(shoot1, pos, 1);
+		
+		engine.Log("BAM.");
 	}
 	
 	public ClientLaser(long id)

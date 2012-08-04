@@ -15,6 +15,8 @@ public class EntityList
 	private HashMap<Long, Entity> entMap;
 	public double ignoreThreshold = 0.001;
 	
+	private boolean isMaster;
+	
 	public void simulateGravity(double delta)
 	{
 		for (int i = 0; i < entities.size(); i++)
@@ -87,6 +89,8 @@ public class EntityList
 		Event.Call("onDestroy", new EntityDestroyedEvent(ent));
 		entities.remove(ent);
 		entMap.remove(ent.getID());
+		if (isMaster)
+			ent.onDie();
 		return ent;
 	}
 	
@@ -135,6 +139,27 @@ public class EntityList
 		return list;
 	}
 	
+	public EntityList getWithinBounds(Vector3 pos, double entRadius,
+			long ignoreID)
+	{
+		EntityList list = new EntityList();
+		for (int i = 0; i < entities.size(); i++)
+		{
+			Entity ent = entities.get(i);
+			if (ent.getID() != ignoreID
+					&& ent.pos.getDistance(pos) <= entRadius + ent.radius)
+			{
+				list.add(ent);
+			}
+		}
+		return list;
+	}
+	
+	public EntityList getWithinBounds(Vector3 pos, double entRadius)
+	{
+		return getWithinBounds(pos, entRadius, 0);
+	}
+	
 	public void removeWithFlags(Flags flags, boolean strict)
 	{
 		int i = 0;
@@ -144,7 +169,8 @@ public class EntityList
 			Entity ent = entities.get(i);
 			if (ent.matchesFlags(flags, strict))
 			{
-				ent.onDie();
+				if (isMaster)
+					ent.onDie();
 				remove(ent);
 			}
 			else
@@ -175,6 +201,20 @@ public class EntityList
 		removeWithFlags(eflags.dead);
 	}
 	
+	public void checkCollision()
+	{
+		for (int i = 0; i < entities.size(); i++)
+		{
+			Entity ent = entities.get(i);
+			if (ent.bSpawned && !ent.isDead())
+			{
+				ent.checkCollision();
+			}
+		}
+		
+		removeWithFlags(eflags.dead);
+	}
+	
 	public void onRender()
 	{
 		for (int i = 0; i < entities.size(); i++)
@@ -194,6 +234,11 @@ public class EntityList
 	public int size()
 	{
 		return entities.size();
+	}
+	
+	public boolean isEmpty()
+	{
+		return entities.isEmpty();
 	}
 	
 	public SearchData traceToNearest(Vector3 start, Vector3 end, double radius,
@@ -257,5 +302,13 @@ public class EntityList
 	{
 		entities = new Vector<Entity>();
 		entMap = new HashMap<Long, Entity>();
+		
+		isMaster = false;
+	}
+	
+	public EntityList(boolean isMaster)
+	{
+		this();
+		this.isMaster = isMaster;
 	}
 }

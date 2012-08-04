@@ -265,6 +265,28 @@ public class basefunctions
 		}
 	}
 	
+	public static class Compare extends Function
+	{
+		public Value Call(Stack args)
+		{
+			if (args.size() >= 3)
+			{
+				Variable v1 = args.at(0);
+				String op = args.at(1).toString();
+				Variable v2 = args.at(2);
+				boolean res = v1.compare(v2, op);
+				args.context.add(new Variable("?")).setBool(res);
+				return new Value().setBool(res);
+			}
+			return new Value();
+		}
+		
+		public Compare()
+		{
+			super("cmp");
+		}
+	}
+	
 	public static class Print extends Function
 	{
 		public Value Call(Stack args)
@@ -572,34 +594,18 @@ public class basefunctions
 	
 	public static void registerAll(Stack env)
 	{
-		env.addFunction(new Multiply());
-		env.addFunction(new Divide());
-		env.addFunction(new Add());
-		env.addFunction(new Subtract());
-		env.addFunction(new Pow());
-		
+		env.registerFunctions(basefunctions.class);
 		env.addFunction(new CallOther("multiply", new Multiply()));
 		env.addFunction(new CallOther("divide", new Divide()));
 		env.addFunction(new CallOther("add", new Add()));
 		env.addFunction(new CallOther("subtract", new Subtract()));
 		env.addFunction(new CallOther("^", new Pow()));
 		
-		env.addFunction(new Set());
-		env.addFunction(new New());
 		env.addFunction(printFunction);
 		
 		env.addFunction(new CallOther("=", new Set()));
 		env.addFunction(new CallOther(">>", new Set()));
 		env.addFunction(new CallOther("<<", printFunction));
-		
-		env.addFunction(new RunFile());
-		env.addFunction(new RunRemote());
-		
-		env.addFunction(new Begin());
-		env.addFunction(new Write());
-		env.addFunction(new End());
-		
-		env.addFunction(new Help());
 		
 		env.add(new Variable.Constant("pi", new Value((double) Math.PI)));
 		env.add(new Variable("", 0d)); // Referenced by "@".

@@ -18,6 +18,7 @@ public class ALAudioResourceManager extends ResourceManager
 				return r;
 			}
 		}
+		engine.Log("Attempting to load: " + engine.getPath() + address);
 		if (alsound.loadSound(engine.getPath() + address, address))
 		{
 			Resource r = new Resource(ResourceType.Sound, address, true);
@@ -27,10 +28,10 @@ public class ALAudioResourceManager extends ResourceManager
 		}
 		return Resource.newInvalid();
 	}
-
+	
 	public ALAudioResourceManager()
 	{
 		super(ResourceType.Sound);
 	}
-
+	
 }

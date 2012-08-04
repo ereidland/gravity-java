@@ -47,6 +47,7 @@ public abstract class TCPServer extends Aquireable
 		public long id;
 		public Socket socket;
 		public Thread receiveThread, sendThread;
+		public boolean kicked;
 		
 		public PacketBuffer queue;
 		
@@ -71,6 +72,11 @@ public abstract class TCPServer extends Aquireable
 						}
 						else
 						{
+							if (kicked)
+							{
+								close();
+								return;
+							}
 							try
 							{
 								Thread.sleep(TCPClient.waitTime);
@@ -268,6 +274,17 @@ public abstract class TCPServer extends Aquireable
 			}
 		}
 		return null;
+	}
+	
+	public void Kick(long id, String reason)
+	{
+		Client client = getClient(id);
+		if (client != null)
+		{
+			client.Send(new Bits().writeByte((byte) -1).writeString(reason));
+			client.kicked = true;
+			clients.remove(client);
+		}
 	}
 	
 	public void sendData(long id, Bits data)

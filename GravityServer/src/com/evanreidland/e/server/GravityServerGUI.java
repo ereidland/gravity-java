@@ -26,6 +26,7 @@ import com.evanreidland.e.commands.enginescript;
 import com.evanreidland.e.net.network;
 import com.evanreidland.e.script.basefunctions;
 import com.evanreidland.e.script.text.Script;
+import com.evanreidland.e.shared.console.sharedfunctions;
 
 public class GravityServerGUI extends JPanel implements Runnable,
 		ActionListener
@@ -67,6 +68,8 @@ public class GravityServerGUI extends JPanel implements Runnable,
 		
 	}
 	
+	public static GravityServerGUI global = null;
+	
 	private static final long serialVersionUID = -727062100602335292L;
 	
 	public static boolean running = true;
@@ -80,6 +83,11 @@ public class GravityServerGUI extends JPanel implements Runnable,
 	private JTextArea logArea;
 	private JScrollPane logScroll;
 	private JTextField consoleLine;
+	
+	public void setTitle(String title)
+	{
+		global.frame.setTitle(title);
+	}
 	
 	public void run()
 	{
@@ -119,6 +127,7 @@ public class GravityServerGUI extends JPanel implements Runnable,
 		serverfunctions.registerAll(script.env);
 		enginescript.registerAll(script.env);
 		basefunctions.registerAll(script.env);
+		sharedfunctions.registerAll(script.env);
 		
 		network.setServer(new GravityServer());
 		
@@ -167,6 +176,7 @@ public class GravityServerGUI extends JPanel implements Runnable,
 		c.weightx = c.weighty = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		
+		frame.setTitle("Gravity Server");
 		frame.setVisible(true);
 		
 		consoleLine.requestFocus();
@@ -177,6 +187,7 @@ public class GravityServerGUI extends JPanel implements Runnable,
 	public GravityServerGUI()
 	{
 		super(new GridBagLayout());
+		global = this;
 	}
 	
 	public static void main(String[] args)

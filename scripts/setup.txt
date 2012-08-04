@@ -55,3 +55,9 @@ set target2 @path
 + @target2 /scripts/
 + @target / @dl.hentry scripts/
 cp @target @target2
+
+set target @path
+set target2 @path
++ @target2 /sound/
++ @target / @dl.hentry sound/
+cp @target @target2

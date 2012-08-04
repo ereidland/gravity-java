@@ -9,14 +9,14 @@ import com.evanreidland.e.ent.Entity;
 public class Scene extends SceneObject
 {
 	private Vector<SceneObject> objects, orderedObjects;
-
+	
 	public boolean autoRemove, autoPosition, autoOrder;
-
+	
 	public int getObjectCount()
 	{
 		return objects.size();
 	}
-
+	
 	public SceneObject addObject(SceneObject object, boolean order)
 	{
 		if (order)
@@ -39,12 +39,12 @@ public class Scene extends SceneObject
 		}
 		return object;
 	}
-
+	
 	public SceneObject addObject(SceneObject object)
 	{
 		return addObject(object, true);
 	}
-
+	
 	public SceneObject addObject(SceneObject object, Entity parent,
 			AnchorType anchorType)
 	{
@@ -53,12 +53,12 @@ public class Scene extends SceneObject
 		object.anchorType = anchorType;
 		return object;
 	}
-
+	
 	public SceneObject addObject(SceneObject object, Entity parent)
 	{
 		return addObject(object, parent, AnchorType.POS_ANGLE);
 	}
-
+	
 	public SceneObject addObject(SceneObject object, SceneObject parent,
 			AnchorType anchorType)
 	{
@@ -67,25 +67,25 @@ public class Scene extends SceneObject
 		object.anchorType = anchorType;
 		return object;
 	}
-
+	
 	public SceneObject addObject(SceneObject object, SceneObject parent)
 	{
 		return addObject(object, parent, AnchorType.POS_ANGLE);
 	}
-
+	
 	public void Position()
 	{
 		for (int i = 0; i < objects.size(); i++)
 		{
 			objects.get(i).Position();
 		}
-
+		
 		for (int i = 0; i < orderedObjects.size(); i++)
 		{
 			orderedObjects.get(i).Position();
 		}
 	}
-
+	
 	public void Render()
 	{
 		if (objects.size() == 0 && orderedObjects.size() == 0)
@@ -111,10 +111,10 @@ public class Scene extends SceneObject
 			orderedObjects.get(i).Render();
 		}
 	}
-
+	
 	public void Order()
 	{
-
+		
 		int i = 0;
 		while (i < objects.size())
 		{
@@ -129,11 +129,11 @@ public class Scene extends SceneObject
 				i++;
 			}
 		}
-
+		
 		Vector<SceneObject> currentObjects = new Vector<SceneObject>(
 				orderedObjects);
 		Vector<SceneObject> newOrderedObjects = new Vector<SceneObject>();
-
+		
 		for (i = 0; i < currentObjects.size(); i++)
 		{
 			SceneObject object = currentObjects.get(i);
@@ -163,14 +163,14 @@ public class Scene extends SceneObject
 				objects.add(object);
 			}
 		}
-
+		
 		orderedObjects = new Vector<SceneObject>();
 		for (i = 0; i < newOrderedObjects.size(); i++)
 		{
 			orderedObjects.add(newOrderedObjects.get(i));
 		}
 	}
-
+	
 	public void bringOutTheDead()
 	{
 		Vector<SceneObject> dead = new Vector<SceneObject>();
@@ -184,12 +184,16 @@ public class Scene extends SceneObject
 					dead.add(object);
 				}
 			}
+			else if (object.isDead)
+			{
+				dead.add(object);
+			}
 		}
 		for (int i = 0; i < dead.size(); i++)
 		{
 			objects.remove(dead.get(i));
 		}
-
+		
 		dead.clear();
 		for (int i = 0; i < orderedObjects.size(); i++)
 		{
@@ -207,7 +211,7 @@ public class Scene extends SceneObject
 			orderedObjects.remove(dead.get(i));
 		}
 	}
-
+	
 	public Scene()
 	{
 		super(false);
