@@ -72,7 +72,28 @@ public class engine
 	
 	public static Game game;
 	
-	public static String version = "";
+	private static String version = "0";
+	
+	public static String getVersion()
+	{
+		return version;
+	}
+	
+	public static String loadVersion()
+	{
+		try
+		{
+			BufferedReader reader = new BufferedReader(new FileReader(getPath()
+					+ "version"));
+			version = reader.readLine();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			Log("Could not load version file: " + e.toString());
+		}
+		return version;
+	}
 	
 	public static double getDelta()
 	{
@@ -101,6 +122,7 @@ public class engine
 		if (dataPath == "")
 		{
 			dataPath = defaultDirectory() + "/.egravity/";
+			dataPath.replace('\\', '/');
 		}
 		return dataPath;
 	}
@@ -197,10 +219,9 @@ public class engine
 		
 		dataPath = defaultDirectory() + "/.egravity/";
 		dataPath.replace('\\', '/');
-		new File(dataPath).mkdir();
+		new File(dataPath).mkdirs();
 		
 		Log("Path: " + dataPath);
-		
 		try
 		{
 			PrintStream pstr = new PrintStream("folder.txt");
@@ -215,7 +236,7 @@ public class engine
 		}
 		catch (Exception e)
 		{
-			version = "(Version unknown.)";
+			version = "0";
 		}
 		
 		addResourceManager(ResourceType.Font, new FontResourceManager()); // Only

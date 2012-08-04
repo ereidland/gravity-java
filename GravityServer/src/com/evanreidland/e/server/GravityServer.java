@@ -406,6 +406,8 @@ public class GravityServer extends TCPServer implements ActionListener
 		
 		engine.game = gravityGame;
 		engine.Initialize();
+		GravityServerGUI.global
+				.setTitle("Gravity Server" + engine.getVersion());
 	}
 	
 	public void Update()

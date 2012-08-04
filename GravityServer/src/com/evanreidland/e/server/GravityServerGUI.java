@@ -67,6 +67,8 @@ public class GravityServerGUI extends JPanel implements Runnable,
 		
 	}
 	
+	public static GravityServerGUI global = null;
+	
 	private static final long serialVersionUID = -727062100602335292L;
 	
 	public static boolean running = true;
@@ -80,6 +82,11 @@ public class GravityServerGUI extends JPanel implements Runnable,
 	private JTextArea logArea;
 	private JScrollPane logScroll;
 	private JTextField consoleLine;
+	
+	public void setTitle(String title)
+	{
+		global.frame.setTitle(title);
+	}
 	
 	public void run()
 	{
@@ -167,6 +174,7 @@ public class GravityServerGUI extends JPanel implements Runnable,
 		c.weightx = c.weighty = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		
+		frame.setTitle("Gravity Server");
 		frame.setVisible(true);
 		
 		consoleLine.requestFocus();
@@ -177,6 +185,7 @@ public class GravityServerGUI extends JPanel implements Runnable,
 	public GravityServerGUI()
 	{
 		super(new GridBagLayout());
+		global = this;
 	}
 	
 	public static void main(String[] args)
