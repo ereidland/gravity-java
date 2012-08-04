@@ -6,9 +6,7 @@ import com.evanreidland.e.Game;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.client.control.input;
 import com.evanreidland.e.client.control.key;
-import com.evanreidland.e.graphics.Quad;
 import com.evanreidland.e.graphics.font;
-import com.evanreidland.e.graphics.graphics;
 import com.evanreidland.e.gui.GUI;
 
 public class MessageArea extends GravityGUIObject
@@ -87,13 +85,6 @@ public class MessageArea extends GravityGUIObject
 	
 	public void onRender()
 	{
-		GUI object = gui.getObject("chatfield");
-		if (object != null && object.flags.getBoolState("focused"))
-		{
-			graphics.setTexture(null);
-			renderQuadOnRect(new Quad().setColor(0.5, 0.5, 0.5, 0.25));
-		}
-		
 		for (int i = 0; i < items.size(); i++)
 		{
 			items.get(i).Render(

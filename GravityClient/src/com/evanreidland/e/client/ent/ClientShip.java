@@ -39,6 +39,7 @@ public class ClientShip extends ClientEntity
 		graphics.scene.addObject(new ClientShipSceneObject(), this,
 				AnchorType.NONE);
 		
+		addRadarObject();
 	}
 	
 	public void onSpawn()
