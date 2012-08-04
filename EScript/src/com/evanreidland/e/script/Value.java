@@ -7,7 +7,27 @@ public class Value implements Bitable
 {
 	public static enum Type
 	{
-		String, Int, Long, Double, Null, // Never supposed to happen.
+		String(4), Double(3), Long(2), Int(1), Null(0);
+		
+		public final int level;
+		
+		public static Type highType(Type a, Type b)
+		{
+			return a.level > b.level ? a : b;
+		}
+		
+		public static Type highNumberType(Type a, Type b)
+		{
+			Type highType = highType(a, b);
+			if (highType == String)
+				highType = Double;
+			return highType;
+		}
+		
+		Type(int level)
+		{
+			this.level = level;
+		}
 	}
 	
 	protected Object object;
@@ -210,6 +230,102 @@ public class Value implements Bitable
 		object = (Long) value;
 		onChange();
 		return this;
+	}
+	
+	public boolean equals(Value other)
+	{
+		Type highType = Type.highType(type, other.type);
+		switch (highType)
+		{
+			case String:
+				return toString().equals(other.toString());
+			case Int:
+				return toInt() == other.toInt();
+			case Long:
+				return toLong() == other.toLong();
+			case Double:
+				return toDouble() == other.toDouble();
+			case Null:
+				return true;
+		}
+		return false;
+	}
+	
+	public boolean lt(Value other)
+	{
+		Type highType = Type.highNumberType(type, other.type);
+		switch (highType)
+		{
+			case Int:
+				return toInt() < other.toInt();
+			case Long:
+				return toLong() < other.toLong();
+			case Double:
+				return toDouble() < other.toDouble();
+		}
+		return false;
+	}
+	
+	public boolean gt(Value other)
+	{
+		Type highType = Type.highNumberType(type, other.type);
+		switch (highType)
+		{
+			case Int:
+				return toInt() > other.toInt();
+			case Long:
+				return toLong() > other.toLong();
+			case Double:
+				return toDouble() > other.toDouble();
+		}
+		return false;
+	}
+	
+	public boolean lte(Value other)
+	{
+		Type highType = Type.highNumberType(type, other.type);
+		switch (highType)
+		{
+			case Int:
+				return toInt() <= other.toInt();
+			case Long:
+				return toLong() <= other.toLong();
+			case Double:
+				return toDouble() <= other.toDouble();
+		}
+		return false;
+	}
+	
+	public boolean gte(Value other)
+	{
+		Type highType = Type.highNumberType(type, other.type);
+		switch (highType)
+		{
+			case Int:
+				return toInt() >= other.toInt();
+			case Long:
+				return toLong() >= other.toLong();
+			case Double:
+				return toDouble() >= other.toDouble();
+		}
+		return false;
+	}
+	
+	public boolean compare(Value other, String op)
+	{
+		if (op.equals("<") || op.equals("lt"))
+			return lt(other);
+		else if (op.equals(">") || op.equals("gt"))
+			return gt(other);
+		else if (op.equals("<=") || op.equals("lte"))
+			return lte(other);
+		else if (op.equals(">=") || op.equals("gte"))
+			return gte(other);
+		else if (op.equals("==") || op.equals("is"))
+			return equals(other);
+		else if (op.equals("!=") || op.equals("isnot"))
+			return !equals(other);
+		return false;
 	}
 	
 	public Value setDouble(double value)
