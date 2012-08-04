@@ -13,7 +13,8 @@ public class RadarSceneObject extends SceneObject
 	{
 		Sprite billboard = new Sprite(1, 1, zarrows);
 		billboard.cr = billboard.cg = 0;
-		billboard.renderLong2d(pos.multipliedBy(1, 1, 0), pos, 1, 0, pos.z);
+		billboard.renderLongBillboard(pos.multipliedBy(1, 1, 0), pos, 1, 0,
+				pos.z, true);
 	}
 	
 	public RadarSceneObject()
