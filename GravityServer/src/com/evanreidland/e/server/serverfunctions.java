@@ -50,7 +50,8 @@ public class serverfunctions
 	{
 		public Value Call(Stack args)
 		{
-			Value returnValue = new Script(args.context).Execute("listen");
+			Value returnValue = new Script(args.context).Execute("listen "
+					+ args.at(0).toString());
 			GravityServer.global.setupGame();
 			return new Value(returnValue.toString() + "and Starting game!");
 		}
