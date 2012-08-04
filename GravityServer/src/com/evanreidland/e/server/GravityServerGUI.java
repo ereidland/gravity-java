@@ -31,6 +31,8 @@ public class GravityServerGUI extends JPanel implements Runnable,
 	
 	public Script script;
 	
+	public static GravityServerGUI global = null;
+	
 	private class LogManager extends Handler
 	{
 		public void close() throws SecurityException
@@ -66,6 +68,11 @@ public class GravityServerGUI extends JPanel implements Runnable,
 	private JTextArea logArea;
 	private JScrollPane logScroll;
 	private JTextField consoleLine;
+	
+	public void setTitle(String title)
+	{
+		global.frame.setTitle(title);
+	}
 	
 	public void run()
 	{
@@ -151,6 +158,7 @@ public class GravityServerGUI extends JPanel implements Runnable,
 		c.weightx = c.weighty = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		
+		frame.setTitle("Gravity Server");
 		frame.setVisible(true);
 		
 		consoleLine.requestFocus();
@@ -161,6 +169,7 @@ public class GravityServerGUI extends JPanel implements Runnable,
 	public GravityServerGUI()
 	{
 		super(new GridBagLayout());
+		global = this;
 	}
 	
 	public static void main(String[] args)

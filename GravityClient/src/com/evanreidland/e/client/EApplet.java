@@ -391,7 +391,7 @@ public class EApplet extends Applet implements Runnable
 	public void mainLoop()
 	{
 		curTime = System.currentTimeMillis();
-		Display.setTitle("Gravitty " + engine.version);
+		Display.setTitle("Gravity " + engine.getVersion());
 		while (running)
 		{
 			if (System.currentTimeMillis() > curTime + frameDelay)
