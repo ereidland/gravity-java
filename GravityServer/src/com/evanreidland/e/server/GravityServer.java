@@ -368,6 +368,22 @@ public class GravityServer extends TCPServer implements ActionListener
 									+ actorID);
 						}
 						break;
+					case VERSION:
+						String version = data.readString();
+						if (!version.equals(engine.getVersion()))
+						{
+							engine.Log("Mismatched version with "
+									+ getFullAddress(id) + ": " + version
+									+ " != " + engine.getVersion());
+							Kick(id, "Mismatched version. Yours: " + version
+									+ " Mine: " + engine.getVersion());
+						}
+						else
+						{
+							engine.Log("Confirmed version with "
+									+ getFullAddress(id) + ": " + version);
+						}
+						break;
 					default:
 						engine.Log("Unused code: " + code.toString());
 						break;

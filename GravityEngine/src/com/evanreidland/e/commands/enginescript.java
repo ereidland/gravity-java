@@ -106,6 +106,19 @@ public class enginescript
 		}
 	}
 	
+	public static class Version extends Function
+	{
+		public Value Call(Stack args)
+		{
+			return new Value(engine.getVersion());
+		}
+		
+		public Version()
+		{
+			super("version");
+		}
+	}
+	
 	public static class EntSetVar extends Function
 	{
 		public Value Call(Stack args)
