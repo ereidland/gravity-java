@@ -298,6 +298,26 @@ public class EntityList
 		return data;
 	}
 	
+	public SearchData findNearest(Vector3 origin)
+	{
+		SearchData data = new SearchData();
+		for (int i = 0; i < entities.size(); i++)
+		{
+			Entity ent = entities.get(i);
+			
+			double len = ent.pos.minus(origin).getLength2d() - ent.radius;
+			
+			if (!data.isPositive || len < data.length)
+			{
+				data.length = len;
+				data.isPositive = true;
+				data.ent = ent;
+				data.origin.setAs(origin);
+			}
+		}
+		return data;
+	}
+	
 	public EntityList()
 	{
 		entities = new Vector<Entity>();
