@@ -65,8 +65,6 @@ public class ClientLaser extends Entity
 		
 		shoot1 = sound.Load("laser1.wav");
 		sound.Play(shoot1, pos, roll.randomDouble(1, 1.25));
-		
-		engine.Log("BAM.");
 	}
 	
 	public ClientLaser(long id)
