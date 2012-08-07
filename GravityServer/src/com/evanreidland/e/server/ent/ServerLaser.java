@@ -31,6 +31,6 @@ public class ServerLaser extends ServerEntity
 		super("laser", id);
 		deathTime = Game.getTime() + 2000;
 		radius = 0.05;
-		flags.add(new Flags("enemy laser projectile"));
+		flags.add(new Flags("laser projectile"));
 	}
 }

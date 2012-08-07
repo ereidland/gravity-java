@@ -7,6 +7,26 @@ public class Vector3 implements Bitable
 {
 	public double x, y, z;
 	
+	public double at(int index)
+	{
+		return index == 0 ? x : index == 1 ? y : index == 2 ? z : 0;
+	}
+	
+	public double set(int index, double value)
+	{
+		switch (index)
+		{
+			case 0:
+				return x = value;
+			case 1:
+				return y = value;
+			case 2:
+				return z = value;
+			default:
+				return 0;
+		}
+	}
+	
 	public String toString()
 	{
 		return "(" + x + ", " + y + ", " + z + ")";
@@ -316,72 +336,9 @@ public class Vector3 implements Bitable
 	public Vector3 clipAngle()
 	{
 		double pi2 = Math.PI * 2;
-		if (x > pi2)
-		{
-			x -= pi2;
-		}
-		else if (x < 0)
-		{
-			x += pi2;
-		}
-		
-		if (y > pi2)
-		{
-			y -= pi2;
-		}
-		else if (y < 0)
-		{
-			y += pi2;
-		}
-		
-		if (z > pi2)
-		{
-			z -= pi2;
-		}
-		else if (z < 0)
-		{
-			z += pi2;
-		}
-		return this;
-	}
-	
-	public Vector3 clipAngle(boolean recursive)
-	{
-		if (recursive)
-		{
-			double pi2 = Math.PI * 2;
-			while (x > pi2)
-			{
-				x -= pi2;
-			}
-			while (x < 0)
-			{
-				x += pi2;
-			}
-			
-			while (y > pi2)
-			{
-				y -= pi2;
-			}
-			while (y < 0)
-			{
-				y += pi2;
-			}
-			
-			while (z > pi2)
-			{
-				z -= pi2;
-			}
-			while (z < 0)
-			{
-				z += pi2;
-			}
-		}
-		else
-		{
-			clipAngle();
-		}
-		
+		x -= ((int) (x / pi2)) * pi2;
+		y -= ((int) (y / pi2)) * pi2;
+		z -= ((int) (z / pi2)) * pi2;
 		return this;
 	}
 	
@@ -567,8 +524,8 @@ public class Vector3 implements Bitable
 	
 	public static Vector3 getAngleDifference(Vector3 origin, Vector3 other)
 	{
-		Vector3 or = origin.cloned().clipAngle(true), ot = other.cloned()
-				.clipAngle(true);
+		Vector3 or = origin.cloned().clipAngle(), ot = other.cloned()
+				.clipAngle();
 		
 		return new Vector3(angleDifference(or.x, ot.x), angleDifference(or.y,
 				ot.y), angleDifference(or.z, ot.z));
@@ -725,7 +682,7 @@ public class Vector3 implements Bitable
 		return x < other.x && y < other.y && z < other.z;
 	}
 	
-	public boolean gr(Vector3 other)
+	public boolean gt(Vector3 other)
 	{
 		return x > other.x && y > other.y && z > other.z;
 	}
@@ -735,7 +692,7 @@ public class Vector3 implements Bitable
 		return x <= other.x && y <= other.y && z <= other.z;
 	}
 	
-	public boolean gre(Vector3 other)
+	public boolean gte(Vector3 other)
 	{
 		return x >= other.x && y >= other.y && z >= other.z;
 	}
