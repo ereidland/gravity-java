@@ -11,6 +11,7 @@ import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.phys.phys;
 import com.evanreidland.e.phys.phys.Target;
 import com.evanreidland.e.server.GravityServer;
+import com.evanreidland.e.shared.Player;
 
 public class ServerShip extends ServerEntity
 {
@@ -87,6 +88,12 @@ public class ServerShip extends ServerEntity
 	public void onDie()
 	{
 		super.onDie();
+		Player player = GravityServer.global.getPlayerOnShip(getID());
+		if (player != null)
+		{
+			player.setPlayerShip(0);
+			player.permissions.remove(getID());
+		}
 		GravityServer.global.broadcastMessage(0, "Ship " + getID()
 				+ " was destroyed!");
 	}
