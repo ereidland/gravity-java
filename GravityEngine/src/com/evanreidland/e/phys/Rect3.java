@@ -41,7 +41,7 @@ public class Rect3 implements Bitable
 	
 	public Vector3 getSize()
 	{
-		return b.minus(a).Abs();
+		return b.minus(a).abs();
 	}
 	
 	public Vector3 topLeft()

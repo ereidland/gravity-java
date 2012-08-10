@@ -26,6 +26,78 @@ public class Line implements Bitable
 		return a.plus(ab.multipliedBy(ratio));
 	}
 	
+	public Vector3 nearestPoint(Line other)
+	{
+		// a = 1, b = 2, other.a = 3, other.b = 4
+		// See: http://paulbourke.net/geometry/lineline3d/
+		Vector3 v13 = a.minus(other.a), v43 = other.b.minus(other.a), v21 = b
+				.minus(a);
+		double d1343 = v13.dot(v43), d4321 = v43.dot(v21), d1321 = v13.dot(v21), d4343 = v43
+				.dot(), d2121 = v21.dot();
+		double da = (d1343 * d4321) - (d1321 * d4343);
+		double db = (d2121 * d4343) - (d4321 * d4321);
+		
+		if (db != 0)
+		{
+			double mua = da / db;
+			if (mua < 0)
+				mua = 0;
+			if (mua > 1)
+				mua = 1;
+			
+			return a.plus(v21.multipliedBy(mua));
+		}
+		
+		return null;
+	}
+	
+	public CollisionData testCollision(Line other, double radius)
+	{
+		CollisionData data = new CollisionData();
+		Vector3 pointA = nearestPoint(other), pointB = other.nearestPoint(this);
+		
+		if (pointA != null && pointB != null)
+		{
+			double len = pointA.getDistance(pointB);
+			data.doesCollide = len <= radius;
+		}
+		else
+		{
+			// For the rare case of parallel lines, it's possible to
+			// have collision. It's ugly.
+			pointA = a;
+			pointB = other.a;
+			double len = pointA.getDistance(pointB);
+			if (!(data.doesCollide = len <= radius))
+			{
+				pointA = a;
+				pointB = other.b;
+				len = pointA.getDistance(pointB);
+				if (!(data.doesCollide = len <= radius))
+				{
+					pointA = b;
+					pointB = other.a;
+					len = pointA.getDistance(pointB);
+					if (!(data.doesCollide = len <= radius))
+					{
+						pointA = b;
+						pointB = other.b;
+						len = pointA.getDistance(pointB);
+						data.doesCollide = len <= radius;
+					}
+				}
+			}
+		}
+		
+		if (data.doesCollide)
+		{
+			data.pos = pointA;
+			data.normal = pointB.minus(pointA).getNormal();
+		}
+		
+		return data;
+	}
+	
 	public Bits toBits()
 	{
 		return new Bits().write(a.toBits()).write(b.toBits());

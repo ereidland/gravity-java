@@ -86,8 +86,7 @@ public class Vector3 implements Bitable
 	
 	public static Vector3 reflectNormal(Vector3 in, Vector3 surface)
 	{
-		return in.minus(
-				surface.multipliedBy(in.dotProduct(surface)).multipliedBy(2))
+		return in.minus(surface.multipliedBy(in.dot(surface)).multipliedBy(2))
 				.Normalize();
 	}
 	
@@ -296,21 +295,34 @@ public class Vector3 implements Bitable
 		return getDistance(other.x, other.y, other.z);
 	}
 	
-	public Vector3 Reduce(double howMuch)
+	public Vector3 reduce(double howMuch)
 	{
-		Vector3 sub = multipliedBy(-howMuch);
+		Vector3 sub = getNormal().multipliedBy(-howMuch);
 		double len = getLength();
 		if (sub.getLength() > len)
 		{
 			return setAs(0, 0, 0);
-			// sub.Normalize().multiply(len);
 		}
 		return add(sub);
 	}
 	
 	public Vector3 reducedBy(double howMuch)
 	{
-		return cloned().Reduce(howMuch);
+		return cloned().reduce(howMuch);
+	}
+	
+	public Vector3 reduce(Vector3 howMuch)
+	{
+		Vector3 sub = minus(howMuch);
+		for (int i = 0; i < 3; i++)
+			if (Math.signum(sub.at(i)) != Math.signum(at(i)))
+				set(i, 0);
+		return this;
+	}
+	
+	public Vector3 reducedBy(Vector3 howMuch)
+	{
+		return cloned().reduce(howMuch);
 	}
 	
 	public Vector3 average(Vector3 other)
@@ -336,9 +348,9 @@ public class Vector3 implements Bitable
 	public Vector3 clipAngle()
 	{
 		double pi2 = Math.PI * 2;
-		x -= ((int) (x / pi2)) * pi2;
-		y -= ((int) (y / pi2)) * pi2;
-		z -= ((int) (z / pi2)) * pi2;
+		x -= ((x < 0 ? -1 : 0) + (int) (x / pi2)) * pi2;
+		y -= ((y < 0 ? -1 : 0) + (int) (y / pi2)) * pi2;
+		z -= ((z < 0 ? -1 : 0) + (int) (z / pi2)) * pi2;
 		return this;
 	}
 	
@@ -418,22 +430,28 @@ public class Vector3 implements Bitable
 		return len != 0 ? multiply(1 / len) : Vector3.Zero();
 	}
 	
-	public double dotProduct()
+	public double dot()
 	{
 		return x * x + y * y + z * z;
 	}
 	
-	public double dotProduct(Vector3 other)
+	public double dot(Vector3 other)
 	{
 		return x * other.x + y * other.y + z * other.z;
 	}
 	
-	public double dotProduct2D()
+	public double dot2d()
 	{
 		return x * x + y * y;
 	}
 	
-	public Vector3 Round(int decimals)
+	public Vector3 crossProduct(Vector3 other)
+	{
+		return new Vector3((y * other.z) - (z * other.y),
+				-((x * other.z) - (z * other.x)), (x * other.y) - (y * other.x));
+	}
+	
+	public Vector3 round(int decimals)
 	{
 		double place = (int) Math.pow(10, decimals);
 		x = Math.round(x * place) / place;
@@ -442,12 +460,12 @@ public class Vector3 implements Bitable
 		return this;
 	}
 	
-	public Vector3 Rounded(int decimals)
+	public Vector3 rounded(int decimals)
 	{
-		return cloned().Round(decimals);
+		return cloned().round(decimals);
 	}
 	
-	public Vector3 Pow(Vector3 other)
+	public Vector3 pow(Vector3 other)
 	{
 		x = Math.pow(x, other.x);
 		x = Math.pow(y, other.y);
@@ -455,22 +473,22 @@ public class Vector3 implements Bitable
 		return this;
 	}
 	
-	public Vector3 Pow(double pow)
+	public Vector3 pow(double pow)
 	{
-		return Pow(new Vector3(pow, pow, pow));
+		return pow(new Vector3(pow, pow, pow));
 	}
 	
 	public Vector3 toPowerOf(Vector3 other)
 	{
-		return cloned().Pow(other);
+		return cloned().pow(other);
 	}
 	
 	public Vector3 toPowerOf(double pow)
 	{
-		return cloned().Pow(pow);
+		return cloned().pow(pow);
 	}
 	
-	public Vector3 Abs()
+	public Vector3 abs()
 	{
 		x = Math.abs(x);
 		y = Math.abs(y);
@@ -480,7 +498,7 @@ public class Vector3 implements Bitable
 	
 	public Vector3 getAbs()
 	{
-		return cloned().Abs();
+		return cloned().abs();
 	}
 	
 	public double[] toArray()
@@ -531,17 +549,17 @@ public class Vector3 implements Bitable
 				ot.y), angleDifference(or.z, ot.z));
 	}
 	
-	public Vector3 Rotate2d(double howMuch)
+	public Vector3 rotate2d(double howMuch)
 	{
 		return setAs(Vector3.fromAngle2d(getAngle2d()).multiply(getLength()));
 	}
 	
-	public Vector3 Rotated2d(double howMuch)
+	public Vector3 rotated2d(double howMuch)
 	{
-		return cloned().Rotate2d(howMuch);
+		return cloned().rotate2d(howMuch);
 	}
 	
-	public Vector3 Rotate(Vector3 howMuch)
+	public Vector3 rotate(Vector3 howMuch)
 	{
 		if (howMuch.x == 0 && howMuch.y == 0 && howMuch.z == 0)
 		{
@@ -575,9 +593,9 @@ public class Vector3 implements Bitable
 		return setAs(cur);
 	}
 	
-	public Vector3 Rotated(Vector3 howMuch)
+	public Vector3 rotated(Vector3 howMuch)
 	{
-		return cloned().Rotate(howMuch);
+		return cloned().rotate(howMuch);
 	}
 	
 	public static enum VectorFormat
@@ -624,24 +642,24 @@ public class Vector3 implements Bitable
 		return v;
 	}
 	
-	public Vector3 Rotate(Vector3 howMuch, Vector3 origin)
+	public Vector3 rotate(Vector3 howMuch, Vector3 origin)
 	{
-		return setAs(origin.plus(this.minus(origin).Rotate(howMuch)));
+		return setAs(origin.plus(this.minus(origin).rotate(howMuch)));
 	}
 	
 	public Vector3 getRotated2d(double howMuch)
 	{
-		return cloned().Rotate2d(howMuch);
+		return cloned().rotate2d(howMuch);
 	}
 	
 	public Vector3 getRotated(Vector3 howMuch)
 	{
-		return cloned().Rotate(howMuch);
+		return cloned().rotate(howMuch);
 	}
 	
 	public Vector3 getRotated(Vector3 howMuch, Vector3 origin)
 	{
-		return cloned().Rotate(howMuch, origin);
+		return cloned().rotate(howMuch, origin);
 	}
 	
 	/*

@@ -37,7 +37,7 @@ public class TriList extends Vector<Tri>
 			Tri tri = get(i);
 			for (int j = 0; j < tri.vert.length; j++)
 			{
-				tri.vert[j].pos.Rotate(howMuch, origin);
+				tri.vert[j].pos.rotate(howMuch, origin);
 			}
 		}
 	}

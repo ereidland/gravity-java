@@ -9,6 +9,7 @@ import com.evanreidland.e.ent.SearchData;
 import com.evanreidland.e.ent.ents;
 import com.evanreidland.e.phys.phys;
 import com.evanreidland.e.phys.phys.Target;
+import com.evanreidland.e.script.Variable;
 
 public class ServerEnemy extends ServerEntity
 {
@@ -17,8 +18,8 @@ public class ServerEnemy extends ServerEntity
 	public void onThink()
 	{
 		super.onThink();
-		SearchData data = ents.findNearest(pos, 10, new Flags(
-				"player targetable"));
+		SearchData data = ents.findNearest(pos, vars.get("range").toDouble(5),
+				new Flags("player targetable"));
 		if (data.isPositive)
 		{
 			if (Game.getTime() > nextShot)
@@ -42,7 +43,8 @@ public class ServerEnemy extends ServerEntity
 	
 	public void checkCollision()
 	{
-		EntityList list = checkCollision(new Flags("friendly projectile"));
+		EntityList list = checkCollision(new Flags("friendly projectile"),
+				Game.getDelta());
 		if (!list.isEmpty())
 		{
 			for (int i = 0; i < list.size(); i++)
@@ -62,5 +64,6 @@ public class ServerEnemy extends ServerEntity
 		maxHP = 2;
 		
 		flags.add(new Flags("enemy targetable"));
+		vars.add(new Variable("range", 5.0));
 	}
 }

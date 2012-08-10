@@ -232,6 +232,12 @@ public class Entity extends Actor
 				getID());
 	}
 	
+	public EntityList checkCollision(Flags other, double delta)
+	{
+		return ents.list.getWithFlags(other).getWithinTimeBounds(pos, vel,
+				radius, getID(), delta);
+	}
+	
 	public void shiftByTimeOffset(long timeReference)
 	{
 		shiftByDeltaMS(System.currentTimeMillis() - timeReference);
