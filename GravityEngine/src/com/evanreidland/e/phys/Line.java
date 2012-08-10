@@ -92,9 +92,22 @@ public class Line implements Bitable
 		if (data.doesCollide)
 		{
 			data.pos = pointA;
-			data.normal = pointB.minus(pointA).getNormal();
+			data.normal = pointB.minus(pointA).Normalize();
 		}
 		
+		return data;
+	}
+	
+	public CollisionData testCollision(Vector3 point, double radius)
+	{
+		CollisionData data = new CollisionData();
+		Vector3 nearPoint = nearestPoint(point);
+		double len = nearPoint.getDistance(point);
+		if (data.doesCollide = len <= radius)
+		{
+			data.pos = nearPoint;
+			data.normal = point.minus(nearPoint).Normalize();
+		}
 		return data;
 	}
 	

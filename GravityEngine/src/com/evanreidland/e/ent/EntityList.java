@@ -157,17 +157,41 @@ public class EntityList
 			double entRadius, long ignoreID, double delta)
 	{
 		EntityList list = new EntityList();
-		Line line1 = new Line(pos, pos.minus(vel.multipliedBy(delta)));
-		for (int i = 0; i < entities.size(); i++)
+		if (vel.getLength() == 0)
 		{
-			Entity ent = entities.get(i);
-			Line line2 = new Line(ent.pos, ent.pos.minus(ent.vel
-					.multipliedBy(delta)));
-			CollisionData data = line1.testCollision(line2, entRadius
-					+ ent.radius);
-			
-			if (data.doesCollide)
-				list.add(ent);
+			for (int i = 0; i < entities.size(); i++)
+			{
+				CollisionData data = new CollisionData();
+				Entity ent = entities.get(i);
+				if (ent.vel.getLength() == 0 || ent.bStatic)
+				{
+					data.doesCollide = pos.getDistance(ent.pos) <= entRadius
+							+ ent.radius;
+				}
+				else
+				{
+					Line line2 = new Line(ent.pos, ent.pos.minus(ent.vel
+							.multipliedBy(delta)));
+					data = line2.testCollision(pos, entRadius + ent.radius);
+				}
+				if (data.doesCollide)
+					list.add(ent);
+			}
+		}
+		else
+		{
+			Line line1 = new Line(pos, pos.minus(vel.multipliedBy(delta)));
+			for (int i = 0; i < entities.size(); i++)
+			{
+				Entity ent = entities.get(i);
+				Line line2 = new Line(ent.pos, ent.pos.minus(ent.vel
+						.multipliedBy(delta)));
+				CollisionData data = line1.testCollision(line2, entRadius
+						+ ent.radius);
+				
+				if (data.doesCollide)
+					list.add(ent);
+			}
 		}
 		return list;
 	}

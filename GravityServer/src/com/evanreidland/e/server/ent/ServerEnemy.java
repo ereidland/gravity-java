@@ -50,6 +50,7 @@ public class ServerEnemy extends ServerEntity
 			for (int i = 0; i < list.size(); i++)
 			{
 				takeDamage(list.get(i), 1);
+				list.get(i).takeDamage(this, 1);
 			}
 		}
 	}
