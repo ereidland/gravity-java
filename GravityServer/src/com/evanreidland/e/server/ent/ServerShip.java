@@ -59,9 +59,9 @@ public class ServerShip extends ServerEntity
 		{
 			if (Game.getTime() > nextShot)
 			{
-				nextShot = Game.getTime() + 50;
+				nextShot = Game.getTime() + 250;
 				
-				double shotSpeed = 128;
+				double shotSpeed = 16;
 				Vector3 launchPos = pos.plus(angle.getForward().multipliedBy(
 						0.01));
 				Target target = phys.getTarget(launchPos, vel, data.ent.pos,
