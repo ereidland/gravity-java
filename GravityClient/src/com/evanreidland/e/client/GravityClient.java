@@ -5,7 +5,6 @@ import java.util.logging.Level;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
 import com.evanreidland.e.action.Action;
-import com.evanreidland.e.action.Actor;
 import com.evanreidland.e.action.act;
 import com.evanreidland.e.client.ent.ClientShip;
 import com.evanreidland.e.ent.Entity;
@@ -221,7 +220,7 @@ public class GravityClient extends TCPClient
 		}
 	}
 	
-	public void requestAction(Actor actor, Action action)
+	public void requestAction(Entity actor, Action action)
 	{
 		Bits bits = new Bits();
 		bits.writeByte(MessageCode.ACT_REQ.toByte());
@@ -276,6 +275,11 @@ public class GravityClient extends TCPClient
 		engine.Log("Exception: " + e.getMessage() + " on event "
 				+ event.toString());
 		e.printStackTrace();
+		
+		GravityClient.game.ship = null;
+		close();
+		
+		ents.list.killAll();
 	}
 	
 	public GravityClient(GravityGame game)

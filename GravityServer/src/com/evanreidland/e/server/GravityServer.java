@@ -35,9 +35,7 @@ public class GravityServer extends TCPServer implements ActionListener
 		{
 			Player player = players.get(i);
 			if (player.getID() == id)
-			{
 				return player;
-			}
 		}
 		return null;
 	}
@@ -48,9 +46,7 @@ public class GravityServer extends TCPServer implements ActionListener
 		{
 			Player player = players.get(i);
 			if (player.getShipID() == shipID)
-			{
 				return player;
-			}
 		}
 		return null;
 	}
@@ -69,9 +65,7 @@ public class GravityServer extends TCPServer implements ActionListener
 		{
 			Entity ent = ents.get(player.getShipID());
 			if (ent != null)
-			{
 				ent.bDead = true;
-			}
 			players.remove(player);
 		}
 	}
@@ -89,14 +83,11 @@ public class GravityServer extends TCPServer implements ActionListener
 		if (ent != null)
 		{
 			ent.pos.setAs(Vector3.RandomNormal().multipliedBy(
-					roll.randomDouble(1, 2)));
+					roll.randomDouble(1, 2), roll.randomDouble(1, 2), 0));
 			ent.flags.add("player targetable");
 			
 			Permissions perms = player.permissions.get(ent.getID());
-			perms.grant("ent_move");
-			perms.grant("ent_bezmove");
 			perms.grant("ent_manmove");
-			perms.grant("ent_stop");
 			perms.grant("weapons");
 			
 			sendEntitySpawn(ent);
@@ -115,7 +106,6 @@ public class GravityServer extends TCPServer implements ActionListener
 	
 	public Bits getEntitySpawnBits(Entity ent, Player player)
 	{
-		
 		ent.bSent = true;
 		Bits bits = new Bits();
 		bits.writeByte(MessageCode.ENT_NEW.toByte());

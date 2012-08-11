@@ -43,13 +43,19 @@ public class Value implements Bitable
 		return object;
 	}
 	
-	protected void onChange()
+	protected void onGet()
+	{
+		
+	}
+	
+	protected void onSet()
 	{
 		
 	}
 	
 	public int toInt(int def)
 	{
+		onGet();
 		try
 		{
 			switch (type)
@@ -80,6 +86,7 @@ public class Value implements Bitable
 	
 	public long toLong(long def)
 	{
+		onGet();
 		try
 		{
 			switch (type)
@@ -110,6 +117,7 @@ public class Value implements Bitable
 	
 	public double toDouble(double def)
 	{
+		onGet();
 		try
 		{
 			switch (type)
@@ -140,6 +148,7 @@ public class Value implements Bitable
 	
 	public boolean toBool(boolean def)
 	{
+		onGet();
 		if (type == Type.Null)
 			return def;
 		String str = toString().toLowerCase();
@@ -185,6 +194,7 @@ public class Value implements Bitable
 	
 	public String toString()
 	{
+		onGet();
 		try
 		{
 			switch (type)
@@ -212,7 +222,7 @@ public class Value implements Bitable
 	{
 		type = Type.String;
 		object = value;
-		onChange();
+		onSet();
 		return this;
 	}
 	
@@ -220,7 +230,7 @@ public class Value implements Bitable
 	{
 		type = Type.Int;
 		object = (Integer) value;
-		onChange();
+		onSet();
 		return this;
 	}
 	
@@ -228,7 +238,7 @@ public class Value implements Bitable
 	{
 		type = Type.Long;
 		object = (Long) value;
-		onChange();
+		onSet();
 		return this;
 	}
 	
@@ -332,7 +342,7 @@ public class Value implements Bitable
 	{
 		type = Type.Double;
 		object = (Double) value;
-		onChange();
+		onSet();
 		return this;
 	}
 	
@@ -406,7 +416,7 @@ public class Value implements Bitable
 	{
 		type = other.type;
 		object = other.object;
-		onChange();
+		onSet();
 		return this;
 	}
 	

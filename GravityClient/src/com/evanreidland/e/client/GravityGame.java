@@ -17,6 +17,7 @@ import com.evanreidland.e.client.ent.ClientShip;
 import com.evanreidland.e.client.graphics.scene.PingSceneObject;
 import com.evanreidland.e.client.graphics.scene.RadarSceneObject;
 import com.evanreidland.e.client.gui.ChatTextField;
+import com.evanreidland.e.client.gui.EngineeringPanel;
 import com.evanreidland.e.client.gui.MessageArea;
 import com.evanreidland.e.commands.enginescript;
 import com.evanreidland.e.ent.Entity;
@@ -62,6 +63,7 @@ public class GravityGame extends GameClientBase
 	Vector3 lastViewSize, targetPoint, targetAngle, lastDragPos;
 	
 	ChatTextField textField;
+	EngineeringPanel engiePanel;
 	public MessageArea messageArea;
 	
 	public static GravityGame active;
@@ -74,6 +76,11 @@ public class GravityGame extends GameClientBase
 				0,
 				textField.rect.getHeight() * 0.5 + messageArea.rect.getHeight()
 						* 0.5, 0));
+		
+		if (engiePanel != null)
+			engiePanel.rect.moveTo(graphics.camera.bottomLeft()
+					.averaged(graphics.camera.bottomRight())
+					.plus(0, engiePanel.rect.getHeight() * 0.75, 0));
 	}
 	
 	public void updateConsole()
@@ -207,9 +214,30 @@ public class GravityGame extends GameClientBase
 		if (ship != null && ship.isDead())
 		{
 			ship = null;
+			engiePanel = null;
 		}
 		if (ship != null)
 		{
+			if (engiePanel == null)
+			{
+				engiePanel = new EngineeringPanel("enginecontrols", 256, 200);
+				engiePanel.add("hp", ship.vars.get("hp"), false).setRange(0,
+						ship.vars.get("maxhp").toDouble());
+				
+				engiePanel.add("vel.x", ship.vars.get("vel.x"), false)
+						.setRange(-2, 2);
+				engiePanel.add("vel.y", ship.vars.get("vel.y"), false)
+						.setRange(-2, 2);
+				engiePanel.add("vel.z", ship.vars.get("vel.z"), false)
+						.setRange(-2, 2);
+				
+				engiePanel.add("static", ship.vars.get("bstatic"), true);
+				engiePanel.rect.moveTo(graphics.camera.bottomLeft()
+						.averaged(graphics.camera.bottomRight())
+						.plus(0, engiePanel.rect.getHeight() * 0.75, 0));
+				
+				hud.add(engiePanel);
+			}
 			if (input.isKeyDown(key.MOUSE_LBUTTON))
 			{
 				lastDragPos = Game.mousePos.cloned();
@@ -400,9 +428,11 @@ public class GravityGame extends GameClientBase
 	{
 		messageArea = new MessageArea("messages", 256, 256, 18);
 		textField = new ChatTextField("chatfield", 256, 18, messageArea);
+		hud.remove(engiePanel);
+		engiePanel = null;
 		
-		hud.addObject(messageArea);
-		hud.addObject(textField);
+		hud.add(messageArea);
+		hud.add(textField);
 		onResize();
 	}
 	

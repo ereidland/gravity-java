@@ -7,6 +7,7 @@ import com.evanreidland.e.Flags;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.event.Event;
 import com.evanreidland.e.event.ent.EntityDestroyedEvent;
+import com.evanreidland.e.phys.CollisionData;
 import com.evanreidland.e.phys.Line;
 
 public class EntityList
@@ -44,10 +45,8 @@ public class EntityList
 		{
 			Entity other = entities.get(i);
 			if (other.getID() != ent.getID())
-			{
 				v.add(other.pos.minus(ent.pos).Normalize()
 						.multiply(ent.getGravity(other)));
-			}
 		}
 		return v;
 	}
@@ -112,9 +111,7 @@ public class EntityList
 		{
 			Entity ent = entities.get(i);
 			if (ent.matchesFlags(flags, strict))
-			{
 				list.add(ent);
-			}
 		}
 		
 		return list;
@@ -132,9 +129,7 @@ public class EntityList
 		{
 			Entity ent = entities.get(i);
 			if (ent.pos.getDistance(pos) <= radius)
-			{
 				list.add(ent);
-			}
 		}
 		return list;
 	}
@@ -148,9 +143,7 @@ public class EntityList
 			Entity ent = entities.get(i);
 			if (ent.getID() != ignoreID
 					&& ent.pos.getDistance(pos) <= entRadius + ent.radius)
-			{
 				list.add(ent);
-			}
 		}
 		return list;
 	}
@@ -158,6 +151,55 @@ public class EntityList
 	public EntityList getWithinBounds(Vector3 pos, double entRadius)
 	{
 		return getWithinBounds(pos, entRadius, 0);
+	}
+	
+	public EntityList getWithinTimeBounds(Vector3 pos, Vector3 vel,
+			double entRadius, long ignoreID, double delta)
+	{
+		EntityList list = new EntityList();
+		if (vel.getLength() == 0)
+		{
+			for (int i = 0; i < entities.size(); i++)
+			{
+				CollisionData data = new CollisionData();
+				Entity ent = entities.get(i);
+				if (ent.vel.getLength() == 0 || ent.bStatic)
+				{
+					data.doesCollide = pos.getDistance(ent.pos) <= entRadius
+							+ ent.radius;
+				}
+				else
+				{
+					Line line2 = new Line(ent.pos, ent.pos.minus(ent.vel
+							.multipliedBy(delta)));
+					data = line2.testCollision(pos, entRadius + ent.radius);
+				}
+				if (data.doesCollide)
+					list.add(ent);
+			}
+		}
+		else
+		{
+			Line line1 = new Line(pos, pos.minus(vel.multipliedBy(delta)));
+			for (int i = 0; i < entities.size(); i++)
+			{
+				Entity ent = entities.get(i);
+				Line line2 = new Line(ent.pos, ent.pos.minus(ent.vel
+						.multipliedBy(delta)));
+				CollisionData data = line1.testCollision(line2, entRadius
+						+ ent.radius);
+				
+				if (data.doesCollide)
+					list.add(ent);
+			}
+		}
+		return list;
+	}
+	
+	public EntityList getWithinTimeBounds(Vector3 pos, Vector3 vel,
+			double entRadius, double delta)
+	{
+		return getWithinTimeBounds(pos, vel, entRadius, 0, delta);
 	}
 	
 	public void removeWithFlags(Flags flags, boolean strict)
@@ -174,10 +216,19 @@ public class EntityList
 				remove(ent);
 			}
 			else
-			{
 				i++;
-			}
 		}
+	}
+	
+	public void killAll()
+	{
+		for (int i = 0; i < entities.size(); i++)
+		{
+			Entity ent = entities.get(i);
+			ent.Kill();
+			ent.onDie();
+		}
+		entities.clear();
 	}
 	
 	public void removeWithFlags(Flags flags)
@@ -218,17 +269,13 @@ public class EntityList
 	public void onRender()
 	{
 		for (int i = 0; i < entities.size(); i++)
-		{
 			entities.get(i).onRender();
-		}
 	}
 	
 	public void onRenderHUD()
 	{
 		for (int i = 0; i < entities.size(); i++)
-		{
 			entities.get(i).onRenderHUD();
-		}
 	}
 	
 	public int size()
@@ -278,9 +325,7 @@ public class EntityList
 			Entity ent = entities.get(i);
 			
 			if (flags != null && !ent.matchesFlags(flags, true))
-			{
 				continue;
-			}
 			
 			double len = ent.pos.minus(origin).getLength2d() - ent.radius;
 			

@@ -1,0 +1,4 @@
+launcher.new
+launcher.+jar @path
+launcher.main com.evanreidland.e.server.GravityServerGUI
+launcher.launch

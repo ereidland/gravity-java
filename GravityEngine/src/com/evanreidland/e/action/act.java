@@ -4,6 +4,8 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Vector;
 
+import com.evanreidland.e.ent.Entity;
+
 public class act
 {
 	private static Vector<ActionListener> listeners = new Vector<ActionListener>();
@@ -87,7 +89,7 @@ public class act
 		listeners.clear();
 	}
 	
-	public static void Start(Actor actor, Action action)
+	public static void Start(Entity actor, Action action)
 	{
 		actor.add(action);
 		
@@ -97,7 +99,7 @@ public class act
 		}
 	}
 	
-	public static void Start(Actor actor, String actionName)
+	public static void Start(Entity actor, String actionName)
 	{
 		Action action = Create(actionName);
 		if (action != null)
