@@ -107,6 +107,7 @@ public class ObjectVariable extends Variable
 			e.printStackTrace();
 		}
 		updateObject();
+		onSet();
 		return this;
 	}
 	
@@ -156,6 +157,7 @@ public class ObjectVariable extends Variable
 			e.printStackTrace();
 		}
 		updateObject();
+		onSet();
 		return this;
 	}
 	
@@ -205,6 +207,7 @@ public class ObjectVariable extends Variable
 			e.printStackTrace();
 		}
 		updateObject();
+		onSet();
 		return this;
 	}
 	
@@ -254,6 +257,7 @@ public class ObjectVariable extends Variable
 			e.printStackTrace();
 		}
 		updateObject();
+		onSet();
 		return this;
 	}
 	
