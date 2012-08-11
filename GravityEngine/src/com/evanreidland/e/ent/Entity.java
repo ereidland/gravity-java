@@ -64,7 +64,7 @@ public class Entity
 			flags.set(name, state);
 	}
 	
-	public NetworkedVariable getNWVar(String name, boolean state)
+	public NetworkedVariable getNWVar(String name)
 	{
 		return new NetworkedVariable(this, name);
 	}
