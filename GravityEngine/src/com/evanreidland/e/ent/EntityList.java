@@ -44,10 +44,8 @@ public class EntityList
 		{
 			Entity other = entities.get(i);
 			if (other.getID() != ent.getID())
-			{
 				v.add(other.pos.minus(ent.pos).Normalize()
 						.multiply(ent.getGravity(other)));
-			}
 		}
 		return v;
 	}
@@ -112,9 +110,7 @@ public class EntityList
 		{
 			Entity ent = entities.get(i);
 			if (ent.matchesFlags(flags, strict))
-			{
 				list.add(ent);
-			}
 		}
 		
 		return list;
@@ -132,9 +128,7 @@ public class EntityList
 		{
 			Entity ent = entities.get(i);
 			if (ent.pos.getDistance(pos) <= radius)
-			{
 				list.add(ent);
-			}
 		}
 		return list;
 	}
@@ -148,9 +142,7 @@ public class EntityList
 			Entity ent = entities.get(i);
 			if (ent.getID() != ignoreID
 					&& ent.pos.getDistance(pos) <= entRadius + ent.radius)
-			{
 				list.add(ent);
-			}
 		}
 		return list;
 	}
@@ -174,10 +166,20 @@ public class EntityList
 				remove(ent);
 			}
 			else
-			{
 				i++;
-			}
 		}
+	}
+	
+	public void killAll()
+	{
+		if (isMaster)
+			for (int i = 0; i < entities.size(); i++)
+			{
+				Entity ent = entities.get(i);
+				ent.Kill();
+				ent.onDie();
+			}
+		entities.clear();
 	}
 	
 	public void removeWithFlags(Flags flags)
@@ -218,17 +220,13 @@ public class EntityList
 	public void onRender()
 	{
 		for (int i = 0; i < entities.size(); i++)
-		{
 			entities.get(i).onRender();
-		}
 	}
 	
 	public void onRenderHUD()
 	{
 		for (int i = 0; i < entities.size(); i++)
-		{
 			entities.get(i).onRenderHUD();
-		}
 	}
 	
 	public int size()
@@ -278,9 +276,7 @@ public class EntityList
 			Entity ent = entities.get(i);
 			
 			if (flags != null && !ent.matchesFlags(flags, true))
-			{
 				continue;
-			}
 			
 			double len = ent.pos.minus(origin).getLength2d() - ent.radius;
 			
@@ -293,6 +289,26 @@ public class EntityList
 					data.ent = ent;
 					data.origin.setAs(origin);
 				}
+			}
+		}
+		return data;
+	}
+	
+	public SearchData findNearest(Vector3 origin)
+	{
+		SearchData data = new SearchData();
+		for (int i = 0; i < entities.size(); i++)
+		{
+			Entity ent = entities.get(i);
+			
+			double len = ent.pos.minus(origin).getLength2d() - ent.radius;
+			
+			if (!data.isPositive || len < data.length)
+			{
+				data.length = len;
+				data.isPositive = true;
+				data.ent = ent;
+				data.origin.setAs(origin);
 			}
 		}
 		return data;

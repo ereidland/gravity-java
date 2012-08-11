@@ -17,9 +17,7 @@ public class GravityServerGame extends Game
 		{
 			Entity ent = ents.list.get(i);
 			if (!ent.bSent)
-			{
 				GravityServer.global.sendEntitySpawn(ent);
-			}
 		}
 		ents.list.onThink();
 		ents.list.checkCollision();

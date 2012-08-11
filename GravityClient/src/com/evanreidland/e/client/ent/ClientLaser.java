@@ -2,6 +2,7 @@ package com.evanreidland.e.client.ent;
 
 import com.evanreidland.e.Resource;
 import com.evanreidland.e.engine;
+import com.evanreidland.e.roll;
 import com.evanreidland.e.audio.sound;
 import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.ent.ents;
@@ -44,10 +45,18 @@ public class ClientLaser extends Entity
 	public void onSpawn()
 	{
 		Sprite sprite = new Sprite(0.05, 0.05, engine.loadTexture("laser1.png"));
-		sprite.cr = 0.5;
-		sprite.cg = 1;
-		sprite.cb = 0.5;
-		sprite.ca = 1.0;
+		if (flags.getBoolState("enemy"))
+		{
+			sprite.cr = 1;
+			sprite.cg = 0.25;
+			sprite.cb = 0.25;
+		}
+		else
+		{
+			sprite.cr = 0.5;
+			sprite.cg = 1;
+			sprite.cb = 0.5;
+		}
 		billboard = new LongBillboardSceneObject(sprite, pos.cloned(),
 				pos.plus(vel), 0.1, 0.4, 0.5, true);
 		graphics.scene.addObject(billboard, this, AnchorType.POS);
@@ -55,9 +64,7 @@ public class ClientLaser extends Entity
 				AnchorType.POS);
 		
 		shoot1 = sound.Load("laser1.wav");
-		sound.Play(shoot1, pos, 1);
-		
-		engine.Log("BAM.");
+		sound.Play(shoot1, pos, roll.randomDouble(1, 1.25));
 	}
 	
 	public ClientLaser(long id)

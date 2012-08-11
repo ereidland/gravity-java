@@ -108,9 +108,9 @@ public class GravityServerGUI extends JPanel implements Runnable,
 	{
 		String text = consoleLine.getText();
 		consoleLine.setText("");
-		String res = script.Execute(text).toString();
 		Log("->" + text);
-		if (res.length() > 0)
+		String res = script.Execute(text).toString();
+		if (!res.isEmpty())
 			Log("<-" + res);
 		
 		logArea.setCaretPosition(logArea.getDocument().getLength());

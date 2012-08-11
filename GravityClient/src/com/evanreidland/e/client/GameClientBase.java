@@ -24,7 +24,8 @@ public abstract class GameClientBase extends Game
 	
 	public void onUpdate()
 	{
-		GravityClient.global.Update();
+		if (GravityClient.global != null)
+			GravityClient.global.Update();
 		if (graphics.camera.width != lCamWidth
 				|| graphics.camera.height != lCamHeight)
 		{

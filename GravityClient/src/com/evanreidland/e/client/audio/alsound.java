@@ -100,6 +100,7 @@ public class alsound
 	
 	public static void playSound(String reg, double pitch)
 	{
+		alsound.pitch = pitch;
 		int play = 0;
 		Integer snd = files.get(reg);
 		if (snd == null)
@@ -124,7 +125,7 @@ public class alsound
 	
 	public static void playSound(String reg)
 	{
-		playSound(reg, 1);
+		playSound(reg, pitch);
 	}
 	
 	public static boolean init()

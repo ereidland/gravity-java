@@ -276,6 +276,11 @@ public class GravityClient extends TCPClient
 		engine.Log("Exception: " + e.getMessage() + " on event "
 				+ event.toString());
 		e.printStackTrace();
+		
+		GravityClient.game.ship = null;
+		close();
+		
+		ents.list.killAll();
 	}
 	
 	public GravityClient(GravityGame game)
