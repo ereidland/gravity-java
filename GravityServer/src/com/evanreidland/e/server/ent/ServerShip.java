@@ -17,6 +17,8 @@ public class ServerShip extends ServerEntity
 {
 	long nextShot;
 	
+	double targetSpeed;
+	
 	public void onThink()
 	{
 		super.onThink();
@@ -105,6 +107,7 @@ public class ServerShip extends ServerEntity
 		hp = 4;
 		maxHP = 4;
 		nextShot = 0;
+		targetSpeed = 1;
 	}
 	
 }
