@@ -10,9 +10,9 @@ public class Ray implements Bitable
 	
 	public Vector3 getPlaneIntersection(Vector3 planeOrigin, Vector3 planeNormal)
 	{
-		double ndt = planeNormal.dotProduct(normal);
+		double ndt = planeNormal.dot(normal);
 		return ndt != 0 ? origin.plus(normal.multipliedBy(planeNormal
-				.dotProduct(planeOrigin.minus(origin)) / ndt)) : origin;
+				.dot(planeOrigin.minus(origin)) / ndt)) : origin;
 	}
 	
 	public Vector3 nearestPoint(Vector3 toPoint)

@@ -273,9 +273,6 @@ public class EApplet extends Applet implements Runnable
 			
 			g.dispose();
 			
-			curTime = System.currentTimeMillis();
-			engine.updateTime();
-			
 			System.out.println("@" + System.currentTimeMillis()
 					+ ": Screenshot saved as '" + nextName + "'");
 		}
