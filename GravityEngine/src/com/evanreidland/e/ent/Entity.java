@@ -1,16 +1,25 @@
 package com.evanreidland.e.ent;
 
+import java.util.HashMap;
+import java.util.Vector;
+
 import com.evanreidland.e.Flags;
 import com.evanreidland.e.Flags.State;
 import com.evanreidland.e.Vector3;
 import com.evanreidland.e.engine;
-import com.evanreidland.e.action.Actor;
+import com.evanreidland.e.action.Action;
+import com.evanreidland.e.action.ActionList;
 import com.evanreidland.e.event.Event;
 import com.evanreidland.e.event.ent.EntitySpawnedEvent;
 import com.evanreidland.e.graphics.graphics;
 import com.evanreidland.e.net.Bits;
+import com.evanreidland.e.net.MessageCode;
+import com.evanreidland.e.net.network;
+import com.evanreidland.e.script.Stack;
+import com.evanreidland.e.script.Value;
+import com.evanreidland.e.script.Variable;
 
-public class Entity extends Actor
+public class Entity
 {
 	public static boolean debug = false;
 	public Vector3 pos, vel, angle, angleVel;
@@ -20,6 +29,128 @@ public class Entity extends Actor
 	public boolean bStatic, bSpawned, bDead, bSent;
 	
 	private String className;
+	
+	private Vector<ActionList> actionTypes;
+	private HashMap<String, ActionList> actionTypesMap;
+	
+	public Flags flags;
+	public Stack vars; // Potentially usable with networking.
+	
+	private long id;
+	
+	public void setNWVar(String name, Value value)
+	{
+		Bits bits = new Bits();
+		bits.writeByte(MessageCode.ENT_SET_VAR.toByte());
+		bits.writeLong(id);
+		bits.writeString(name);
+		bits.write(value.toBits());
+		
+		network.Send(bits);
+		if (network.isServer())
+			vars.add(new Variable(name, value));
+	}
+	
+	public void setNWFlag(String name, boolean state)
+	{
+		Bits bits = new Bits();
+		bits.writeByte(MessageCode.ENT_SET_FLAG.toByte());
+		bits.writeLong(id);
+		bits.writeString(name);
+		bits.writeBit(state);
+		
+		network.Send(bits);
+		if (network.isServer())
+			flags.set(name, state);
+	}
+	
+	public long getID()
+	{
+		return id;
+	}
+	
+	public boolean isValid()
+	{
+		return id != 0;
+	}
+	
+	public void Be(long targetID)
+	{
+		id = targetID;
+	}
+	
+	public void Be()
+	{
+		Be(id);
+	}
+	
+	private ActionList getList(String type, boolean create)
+	{
+		ActionList list = actionTypesMap.get(type);
+		if (list == null && create)
+		{
+			list = new ActionList(type, this);
+			actionTypesMap.put(type, list);
+			actionTypes.add(list);
+		}
+		
+		return list;
+	}
+	
+	public void add(Action action)
+	{
+		action.setActor(this);
+		getList(action.getType(), true).add(action);
+	}
+	
+	public void kill(String type)
+	{
+		ActionList list = getList(type, false);
+		if (list != null)
+		{
+			list.killAll();
+		}
+	}
+	
+	public void killOthers(String type)
+	{
+		ActionList list = getList(type, false);
+		if (list != null)
+		{
+			list.killOthers();
+		}
+	}
+	
+	public void killActions()
+	{
+		for (int i = 0; i < actionTypes.size(); i++)
+		{
+			actionTypes.get(i).killAll();
+		}
+		
+		actionTypes.clear();
+		actionTypesMap.clear();
+	}
+	
+	public void updateActions()
+	{
+		Vector<ActionList> toRemove = new Vector<ActionList>();
+		for (int i = 0; i < actionTypes.size(); i++)
+		{
+			ActionList list = actionTypes.get(i);
+			if (list.Update())
+			{
+				toRemove.add(list);
+			}
+		}
+		
+		for (int i = 0; i < toRemove.size(); i++)
+		{
+			ActionList list = toRemove.get(i);
+			actionTypes.remove(list);
+			actionTypesMap.remove(list.getName());
+		}
+	}
 	
 	public boolean matchesFlags(Flags oflags, boolean strict)
 	{
@@ -154,7 +285,7 @@ public class Entity extends Actor
 	
 	public void onThink()
 	{
-		super.Update();
+		updateActions();
 		State f = flags.get("dead");
 		if (!bStatic
 				&& (f == State.False || f == State.Undef || f == State.Either))
@@ -281,7 +412,18 @@ public class Entity extends Actor
 	{
 		boolean tSpawned = bSpawned;
 		bSpawned = false;
-		Bits bits = super.toBits();
+		
+		Bits bits = new Bits();
+		
+		bits.write(vars.toBits());
+		bits.write(flags.toBits(eflags.table, false));
+		
+		bits.writeSize(actionTypes.size());
+		for (int i = 0; i < actionTypes.size(); i++)
+		{
+			bits.write(actionTypes.get(i).toBits());
+		}
+		
 		bSpawned = tSpawned;
 		
 		bits.writeBit(bStatic);
@@ -322,7 +464,15 @@ public class Entity extends Actor
 	
 	public void loadBits(Bits bits)
 	{
-		super.loadBits(bits);
+		vars.loadBits(bits);
+		flags.loadBits(bits, eflags.table);
+		
+		int size = (int) bits.readSize();
+		for (int i = 0; i < size; i++)
+		{
+			new ActionList("", this).loadBits(bits);
+		}
+		
 		bStatic = bits.readBit();
 		pos.setAs(Vector3.fromBits(bits));
 		angle.setAs(Vector3.fromBits(bits));
@@ -337,8 +487,12 @@ public class Entity extends Actor
 	
 	public Entity(String className, long id)
 	{
-		super(id);
 		this.className = className;
+		this.id = id;
+		vars = new Stack();
+		flags = new Flags();
+		actionTypes = new Vector<ActionList>();
+		actionTypesMap = new HashMap<String, ActionList>();
 		
 		pos = Vector3.Zero();
 		vel = Vector3.Zero();

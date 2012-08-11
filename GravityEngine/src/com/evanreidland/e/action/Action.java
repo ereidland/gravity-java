@@ -1,20 +1,21 @@
 package com.evanreidland.e.action;
 
+import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.net.Bitable;
 import com.evanreidland.e.net.Bits;
 
 public abstract class Action implements Bitable
 {
 	private String name, type;
-	private Actor actor;
+	private Entity actor;
 	public boolean isOrdered, isStarted;
 	
-	public Actor getActor()
+	public Entity getActor()
 	{
 		return actor;
 	}
 	
-	public boolean setActor(Actor actor)
+	public boolean setActor(Entity actor)
 	{
 		if (this.actor == null)
 		{

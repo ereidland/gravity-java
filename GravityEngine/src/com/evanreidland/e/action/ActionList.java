@@ -4,6 +4,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 
 import com.evanreidland.e.engine;
+import com.evanreidland.e.ent.Entity;
 import com.evanreidland.e.net.Bitable;
 import com.evanreidland.e.net.Bits;
 
@@ -11,9 +12,9 @@ public class ActionList implements Bitable
 {
 	private String name;
 	public boolean ordered;
-	private Actor actor;
+	private Entity actor;
 	
-	public Actor getActor()
+	public Entity getEntity()
 	{
 		return actor;
 	}
@@ -183,7 +184,7 @@ public class ActionList implements Bitable
 		}
 	}
 	
-	public ActionList(String name, Actor actor)
+	public ActionList(String name, Entity actor)
 	{
 		this.name = name;
 		this.actor = actor;
